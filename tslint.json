@@ -3,12 +3,16 @@
   "linterOptions": {
     "exclude": [
       "config/**/*.js",
-      "node_modules/**/*.ts"
+      "node_modules/**/*.ts",
+      "Redux-Thunk.tsx"
     ]
   },
   "rules": {
     "interface-name": false,
     "ordered-imports": false,
-    "object-literal-sort-keys": false
+    "object-literal-sort-keys": false,
+    "interface-over-type-literal": false,
+    "ban-types": false,
+    "no-shadowed-variable": false
   }
 }
