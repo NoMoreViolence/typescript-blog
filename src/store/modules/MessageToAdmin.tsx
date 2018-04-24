@@ -26,15 +26,15 @@ export const MessageToAdminActions = {
 
 //  기본 State 타입 정의
 export interface AdminRippleState {
-  MessageToAdminPending: boolean;
-  MessageToAdminError: boolean;
-  MessageToAdminMessage: string | undefined;
+  messageToAdminPending: boolean;
+  messageToAdminError: boolean;
+  messageToAdminMessage: string | undefined;
 }
 // 초기 상태
 const initialState: AdminRippleState = {
-  MessageToAdminPending: false,
-  MessageToAdminError: false,
-  MessageToAdminMessage: ''
+  messageToAdminPending: false,
+  messageToAdminError: false,
+  messageToAdminMessage: ''
 };
 
 // 액션 상태
@@ -42,24 +42,24 @@ export default handleActions(
   {
     [POST_MESSAGE_TO_ADMIN_PENDING]: state => ({
       ...state,
-      MessageToAdminPending: true,
-      MessageToAdminError: false
+      messageToAdminPending: true,
+      messageToAdminError: false
     }),
     [POST_MESSAGE_TO_ADMIN_SUCCESS]: state => ({
       ...state,
-      MessageToAdminPending: false,
-      MessageToAdminError: false,
-      MessageToAdminMessage: ''
+      messageToAdminPending: false,
+      messageToAdminError: false,
+      messageToAdminMessage: ''
     }),
     [POST_MESSAGE_TO_ADMIN_FAILURE]: state => ({
       ...state,
-      MessageToAdminPending: false,
-      MessageToAdminError: true
+      messageToAdminPending: false,
+      messageToAdminError: true
     }),
+    // 인풋 값 변경
     [HANDLE_CHANGE]: (state, action: Action<ChangeInputPayload>) => {
       return produce(state, (draft: AdminRippleState) => {
-        // tslint:disable-next-line:no-unused-expression
-        draft.MessageToAdminMessage = action.payload;
+        draft.messageToAdminMessage = action.payload;
       });
     }
   },

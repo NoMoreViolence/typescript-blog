@@ -1,6 +1,9 @@
 import * as React from 'react';
+import { Row, Col } from 'reactstrap';
 import { CategoryStateInside } from 'store/modules/Category';
-import HeaderMessageToAdmin from 'containers/HeaderMessageToAdmin';
+import HeaderMessageToAdminContainer from 'containers/Header/HeaderMessageToAdminContainer';
+import HeaderLogo from './HeaderLogo';
+import HeaderCategory from './HeaderCategory';
 
 interface Props {
   onLoadCategory: Function;
@@ -15,16 +18,18 @@ class Header extends React.Component<Props, {}> {
   }
 
   public render() {
-    const hello = (object: [CategoryStateInside]) => {
-      return object.map((object, i) => {
-        return <div key={i}>{object.category}</div>;
-      });
-    };
     return (
-      <div>
-        {hello(this.props.categoryCategory)}
-        <HeaderMessageToAdmin />
-      </div>
+      <React.Fragment>
+        <Row>
+          <Col>
+            <HeaderLogo onLoadCategory={this.props.onLoadCategory} />
+          </Col>
+          <Col>
+            <HeaderCategory Category={this.props.categoryCategory} />
+          </Col>
+        </Row>
+        <HeaderMessageToAdminContainer />
+      </React.Fragment>
     );
   }
 }

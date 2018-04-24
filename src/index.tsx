@@ -5,6 +5,8 @@ import MainComponent from 'components/MainComponent';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import store from './store';
+// 리액트 스트랩 CSS 적용
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
   <Provider store={store}>

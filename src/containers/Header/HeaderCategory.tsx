@@ -1,5 +1,5 @@
 import * as React from 'react';
-import HeaderSearch from 'components/Header/HeaderSearch';
+import HeaderMessage from 'components/Header/HeaderMessage';
 
 // 운영자에게 보내는 메시지
 import { MessageToAdminActions } from 'store/modules/MessageToAdmin';
@@ -19,7 +19,8 @@ type Props = {
 class HeaderContainer extends React.Component<Props> {
   public render() {
     return (
-      <HeaderSearch
+      <HeaderMessage
+        onPostMessage={this.props.MessageToAdminActions.postMessage}
         onChange={this.props.MessageToAdminActions.handleChange}
         messageToAdminMessage={this.props.messageToAdminMessage}
         messageToAdminPending={this.props.messageToAdminPending}
@@ -32,9 +33,9 @@ class HeaderContainer extends React.Component<Props> {
 export default connect(
   ({ Category, MessageToAdmin }: StoreState) => ({
     // 운영자 메시지
-    messageToAdminMessage: MessageToAdmin.MessageToAdminMessage,
-    messageToAdminPending: MessageToAdmin.MessageToAdminPending,
-    messageToAdminError: MessageToAdmin.MessageToAdminError
+    messageToAdminMessage: MessageToAdmin.messageToAdminMessage,
+    messageToAdminPending: MessageToAdmin.messageToAdminPending,
+    messageToAdminError: MessageToAdmin.messageToAdminError
   }),
   dispatch => ({
     // 디스패치
