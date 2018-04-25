@@ -35,14 +35,12 @@ export const LoginActions = {
 //  기본 State 타입 정의
 export interface LoginState {
   loginLogined: boolean;
-  loginToken: string | undefined;
   loginUsername: string | undefined;
   loginPassword: string | undefined;
 }
 // 초기 상태
 const initialState: LoginState = {
   loginLogined: false,
-  loginToken: '',
   loginUsername: '',
   loginPassword: ''
 };
@@ -54,7 +52,6 @@ export default handleActions(
     [POST_LOGIN]: (state, action: Action<ChangeInputPayload>) =>
       produce(state, (draft: LoginState) => {
         draft.loginLogined = true;
-        draft.loginToken = action.payload;
       }),
     [POST_LOGIN_FAILURE]: state =>
       produce(state, (draft: LoginState) => {
@@ -80,7 +77,6 @@ export default handleActions(
     [LOGOUT]: (state, action: Action<ChangeInputPayload>) =>
       produce(state, (draft: LoginState) => {
         draft.loginLogined = false;
-        draft.loginToken = '';
       })
   },
   initialState
