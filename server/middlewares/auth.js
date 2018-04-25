@@ -2,17 +2,14 @@ const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
   // 헤더 || url 쿼리 || body 안에 토큰을 아무거나 넣어서 보내줍니다, 그 토큰의 쌍따옴표를 제거합니다
-  let token = (
-    req.headers['x-access-token'] ||
-    req.query.token ||
-    req.body.token
-  ).replace(/"/g, '');
+  const token = req.headers['x-access-token'];
+  console.log(token);
 
   // 토큰이 존재하지 않는다면
   if (!token) {
     return res.status(403).json({
       success: false,
-      message: 'Not Logged In',
+      message: 'Not Logged In'
     });
   }
 
@@ -28,7 +25,7 @@ const authMiddleware = (req, res, next) => {
   const onError = error => {
     res.status(403).json({
       success: false,
-      message: error.message,
+      message: error.message
     });
   };
 

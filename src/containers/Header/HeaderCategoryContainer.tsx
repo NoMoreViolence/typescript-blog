@@ -16,7 +16,7 @@ type Props = {
   MessageToAdminActions: typeof MessageToAdminActions;
 };
 
-class HeaderContainer extends React.Component<Props> {
+class HeaderCategoryContainer extends React.Component<Props> {
   public render() {
     return (
       <HeaderMessage
@@ -41,4 +41,4 @@ export default connect(
     // 디스패치
     MessageToAdminActions: bindActionCreators(MessageToAdminActions, dispatch)
   })
-)(HeaderContainer);
+)(HeaderCategoryContainer);

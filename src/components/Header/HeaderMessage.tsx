@@ -10,13 +10,13 @@ interface Props {
   messageToAdminError: boolean;
 }
 
-interface Input {
+interface InputTarget {
   target: HTMLInputElement;
 }
 
 class HeaderMessage extends React.Component<Props> {
   // 글자 체인지
-  public onChange = (e: Input) => {
+  public onChange = (e: InputTarget) => {
     this.props.onChange(e.target.value);
   };
 
@@ -36,6 +36,7 @@ class HeaderMessage extends React.Component<Props> {
           <InputGroup>
             <Input
               type="text"
+              placeholder="사이트 운영자에게 하고 싶은 말을 적어주세요 ! "
               value={this.props.messageToAdminMessage}
               onChange={this.onChange}
             />

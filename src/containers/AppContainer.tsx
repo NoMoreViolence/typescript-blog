@@ -11,11 +11,8 @@ import { StoreState } from 'store/modules';
 type Props = {
   // 메시지
   loginLogined: boolean;
-  loginPending: boolean;
-  loginError: boolean;
+  loginToken: string;
   LoginActions: typeof LoginActions;
-  loginUsername: string;
-  loginPassword: string;
 };
 
 class AppContainer extends React.Component<Props> {
@@ -23,14 +20,8 @@ class AppContainer extends React.Component<Props> {
     return (
       <App
         Logined={this.props.loginLogined}
-        loginPending={this.props.loginPending}
-        loginError={this.props.loginError}
-        postLogin={this.props.LoginActions.postLogin}
         getLoginCheck={this.props.LoginActions.getLoginCheck}
-        handleChangeUsername={this.props.LoginActions.handleChangeUsername}
-        loginUsername={this.props.loginUsername}
-        handleChangePassword={this.props.LoginActions.handleChangePassword}
-        loginPassword={this.props.loginPassword}
+        loginToken={this.props.loginToken}
       />
     );
   }
@@ -38,11 +29,8 @@ class AppContainer extends React.Component<Props> {
 
 export default connect(
   ({ Login }: StoreState) => ({
-    loginPending: Login.loginPending,
-    loginError: Login.loginPending,
     loginLogined: Login.loginLogined,
-    loginUsername: Login.loginUsername,
-    loginPassword: Login.loginPassword
+    loginToken: Login.loginToken
   }),
   dispatch => ({
     LoginActions: bindActionCreators(LoginActions, dispatch)
