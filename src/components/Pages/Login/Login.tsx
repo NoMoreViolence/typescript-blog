@@ -1,9 +1,17 @@
 import * as React from 'react';
 import LoginContainer from 'containers/Login/LoginContainer';
 
-class Login extends React.Component {
+interface Push {
+  push: Function;
+}
+
+interface Props {
+  history: Push;
+}
+
+class Login extends React.Component<Props> {
   public render() {
-    return <LoginContainer />;
+    return <LoginContainer history={this.props.history} />;
   }
 }
 

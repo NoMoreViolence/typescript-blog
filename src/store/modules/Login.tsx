@@ -56,6 +56,7 @@ export default handleActions(
     [POST_LOGIN_FAILURE]: state =>
       produce(state, (draft: LoginState) => {
         (draft.loginUsername = ''), (draft.loginPassword = '');
+        draft.loginLogined = false;
       }),
     // 토큰이 존재할 시 로그인 토큰값 조회후 로그인 조회 값
     [GET_LOGIN_CHECK]: state =>

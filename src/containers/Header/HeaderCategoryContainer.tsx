@@ -1,6 +1,6 @@
 import * as React from 'react';
 // 헤더 카테고리
-import HeaderCategory from 'components/Header/HeaderCategory';
+import HeaderCategory from 'components/Templates/Header/HeaderCategory';
 
 import { LoginActions } from 'store/modules/Login';
 import { CategoryStateInside } from 'store/modules/Category';
@@ -22,7 +22,7 @@ class HeaderCategoryContainer extends React.Component<Props> {
       <HeaderCategory
         Category={this.props.Category}
         Logout={this.props.loginActions.logout}
-        loginLogined={this.props.loginLogined}
+        Logined={this.props.loginLogined}
       />
     );
   }

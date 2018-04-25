@@ -1,5 +1,5 @@
 import * as React from 'react';
-import HeaderMessage from 'components/Header/HeaderMessage';
+import HeaderMessageToAdmin from 'components/Templates/Header/HeaderMessageToAdmin';
 
 // 운영자에게 보내는 메시지
 import { MessageToAdminActions } from 'store/modules/MessageToAdmin';
@@ -19,7 +19,7 @@ type Props = {
 class HeaderContainer extends React.Component<Props> {
   public render() {
     return (
-      <HeaderMessage
+      <HeaderMessageToAdmin
         onPostMessage={this.props.MessageToAdminActions.postMessage}
         onChange={this.props.MessageToAdminActions.handleChange}
         messageToAdminMessage={this.props.messageToAdminMessage}

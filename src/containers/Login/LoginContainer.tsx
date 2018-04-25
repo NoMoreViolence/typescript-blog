@@ -8,12 +8,17 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { StoreState } from 'store/modules';
 
-type Props = {
+interface Push {
+  push: Function;
+}
+
+interface Props {
   loginLogined: boolean;
   loginUsername: string;
   loginPassword: string;
   LoginActions: typeof LoginActions;
-};
+  history: Push;
+}
 
 class LoginContainer extends React.Component<Props> {
   public render() {
@@ -27,6 +32,7 @@ class LoginContainer extends React.Component<Props> {
         postLoginFailed={this.props.LoginActions.postLoginFailed}
         getLoginCheck={this.props.LoginActions.getLoginCheck}
         Logined={this.props.loginLogined}
+        history={this.props.history}
       />
     );
   }
