@@ -13,6 +13,7 @@ interface Props {
 class HeaderCategory extends React.Component<Props> {
   public handleSignOut = () => {
     this.props.Logout();
+    sessionStorage.clear();
     toast('로그아웃 되셨습니다');
   };
 
@@ -36,11 +37,11 @@ class HeaderCategory extends React.Component<Props> {
         {this.props.Logined === true && (
           <React.Fragment>
             <BreadcrumbItem>
-              <NavLink to="/admin/post">관리자 페이지</NavLink>
+              <NavLink to="/admin">관리자 페이지</NavLink>
             </BreadcrumbItem>
             <BreadcrumbItem>
               <NavLink to="/" onClick={this.handleSignOut}>
-                Sign out
+                로그아웃
               </NavLink>
             </BreadcrumbItem>
           </React.Fragment>

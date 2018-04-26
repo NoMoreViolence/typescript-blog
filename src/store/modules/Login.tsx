@@ -53,6 +53,7 @@ export default handleActions(
       produce(state, (draft: LoginState) => {
         draft.loginLogined = true;
       }),
+    // 로그인 실패 시
     [POST_LOGIN_FAILURE]: state =>
       produce(state, (draft: LoginState) => {
         (draft.loginUsername = ''), (draft.loginPassword = '');

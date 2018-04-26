@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Container, Row, Col, Button, Form, Input } from 'reactstrap';
 import './Login.css';
+import { toast } from 'react-toastify';
 
 interface InputTarget {
   target: HTMLInputElement;
@@ -48,14 +49,19 @@ class Login extends React.Component<Props> {
             this.props.postLogined();
             // tslint:disable-next-line:no-console
             console.log('로그인 성공 - Login.tsx');
+            toast('환영합니다 관리자님 !');
             // URL 이동
             this.props.history.push('/');
           } else {
+            toast('아이디와 비밀번호가 일치하지 않습니다');
             this.props.postLoginFailed();
           }
         })
         .catch(error => {
-          throw error;
+          // tslint:disable-next-line:no-console
+          console.log(error.message);
+          this.props.postLoginFailed();
+          toast('서버의 오류로 로그인에 실패했습니다');
         });
     }
   };
