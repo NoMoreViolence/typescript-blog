@@ -6,6 +6,9 @@
 # dependencies
 /node_modules
 
+# yarn-lock
+yarn.lock
+
 # testing
 /coverage
 

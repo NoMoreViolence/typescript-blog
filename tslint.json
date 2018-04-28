@@ -13,6 +13,7 @@
     "object-literal-sort-keys": false,
     "interface-over-type-literal": false,
     "ban-types": false,
-    "no-shadowed-variable": false
+    "no-shadowed-variable": false,
+    "semicolon": false
   }
 }

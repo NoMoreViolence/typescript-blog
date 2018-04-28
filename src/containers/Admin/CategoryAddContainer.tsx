@@ -1,29 +1,37 @@
-/*
-import * as React from 'react';
+import * as React from 'react'
 // 헤더 카테고리
-import CategoryAdd from 'components/Templates/Admin/CategoryAdd';
+import CategoryAdd from 'components/Templates/Admin/CategoryAdd'
 
-import { LoginActions } from 'store/modules/Login';
-import { CategoryStateInside } from 'store/modules/Category';
+import { CategoryStateInside, CategoryActions } from 'store/modules/Category'
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { StoreState } from 'store/modules';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { StoreState } from 'store/modules'
 
-class CategoryAddContainer extends React.Component {
+interface Props {
+  Category: [CategoryStateInside]
+  loginLogined: boolean
+  CategoryActions: typeof CategoryActions
+}
+
+class CategoryAddContainer extends React.Component<Props> {
   public render() {
-    return <div />;
+    return (
+      <CategoryAdd
+        Category={this.props.Category}
+        loginLogined={this.props.loginLogined}
+      />
+    )
   }
 }
 
 export default connect(
   ({ Category, Login }: StoreState) => ({
-    loginLogined: Login.loginLogined,
-    Category: Category.categoryCategory
+    Category: Category.categoryCategory,
+    loginLogined: Login.loginLogined
   }),
   dispatch => ({
     // 디스패치
-    loginActions: bindActionCreators(LoginActions, dispatch)
+    CategoryActions: bindActionCreators(CategoryActions, dispatch)
   })
-)(CategoryAddContainer);
-*/
+)(CategoryAddContainer)

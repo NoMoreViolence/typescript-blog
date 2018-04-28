@@ -8,6 +8,7 @@ interface Props {
 }
 
 class Basic extends React.Component<Props> {
+  // 사이트 초기 로딩 시 토큰 자동 로그인 & 카테고리 데이터 불러오기
   public componentDidMount() {
     const { loginLogined, loadCategory, getLoginCheck } = this.props;
     // 자동 로그인 체크
