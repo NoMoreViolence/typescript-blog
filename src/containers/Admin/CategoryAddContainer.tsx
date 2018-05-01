@@ -13,17 +13,15 @@ interface Props {
   CategoryActions: typeof CategoryActions
 }
 
-class CategoryAddContainer extends React.Component<Props> {
-  public render() {
-    return (
-      <CategoryAdd
-        loginLogined={this.props.loginLogined}
-        categoryLoad={this.props.CategoryActions.getCategory}
-        addCategorySuccess={this.props.CategoryActions.addCategorySuccess}
-        addCategoryFailure={this.props.CategoryActions.addCategoryFailure}
-      />
-    )
-  }
+const CategoryAddContainer = (Props: Props) => {
+  return (
+    <CategoryAdd
+      loginLogined={Props.loginLogined}
+      categoryLoad={Props.CategoryActions.getCategory}
+      addCategorySuccess={Props.CategoryActions.addCategorySuccess}
+      addCategoryFailure={Props.CategoryActions.addCategoryFailure}
+    />
+  )
 }
 
 export default connect(

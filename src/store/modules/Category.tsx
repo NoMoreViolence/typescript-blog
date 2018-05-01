@@ -16,6 +16,8 @@ const GET_BRING_CATEGORY_FAILURE = 'GET_BRING_CATEGORY_FAILURE'
 const POST_ADD_CATEGORY_SUCCESS = 'POST_ADD_CATEGORY_SUCCESS'
 const POST_ADD_CATEGORY_FAILURE = 'POST_ADD_CATEGORY_FAILURE'
 // 카테고리 변경
+const CHANGE_CHANGE_CATEGORY_SELECT = 'CHANGE_CHANGE_CATEGORY_SELECT'
+const PATCH_CHANGE_CATEGORY_PENDING = 'PATCH_CHANGE_CATEGIRT_PENDING'
 const PATCH_CHANGE_CATEGORY_SUCCESS = 'PATCH_CHANGE_CATEGORY_SUCCESS'
 const PATCH_CHANGE_CATEGORY_FAILURE = 'PATCH_CHANGE_CATEGORY_FAILURE'
 // 카테고리 삭제
@@ -23,12 +25,22 @@ const DELETE_DELETE_CATEGORY_SUCCESS = 'DELETE_DELETE_CATEGORY_SUCCESS'
 const DELETE_DELETE_CATEGORY_FAILURE = 'DELETE_DELETE_CATEGORY_FAILURE'
 // 카테고리 페이로드 정의 근데 내 실력이 부족해서 명확하게 쓸 부분만 정의할 수가 없었다, 그래서 any값을 우겨넣었다
 type CategoryPayload = any
+type CategoryInputPayload = string
 
 // 카테고리 가져오는 액션 방출
 export const CategoryActions = {
   getCategory: createAction(GET_BRING_CATEGORY, getCategoryAPI),
+  // 카테고리 추가
   addCategorySuccess: createAction(POST_ADD_CATEGORY_SUCCESS),
-  addCategoryFailure: createAction(POST_ADD_CATEGORY_FAILURE)
+  addCategoryFailure: createAction(POST_ADD_CATEGORY_FAILURE),
+  // 카테고리 변경
+  changeCategoryValue: createAction<CategoryInputPayload>(CHANGE_CHANGE_CATEGORY_SELECT),
+  changeCategoryPending: createAction(PATCH_CHANGE_CATEGORY_PENDING),
+  changeCategorySuccess: createAction(PATCH_CHANGE_CATEGORY_SUCCESS),
+  changeCategoryFailure: createAction(PATCH_CHANGE_CATEGORY_FAILURE),
+  // 카테고리 삭
+  deleteCategorySuccess: createAction(DELETE_DELETE_CATEGORY_SUCCESS),
+  deleteCategoryFailure: createAction(DELETE_DELETE_CATEGORY_FAILURE)
 }
 
 // 카테고리 들어있는 부분의 State 정의
@@ -43,12 +55,14 @@ export interface CategoryState {
   categoryPending: boolean
   categoryError: boolean
   categoryCategory: [CategoryStateInside]
+  changeCategorySelect: string | undefined
 }
 // 초기 상태
 const initialState: CategoryState = {
   categoryPending: false,
   categoryError: false,
-  categoryCategory: [{ posts: [''], _id: '', category: '', __v: 0 }]
+  categoryCategory: [{ posts: [''], _id: '', category: '', __v: 0 }],
+  changeCategorySelect: '변경할 카테고리 선택'
 }
 
 // 액션 상태
@@ -72,9 +86,7 @@ export default handleActions(
       produce(state, (draft: CategoryState) => {
         draft.categoryPending = false
         draft.categoryError = true
-        draft.categoryCategory = [
-          { posts: [''], _id: '', category: '', __v: 0 }
-        ]
+        draft.categoryCategory = [{ posts: [''], _id: '', category: '', __v: 0 }]
       }),
     // 카테고리 추가 성공
     [POST_ADD_CATEGORY_SUCCESS]: state =>
@@ -86,10 +98,20 @@ export default handleActions(
       produce(state, (draft: CategoryState) => {
         // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
       }),
+    [CHANGE_CHANGE_CATEGORY_SELECT]: (state, action: Action<CategoryInputPayload>) =>
+      produce(state, (draft: CategoryState) => {
+        draft.changeCategorySelect = action.payload
+      }),
+    // 특정 카테고리 이름 변경 작업 시작
+    [PATCH_CHANGE_CATEGORY_PENDING]: state =>
+      produce(state, (draft: CategoryState) => {
+        // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
+      }),
     // 특정 카테고리 이름 변경 성공
     [PATCH_CHANGE_CATEGORY_SUCCESS]: state =>
       produce(state, (draft: CategoryState) => {
-        // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
+        // 카테고리 변경 작업이 완료되었으므로 바꾸어 준다
+        draft.changeCategorySelect = '변경할 카테고리 선택'
       }),
     // 특정 카테고리 이름 변경 실패
     [PATCH_CHANGE_CATEGORY_FAILURE]: state =>
