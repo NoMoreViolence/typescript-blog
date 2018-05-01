@@ -5,6 +5,7 @@ import { Container, Row, Col } from 'reactstrap'
 import CurrentCategoryContainer from 'containers/Admin/CurrentCategoryContainer'
 import CategoryAddContainer from 'containers/Admin/CategoryAddContainer'
 import CategoryChangeContainer from 'containers/Admin/CategoryChangeContainer'
+import CategoryDeleteContainer from 'containers/Admin/CategoryDeleteContainer'
 
 const Admin = ({}) => {
   return (
@@ -31,7 +32,9 @@ const Admin = ({}) => {
           </Col>
         </Row>
         <Row>
-          <Col>{/* 포스트 별 댓글 관리 부분 */}</Col>
+          <Col>
+            <CategoryDeleteContainer />
+          </Col>
         </Row>
       </Container>
     </Container>

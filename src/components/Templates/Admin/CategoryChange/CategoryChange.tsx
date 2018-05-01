@@ -18,8 +18,8 @@ import './CategoryChange.css'
 interface Props {
   loginLogined: boolean
   category: [CategoryStateInside]
-  changeCategorySelect: string
-  changeCategoryValue: (value: string) => void
+  changeCategoryValue: string
+  changeCategorySelect: (value: string) => void
   categoryLoad: () => void
   changeCategoryPending: () => void
   changeCategorySuccess: () => void
@@ -56,7 +56,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
 
     // 변경할 카테고리 선택
     public handleSelect = (e: Dropdown) => {
-      this.props.changeCategoryValue(e.currentTarget.textContent)
+      this.props.changeCategorySelect(e.currentTarget.textContent)
     }
 
     // 제출
@@ -66,7 +66,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       const { changeCategoryInput } = this.state
       const {
         loginLogined,
-        changeCategorySelect,
+        changeCategoryValue,
         changeCategoryPending,
         changeCategorySuccess,
         changeCategoryFailure,
@@ -77,7 +77,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
 
       if (
         changeCategoryInput !== '' &&
-        changeCategorySelect !== '변경할 카테고리 선택' &&
+        changeCategoryValue !== '변경할 카테고리 선택' &&
         loginLogined === true &&
         sessionStorage.getItem('token') !== null
       ) {
@@ -88,7 +88,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
           },
           body: JSON.stringify({
             token: sessionStorage.getItem('token'),
-            category: changeCategorySelect,
+            category: changeCategoryValue,
             changeCategory: changeCategoryInput
           }),
           mode: 'cors'
@@ -134,7 +134,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
     public render() {
       const { changeCategoryInput, changeCategoryDropdown } = this.state
 
-      const { changeCategorySelect } = this.props
+      const { changeCategoryValue } = this.props
 
       // 데이터 받아서 정렬
       const CurrentCategoryChangeBar = (data: [CategoryStateInside]) => {
@@ -154,7 +154,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
             <InputGroup>
               <Dropdown isOpen={changeCategoryDropdown} toggle={this.handleToogle}>
                 <DropdownToggle outline={true} color="info" caret={true}>
-                  {changeCategorySelect}
+                  {changeCategoryValue}
                 </DropdownToggle>
                 <DropdownMenu>
                   <DropdownItem onClick={this.handleSelect}>변경할 카테고리 선택</DropdownItem>

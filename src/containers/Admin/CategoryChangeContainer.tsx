@@ -11,7 +11,7 @@ import { StoreState } from 'store/modules'
 interface Props {
   loginLogined: boolean
   category: [CategoryStateInside]
-  changeCategorySelect: string
+  changeCategoryValue: string
   CategoryActions: typeof CategoryActions
 }
 
@@ -21,8 +21,8 @@ const CategoryChangeContainer = (Props: Props) => {
       loginLogined={Props.loginLogined}
       category={Props.category}
       categoryLoad={Props.CategoryActions.getCategory}
-      changeCategorySelect={Props.changeCategorySelect}
-      changeCategoryValue={Props.CategoryActions.changeCategoryValue}
+      changeCategoryValue={Props.changeCategoryValue}
+      changeCategorySelect={Props.CategoryActions.changeCategorySelect}
       changeCategoryPending={Props.CategoryActions.changeCategoryPending}
       changeCategorySuccess={Props.CategoryActions.changeCategorySuccess}
       changeCategoryFailure={Props.CategoryActions.changeCategoryFailure}
@@ -34,7 +34,7 @@ export default connect(
   ({ Category, Login }: StoreState) => ({
     loginLogined: Login.loginLogined,
     category: Category.categoryCategory,
-    changeCategorySelect: Category.changeCategorySelect
+    changeCategoryValue: Category.changeCategoryValue
   }),
   dispatch => ({
     CategoryActions: bindActionCreators(CategoryActions, dispatch)

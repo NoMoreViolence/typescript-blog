@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import CategoryChange from 'components/Templates/Admin/CategoryChange'
+import CategoryDelete from 'components/Templates/Admin/CategoryDelete'
 
 import { CategoryActions, CategoryStateInside } from 'store/modules/Category'
 
@@ -11,21 +11,21 @@ import { StoreState } from 'store/modules'
 interface Props {
   loginLogined: boolean
   category: [CategoryStateInside]
-  changeCategorySelect: string
+  deleteCategoryValue: string
   CategoryActions: typeof CategoryActions
 }
 
-const CategoryChangeContainer = (Props: Props) => {
+const CategoryDeleteContainer = (Props: Props) => {
   return (
-    <CategoryChange
+    <CategoryDelete
       loginLogined={Props.loginLogined}
       category={Props.category}
       categoryLoad={Props.CategoryActions.getCategory}
-      changeCategorySelect={Props.changeCategorySelect}
-      changeCategoryValue={Props.CategoryActions.changeCategoryValue}
-      changeCategoryPending={Props.CategoryActions.changeCategoryPending}
-      changeCategorySuccess={Props.CategoryActions.changeCategorySuccess}
-      changeCategoryFailure={Props.CategoryActions.changeCategoryFailure}
+      deleteCategoryValue={Props.deleteCategoryValue}
+      deleteCategorySelect={Props.CategoryActions.deleteCategorySelect}
+      deleteCategoryPending={Props.CategoryActions.deleteCategoryPending}
+      deleteCategorySuccess={Props.CategoryActions.deleteCategorySuccess}
+      deleteCategoryFailure={Props.CategoryActions.deleteCategoryFailure}
     />
   )
 }
@@ -34,9 +34,9 @@ export default connect(
   ({ Category, Login }: StoreState) => ({
     loginLogined: Login.loginLogined,
     category: Category.categoryCategory,
-    changeCategorySelect: Category.changeCategorySelect
+    deleteCategoryValue: Category.deleteCategoryValue
   }),
   dispatch => ({
     CategoryActions: bindActionCreators(CategoryActions, dispatch)
   })
-)(CategoryChangeContainer)
+)(CategoryDeleteContainer)

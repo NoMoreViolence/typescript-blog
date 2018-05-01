@@ -16,11 +16,13 @@ const GET_BRING_CATEGORY_FAILURE = 'GET_BRING_CATEGORY_FAILURE'
 const POST_ADD_CATEGORY_SUCCESS = 'POST_ADD_CATEGORY_SUCCESS'
 const POST_ADD_CATEGORY_FAILURE = 'POST_ADD_CATEGORY_FAILURE'
 // 카테고리 변경
-const CHANGE_CHANGE_CATEGORY_SELECT = 'CHANGE_CHANGE_CATEGORY_SELECT'
+const PATCH_CHANGE_CATEGORY_SELECT = 'PATCH_CHANGE_CATEGORY_SELECT'
 const PATCH_CHANGE_CATEGORY_PENDING = 'PATCH_CHANGE_CATEGIRT_PENDING'
 const PATCH_CHANGE_CATEGORY_SUCCESS = 'PATCH_CHANGE_CATEGORY_SUCCESS'
 const PATCH_CHANGE_CATEGORY_FAILURE = 'PATCH_CHANGE_CATEGORY_FAILURE'
 // 카테고리 삭제
+const DELETE_CHANGE_CATEGORY_SELECT = 'DELETE_CHANGE_CATEGORY-SELECT'
+const DELETE_DELETE_CATEGORY_PENDING = 'DELETE_DELETE_CATEGORY_PENDING'
 const DELETE_DELETE_CATEGORY_SUCCESS = 'DELETE_DELETE_CATEGORY_SUCCESS'
 const DELETE_DELETE_CATEGORY_FAILURE = 'DELETE_DELETE_CATEGORY_FAILURE'
 // 카테고리 페이로드 정의 근데 내 실력이 부족해서 명확하게 쓸 부분만 정의할 수가 없었다, 그래서 any값을 우겨넣었다
@@ -34,15 +36,16 @@ export const CategoryActions = {
   addCategorySuccess: createAction(POST_ADD_CATEGORY_SUCCESS),
   addCategoryFailure: createAction(POST_ADD_CATEGORY_FAILURE),
   // 카테고리 변경
-  changeCategoryValue: createAction<CategoryInputPayload>(CHANGE_CHANGE_CATEGORY_SELECT),
+  changeCategorySelect: createAction<CategoryInputPayload>(PATCH_CHANGE_CATEGORY_SELECT),
   changeCategoryPending: createAction(PATCH_CHANGE_CATEGORY_PENDING),
   changeCategorySuccess: createAction(PATCH_CHANGE_CATEGORY_SUCCESS),
   changeCategoryFailure: createAction(PATCH_CHANGE_CATEGORY_FAILURE),
-  // 카테고리 삭
+  // 카테고리 삭제
+  deleteCategorySelect: createAction<CategoryInputPayload>(DELETE_CHANGE_CATEGORY_SELECT),
+  deleteCategoryPending: createAction(DELETE_DELETE_CATEGORY_PENDING),
   deleteCategorySuccess: createAction(DELETE_DELETE_CATEGORY_SUCCESS),
   deleteCategoryFailure: createAction(DELETE_DELETE_CATEGORY_FAILURE)
 }
-
 // 카테고리 들어있는 부분의 State 정의
 export interface CategoryStateInside {
   posts: [string]
@@ -55,14 +58,16 @@ export interface CategoryState {
   categoryPending: boolean
   categoryError: boolean
   categoryCategory: [CategoryStateInside]
-  changeCategorySelect: string | undefined
+  changeCategoryValue: string | undefined
+  deleteCategoryValue: string | undefined
 }
 // 초기 상태
 const initialState: CategoryState = {
   categoryPending: false,
   categoryError: false,
   categoryCategory: [{ posts: [''], _id: '', category: '', __v: 0 }],
-  changeCategorySelect: '변경할 카테고리 선택'
+  changeCategoryValue: '변경할 카테고리 선택',
+  deleteCategoryValue: '삭제할 카테고리 선택'
 }
 
 // 액션 상태
@@ -98,30 +103,42 @@ export default handleActions(
       produce(state, (draft: CategoryState) => {
         // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
       }),
-    [CHANGE_CHANGE_CATEGORY_SELECT]: (state, action: Action<CategoryInputPayload>) =>
+    // 변경할 카테고리 셀렉트값 변경
+    [PATCH_CHANGE_CATEGORY_SELECT]: (state, action: Action<CategoryInputPayload>) =>
       produce(state, (draft: CategoryState) => {
-        draft.changeCategorySelect = action.payload
+        draft.changeCategoryValue = action.payload
       }),
-    // 특정 카테고리 이름 변경 작업 시작
+    // 특정 카테고리 변경 작업 시작
     [PATCH_CHANGE_CATEGORY_PENDING]: state =>
       produce(state, (draft: CategoryState) => {
         // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
       }),
-    // 특정 카테고리 이름 변경 성공
+    // 특정 카테고리 변경 성공
     [PATCH_CHANGE_CATEGORY_SUCCESS]: state =>
       produce(state, (draft: CategoryState) => {
         // 카테고리 변경 작업이 완료되었으므로 바꾸어 준다
-        draft.changeCategorySelect = '변경할 카테고리 선택'
+        draft.changeCategoryValue = '변경할 카테고리 선택'
       }),
-    // 특정 카테고리 이름 변경 실패
+    // 특정 카테고리 변경 실패
     [PATCH_CHANGE_CATEGORY_FAILURE]: state =>
+      produce(state, (draft: CategoryState) => {
+        // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
+      }),
+    // 삭제할 카테고리 셀렉트값 변경
+    [DELETE_CHANGE_CATEGORY_SELECT]: (state, action: Action<CategoryInputPayload>) =>
+      produce(state, (draft: CategoryState) => {
+        draft.deleteCategoryValue = action.payload
+      }),
+    // 특정 카테고리 삭제 시작
+    [DELETE_DELETE_CATEGORY_PENDING]: state =>
       produce(state, (draft: CategoryState) => {
         // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
       }),
     // 특정 카테고리 삭제 성공
     [DELETE_DELETE_CATEGORY_SUCCESS]: state =>
       produce(state, (draft: CategoryState) => {
-        // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
+        // 카테고리 변경 작업이 완료되었으므로 바꾸어 준다
+        draft.deleteCategoryValue = '삭제할 카테고리 선택'
       }),
     // 특정 카테고리 삭제 실패
     [DELETE_DELETE_CATEGORY_FAILURE]: state =>
