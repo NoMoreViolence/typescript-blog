@@ -9,9 +9,15 @@ import { bindActionCreators } from 'redux'
 import { StoreState } from 'store/modules'
 
 interface Props {
+  // 로그인 변수
   loginLogined: boolean
+  // 카테고리
   category: [CategoryStateInside]
-  changeCategoryValue: string
+  // 카테고리 체인지 인풋
+  changeCategoryInputValue: string
+  // 카테고리 체인지 셀렉트값
+  changeCategorySelectValue: string
+  // 각종 카테고리 변경 액션
   CategoryActions: typeof CategoryActions
 }
 
@@ -21,11 +27,14 @@ const CategoryChangeContainer = (Props: Props) => {
       loginLogined={Props.loginLogined}
       category={Props.category}
       categoryLoad={Props.CategoryActions.getCategory}
-      changeCategoryValue={Props.changeCategoryValue}
-      changeCategorySelect={Props.CategoryActions.changeCategorySelect}
+      changeCategoryInputValue={Props.changeCategoryInputValue}
+      changeCategoryInputChange={Props.CategoryActions.changeCategoryInputChange}
+      changeCategorySelectValue={Props.changeCategorySelectValue}
+      changeCategorySelectChange={Props.CategoryActions.changeCategorySelectChange}
       changeCategoryPending={Props.CategoryActions.changeCategoryPending}
       changeCategorySuccess={Props.CategoryActions.changeCategorySuccess}
       changeCategoryFailure={Props.CategoryActions.changeCategoryFailure}
+      categoryDone={Props.CategoryActions.categoryDone}
     />
   )
 }
@@ -34,7 +43,8 @@ export default connect(
   ({ Category, Login }: StoreState) => ({
     loginLogined: Login.loginLogined,
     category: Category.categoryCategory,
-    changeCategoryValue: Category.changeCategoryValue
+    changeCategoryInputValue: Category.changeCategoryInputValue,
+    changeCategorySelectValue: Category.changeCategorySelectValue
   }),
   dispatch => ({
     CategoryActions: bindActionCreators(CategoryActions, dispatch)
