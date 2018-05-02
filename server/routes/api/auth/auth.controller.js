@@ -89,14 +89,14 @@ exports.login = (req, res) => {
 
   const adminCheck = user => {
     if (user.admin === true) return user
-    throw new Error('Not Admin')
+    throw new Error('관리자가 아닙니다 !')
   }
 
   // 유저를 체크하고 JWT 토큰을 발급합니다
   const check = user => {
     if (!user) {
       // user does not exist
-      throw new Error('login failed')
+      throw new Error('유저가 존재하지 않습니다 !')
     } else {
       // user exists, check the password
       if (user.verify(password)) {
@@ -122,14 +122,14 @@ exports.login = (req, res) => {
         })
         return p
       } else {
-        throw new Error('login failed')
+        throw new Error('아이디 비밀번호 오류입니다 !')
       }
     }
   }
 
   // respond the token
   const respond = token => {
-    console.log('로그인 성공')
+    console.log('로그인 성공 !')
     res.json({
       message: true,
       token
@@ -159,6 +159,7 @@ exports.check = (req, res) => {
   console.log('토큰이 인증 되었습니다')
   res.json({
     success: true,
+    message: '환영합니다 !',
     info: req.decoded
   })
 }
