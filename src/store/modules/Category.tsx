@@ -13,15 +13,17 @@ const GET_BRING_CATEGORY_PENDING = 'GET_BRING_CATEGORY_PENDING'
 const GET_BRING_CATEGORY_SUCCESS = 'GET_BRING_CATEGORY_SUCCESS'
 const GET_BRING_CATEGORY_FAILURE = 'GET_BRING_CATEGORY_FAILURE'
 // 카테고리 추가
+const POST_ADD_CATEGORY_INPUT_CHANGE = 'POST_ADD_CATEGORY_INPUT_CHANGE'
+const POST_ADD_CATEGORY_PENDING = 'POST_ADD_CATEGORY_PENDING'
 const POST_ADD_CATEGORY_SUCCESS = 'POST_ADD_CATEGORY_SUCCESS'
 const POST_ADD_CATEGORY_FAILURE = 'POST_ADD_CATEGORY_FAILURE'
 // 카테고리 변경
-const PATCH_CHANGE_CATEGORY_SELECT = 'PATCH_CHANGE_CATEGORY_SELECT'
+const PATCH_CHANGE_CATEGORY_SELECT_CHANGE = 'PATCH_CHANGE_CATEGORY_SELECT_CHANGE'
 const PATCH_CHANGE_CATEGORY_PENDING = 'PATCH_CHANGE_CATEGIRT_PENDING'
 const PATCH_CHANGE_CATEGORY_SUCCESS = 'PATCH_CHANGE_CATEGORY_SUCCESS'
 const PATCH_CHANGE_CATEGORY_FAILURE = 'PATCH_CHANGE_CATEGORY_FAILURE'
 // 카테고리 삭제
-const DELETE_CHANGE_CATEGORY_SELECT = 'DELETE_CHANGE_CATEGORY-SELECT'
+const DELETE_CHANGE_CATEGORY_SELECT_CHANGE = 'DELETE_CHANGE_CATEGORY-SELECT_CHANGE'
 const DELETE_DELETE_CATEGORY_PENDING = 'DELETE_DELETE_CATEGORY_PENDING'
 const DELETE_DELETE_CATEGORY_SUCCESS = 'DELETE_DELETE_CATEGORY_SUCCESS'
 const DELETE_DELETE_CATEGORY_FAILURE = 'DELETE_DELETE_CATEGORY_FAILURE'
@@ -33,15 +35,17 @@ type CategoryInputPayload = string
 export const CategoryActions = {
   getCategory: createAction(GET_BRING_CATEGORY, getCategoryAPI),
   // 카테고리 추가
+  addCategoryInputChange: createAction<CategoryInputPayload>(POST_ADD_CATEGORY_INPUT_CHANGE),
+  addCategoryPending: createAction(POST_ADD_CATEGORY_PENDING),
   addCategorySuccess: createAction(POST_ADD_CATEGORY_SUCCESS),
   addCategoryFailure: createAction(POST_ADD_CATEGORY_FAILURE),
   // 카테고리 변경
-  changeCategorySelect: createAction<CategoryInputPayload>(PATCH_CHANGE_CATEGORY_SELECT),
+  changeCategorySelect: createAction<CategoryInputPayload>(PATCH_CHANGE_CATEGORY_SELECT_CHANGE),
   changeCategoryPending: createAction(PATCH_CHANGE_CATEGORY_PENDING),
   changeCategorySuccess: createAction(PATCH_CHANGE_CATEGORY_SUCCESS),
   changeCategoryFailure: createAction(PATCH_CHANGE_CATEGORY_FAILURE),
   // 카테고리 삭제
-  deleteCategorySelect: createAction<CategoryInputPayload>(DELETE_CHANGE_CATEGORY_SELECT),
+  deleteCategorySelect: createAction<CategoryInputPayload>(DELETE_CHANGE_CATEGORY_SELECT_CHANGE),
   deleteCategoryPending: createAction(DELETE_DELETE_CATEGORY_PENDING),
   deleteCategorySuccess: createAction(DELETE_DELETE_CATEGORY_SUCCESS),
   deleteCategoryFailure: createAction(DELETE_DELETE_CATEGORY_FAILURE)
@@ -58,16 +62,22 @@ export interface CategoryState {
   categoryPending: boolean
   categoryError: boolean
   categoryCategory: [CategoryStateInside]
+  addCategoryInputValue: string | undefined
   changeCategoryValue: string | undefined
+  changeCategoryInputValue: string | undefined
   deleteCategoryValue: string | undefined
+  deleteCategoryInputValue: string | undefined
 }
 // 초기 상태
 const initialState: CategoryState = {
   categoryPending: false,
   categoryError: false,
   categoryCategory: [{ posts: [''], _id: '', category: '', __v: 0 }],
+  addCategoryInputValue: '',
   changeCategoryValue: '변경할 카테고리 선택',
-  deleteCategoryValue: '삭제할 카테고리 선택'
+  changeCategoryInputValue: '',
+  deleteCategoryValue: '삭제할 카테고리 선택',
+  deleteCategoryInputValue: ''
 }
 
 // 액션 상태
@@ -93,10 +103,15 @@ export default handleActions(
         draft.categoryError = true
         draft.categoryCategory = [{ posts: [''], _id: '', category: '', __v: 0 }]
       }),
+    // 추가할 카테고리 인풋값 변경
+    [POST_ADD_CATEGORY_INPUT_CHANGE]: (state, action: Action<CategoryInputPayload>) =>
+      produce(state, (draft: CategoryState) => {
+        draft.addCategoryInputValue = action.payload
+      }),
     // 카테고리 추가 성공
     [POST_ADD_CATEGORY_SUCCESS]: state =>
       produce(state, (draft: CategoryState) => {
-        // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
+        draft.addCategoryInputValue = ''
       }),
     // 카테고리 추가 실패
     [POST_ADD_CATEGORY_FAILURE]: state =>
@@ -104,7 +119,7 @@ export default handleActions(
         // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
       }),
     // 변경할 카테고리 셀렉트값 변경
-    [PATCH_CHANGE_CATEGORY_SELECT]: (state, action: Action<CategoryInputPayload>) =>
+    [PATCH_CHANGE_CATEGORY_SELECT_CHANGE]: (state, action: Action<CategoryInputPayload>) =>
       produce(state, (draft: CategoryState) => {
         draft.changeCategoryValue = action.payload
       }),
@@ -118,6 +133,7 @@ export default handleActions(
       produce(state, (draft: CategoryState) => {
         // 카테고리 변경 작업이 완료되었으므로 바꾸어 준다
         draft.changeCategoryValue = '변경할 카테고리 선택'
+        draft.deleteCategoryValue = '삭제할 카테고리 선택'
       }),
     // 특정 카테고리 변경 실패
     [PATCH_CHANGE_CATEGORY_FAILURE]: state =>
@@ -125,7 +141,7 @@ export default handleActions(
         // 딱히 무엇을 변경하지는 않는다, Redux-Dev-Tools를 사용하기 위함
       }),
     // 삭제할 카테고리 셀렉트값 변경
-    [DELETE_CHANGE_CATEGORY_SELECT]: (state, action: Action<CategoryInputPayload>) =>
+    [DELETE_CHANGE_CATEGORY_SELECT_CHANGE]: (state, action: Action<CategoryInputPayload>) =>
       produce(state, (draft: CategoryState) => {
         draft.deleteCategoryValue = action.payload
       }),
@@ -139,6 +155,7 @@ export default handleActions(
       produce(state, (draft: CategoryState) => {
         // 카테고리 변경 작업이 완료되었으므로 바꾸어 준다
         draft.deleteCategoryValue = '삭제할 카테고리 선택'
+        draft.changeCategoryValue = '변경할 카테고리 선택'
       }),
     // 특정 카테고리 삭제 실패
     [DELETE_DELETE_CATEGORY_FAILURE]: state =>

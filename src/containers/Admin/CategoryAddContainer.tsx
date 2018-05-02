@@ -10,6 +10,7 @@ import { StoreState } from 'store/modules'
 
 interface Props {
   loginLogined: boolean
+  addCategoryInputValue: string
   CategoryActions: typeof CategoryActions
 }
 
@@ -18,6 +19,9 @@ const CategoryAddContainer = (Props: Props) => {
     <CategoryAdd
       loginLogined={Props.loginLogined}
       categoryLoad={Props.CategoryActions.getCategory}
+      addCategoryInputValue={Props.addCategoryInputValue}
+      addCategoryInputChange={Props.CategoryActions.addCategoryInputChange}
+      addCategoryPending={Props.CategoryActions.addCategoryPending}
       addCategorySuccess={Props.CategoryActions.addCategorySuccess}
       addCategoryFailure={Props.CategoryActions.addCategoryFailure}
     />
@@ -26,7 +30,8 @@ const CategoryAddContainer = (Props: Props) => {
 
 export default connect(
   ({ Category, Login }: StoreState) => ({
-    loginLogined: Login.loginLogined
+    loginLogined: Login.loginLogined,
+    addCategoryInputValue: Category.addCategoryInputValue
   }),
   dispatch => ({
     // 디스패치

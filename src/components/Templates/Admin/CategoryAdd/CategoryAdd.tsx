@@ -8,6 +8,9 @@ import './CategoryAdd.css'
 interface Props {
   loginLogined: boolean
   categoryLoad: () => void
+  addCategoryInputValue: string
+  addCategoryInputChange: (value: string) => void
+  addCategoryPending: () => void
   addCategorySuccess: () => void
   addCategoryFailure: () => void
 }
@@ -18,25 +21,27 @@ interface Target {
 
 const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
   class CategoryAdd extends React.Component<Props & RouteComponentProps<any>> {
-    // 카테고리 추가 입력칸
-    public state = {
-      addCategory: ''
-    }
-
     // 입력 체인지
     public handleChange = (e: Target) => {
-      this.setState({
-        [e.target.name]: e.target.value
-      })
+      this.props.addCategoryInputChange(e.target.value)
     }
 
     // 카테고리 추가 메소드
     public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
 
-      const { addCategory } = this.state
+      const {
+        categoryLoad,
+        addCategoryInputValue,
+        loginLogined,
+        addCategoryPending,
+        addCategorySuccess,
+        addCategoryFailure
+      } = this.props
 
-      if (addCategory !== '' && this.props.loginLogined !== false) {
+      addCategoryPending()
+
+      if (addCategoryInputValue !== '' && loginLogined !== false) {
         fetch('/api/category/create', {
           method: 'POST',
           headers: {
@@ -44,7 +49,7 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
           },
           body: JSON.stringify({
             token: sessionStorage.getItem('token'),
-            category: addCategory
+            category: addCategoryInputValue
           }),
           mode: 'cors'
         })
@@ -53,14 +58,11 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
             // 카테고리 생성 성공
             if (res.success === true) {
               toast('" ' + res.category + ' " 카테고리가 추가 되었습니다')
-              this.props.addCategorySuccess()
-              this.props.categoryLoad()
-              this.setState({
-                addCategory: ''
-              })
+              addCategorySuccess()
+              categoryLoad()
             } else {
               // 카테고리 생성 실패
-              this.props.addCategoryFailure()
+              addCategoryFailure()
               toast('서버 오류입니다')
             }
             // tslint:disable-next-line:no-console
@@ -71,14 +73,16 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
             console.log('서버 오류입니다')
             // tslint:disable-next-line:no-console
             console.log(error.message)
+            addCategoryFailure()
           })
       } else {
-        if (this.props.loginLogined === false) {
+        if (loginLogined === false) {
           toast('허용되지 않은 사용자 입니다.')
           this.props.history.push('/')
         } else {
           toast('추가할 카테고리를 입력해 주세요!')
         }
+        addCategoryFailure()
       }
     }
 
@@ -91,7 +95,7 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
               <Input
                 name="addCategory"
                 placeholder="추가할 카테고리 입력"
-                value={this.state.addCategory}
+                value={this.props.addCategoryInputValue}
                 onChange={this.handleChange}
               />
               <Button outline={true} color="primary">
