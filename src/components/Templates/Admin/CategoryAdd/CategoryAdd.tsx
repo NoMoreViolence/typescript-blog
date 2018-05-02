@@ -13,6 +13,7 @@ interface Props {
   addCategoryPending: () => void
   addCategorySuccess: () => void
   addCategoryFailure: () => void
+  categoryDone: () => void
 }
 
 interface Target {
@@ -36,7 +37,8 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
         loginLogined,
         addCategoryPending,
         addCategorySuccess,
-        addCategoryFailure
+        addCategoryFailure,
+        categoryDone
       } = this.props
 
       addCategoryPending()
@@ -59,6 +61,7 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
             if (res.success === true) {
               toast('" ' + res.category + ' " 카테고리가 추가 되었습니다')
               addCategorySuccess()
+              categoryDone()
               categoryLoad()
             } else {
               // 카테고리 생성 실패
@@ -76,13 +79,13 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
             addCategoryFailure()
           })
       } else {
+        addCategoryFailure()
         if (loginLogined === false) {
           toast('허용되지 않은 사용자 입니다.')
           this.props.history.push('/')
         } else {
           toast('추가할 카테고리를 입력해 주세요!')
         }
-        addCategoryFailure()
       }
     }
 

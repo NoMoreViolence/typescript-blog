@@ -24,6 +24,7 @@ const CategoryAddContainer = (Props: Props) => {
       addCategoryPending={Props.CategoryActions.addCategoryPending}
       addCategorySuccess={Props.CategoryActions.addCategorySuccess}
       addCategoryFailure={Props.CategoryActions.addCategoryFailure}
+      categoryDone={Props.CategoryActions.categoryDone}
     />
   )
 }
