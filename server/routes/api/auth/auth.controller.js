@@ -14,6 +14,7 @@ const crypto = require('crypto')
 */
 exports.register = (req, res) => {
   console.log('회원가입 비밀번호: ' + req.body.password)
+
   req.body.password = crypto
     .createHash('sha512')
     .update(req.body.password)
@@ -67,7 +68,7 @@ exports.register = (req, res) => {
     .then(create)
     .then(count)
     .then(assign)
-    .then(respond)
+    .then(respon)
     .catch(onError)
 }
 
@@ -80,11 +81,14 @@ exports.register = (req, res) => {
 */
 exports.login = (req, res) => {
   console.log('로그인 비밀번호: ' + req.body.password)
+  console.log(req.app.get('jwt-secret'))
+
   req.body.password = crypto
     .createHash('sha512')
     .update(req.body.password)
     .digest('base64')
   const { username, password } = req.body
+  // JWT 시크릿값 저장해놓았던 거 불러오기
   const secret = req.app.get('jwt-secret')
 
   const adminCheck = user => {
@@ -112,7 +116,7 @@ exports.login = (req, res) => {
             {
               expiresIn: '1d',
               issuer: 'Leejihoon',
-              subject: 'IHP'
+              subject: "Lee's Blog"
             },
             (err, token) => {
               if (err) reject(err)
@@ -138,7 +142,7 @@ exports.login = (req, res) => {
 
   // error occured
   const onError = error => {
-    res.status(403).json({
+    res.status(409).json({
       message: false
     })
   }

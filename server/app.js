@@ -24,15 +24,6 @@ app.use('/api', require('./routes/api'))
 // 빌드 파일 입니당 이걸로 리액트 클라이언트 파일 끌어와요
 app.use(express.static(path.join(__dirname, '../build')))
 
-// api 처음 받았을 때 줄 주소였는데
-app.get('/hello', (req, res) => {
-  res.json({ message: 'HelloJwt' })
-})
-
-app.post('/message/talk', (req, res) => {
-  res.json({ message: 'this is search' })
-})
-
 /* =======================
   모오옹고디비 서버에 연! 결!
 ========================== */
