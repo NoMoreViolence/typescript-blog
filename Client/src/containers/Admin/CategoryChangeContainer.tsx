@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import CategoryChange from 'components/Templates/Admin/CategoryChange'
 
+import { LoginActions } from 'store/modules/Login'
 import { CategoryActions, CategoryStateInside } from 'store/modules/Category'
 
 import { connect } from 'react-redux'
@@ -19,6 +20,7 @@ interface Props {
   changeCategorySelectValue: string
   // 각종 카테고리 변경 액션
   CategoryActions: typeof CategoryActions
+  LoginActions: typeof LoginActions
 }
 
 const CategoryChangeContainer = (Props: Props) => {
@@ -31,9 +33,8 @@ const CategoryChangeContainer = (Props: Props) => {
       changeCategoryInputChange={Props.CategoryActions.changeCategoryInputChange}
       changeCategorySelectValue={Props.changeCategorySelectValue}
       changeCategorySelectChange={Props.CategoryActions.changeCategorySelectChange}
-      changeCategoryPending={Props.CategoryActions.changeCategoryPending}
-      changeCategorySuccess={Props.CategoryActions.changeCategorySuccess}
-      changeCategoryFailure={Props.CategoryActions.changeCategoryFailure}
+      changeCategory={Props.CategoryActions.changeCategory}
+      logout={Props.LoginActions.logout}
       categoryDone={Props.CategoryActions.categoryDone}
     />
   )
@@ -47,6 +48,7 @@ export default connect(
     changeCategorySelectValue: Category.changeCategorySelectValue
   }),
   dispatch => ({
-    CategoryActions: bindActionCreators(CategoryActions, dispatch)
+    CategoryActions: bindActionCreators(CategoryActions, dispatch),
+    LoginActions: bindActionCreators(LoginActions, dispatch)
   })
 )(CategoryChangeContainer)

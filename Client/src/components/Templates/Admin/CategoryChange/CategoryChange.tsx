@@ -18,14 +18,15 @@ import './CategoryChange.css'
 interface Props {
   loginLogined: boolean
   category: [CategoryStateInside]
+
   changeCategoryInputValue: string
   changeCategoryInputChange: (value: string) => void
   changeCategorySelectValue: string
   changeCategorySelectChange: (value: string) => void
+
   categoryLoad: () => void
-  changeCategoryPending: () => void
-  changeCategorySuccess: () => void
-  changeCategoryFailure: () => void
+  changeCategory: (oldCategory: string, newCategory: string) => any
+  logout: () => void
   categoryDone: () => void
 }
 
@@ -38,10 +39,13 @@ interface Dropdown {
 
 const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
   class CategoryChange extends React.Component<Props & RouteComponentProps<any>> {
+    public changeCategoryInput: HTMLInputElement
+
     // 드롭다운 State
     public state = {
       changeCategoryDropdown: false
     }
+
     // 글자 변경 메소드
     public handleChange = (e: Target) => {
       this.props.changeCategoryInputChange(e.target.value)
@@ -65,67 +69,60 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
 
       const {
         loginLogined,
-        changeCategoryInputValue,
+        changeCategoryInputChange,
+        changeCategorySelectChange,
         changeCategorySelectValue,
-        changeCategoryPending,
-        changeCategorySuccess,
-        changeCategoryFailure,
-        categoryLoad,
-        categoryDone
-      } = this.props
+        changeCategoryInputValue,
 
-      changeCategoryPending()
+        categoryLoad,
+        changeCategory,
+        logout,
+        categoryDone,
+
+        history
+      } = this.props
 
       if (
         changeCategoryInputValue !== '' &&
         changeCategorySelectValue !== '변경할 카테고리 선택' &&
-        loginLogined === true &&
-        sessionStorage.getItem('token') !== null
+        loginLogined !== false
       ) {
-        fetch('/api/category/change', {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            token: sessionStorage.getItem('token'),
-            category: changeCategorySelectValue,
-            changeCategory: changeCategoryInputValue
-          }),
-          mode: 'cors'
-        })
-          .then(res => res.json())
-          .then(res => {
-            // 카테고리 생성 성공
-            if (res.success === true) {
-              toast(res.message)
-              changeCategorySuccess()
-              categoryDone()
-              categoryLoad()
-            } else {
-              // 카테고리 생성 실패
-              changeCategoryFailure()
-              categoryLoad()
-              toast('서버 오류입니다')
-            }
-            // tslint:disable-next-line:no-console
-            console.log(res.message)
-          })
-          .catch(error => {
-            // tslint:disable-next-line:no-console
-            console.log('서버 오류입니다')
-            // tslint:disable-next-line:no-console
-            console.log(error.message)
-            changeCategoryFailure()
+        // 카테고리 변경 메소드
+        changeCategory(changeCategorySelectValue, changeCategoryInputValue)
+          // 카테고리 변경 성공
+          .then((res: any) => {
+            toast(res.value.data.message)
             categoryLoad()
+            categoryDone()
+          })
+          // 카테고리 변경 실패
+          .catch((err: any) => {
+            // 사용자의 해킹 시도
+            if (err.response.data.type === 'undefinded token' || err.response.data.type === 'invalid token') {
+              toast('인증된 사용자가 아닙니다 !')
+              // 로그아웃 메소드로 loginLogined false & 세션 스토리지 초기화 & 홈페이지로 이동
+              logout()
+              sessionStorage.clear()
+              history.push('/')
+            }
+            // 사용자의 시도 실패
+            else if (err.response.data.type === 'server error') {
+              toast(err.response.data.message)
+              this.changeCategoryInput.focus()
+              changeCategoryInputChange('')
+              changeCategorySelectChange('변경할 카테고리 선택')
+            }
           })
       } else {
-        changeCategoryFailure()
         if (loginLogined === false) {
-          toast('올바르지 않은 사용자의 접근입니다')
-          this.props.history.push('/')
-        } else {
-          toast('올바른 형태로 입력해 주세요')
+          toast('관리자만 접근 / 엑세스 가능합니다 !')
+          logout()
+          history.push('/')
+        } else if (changeCategoryInputValue === '') {
+          toast('변경할 카테고리의 값을 넣어 주세요 !')
+          this.changeCategoryInput.focus()
+        } else if (changeCategorySelectValue === '변경할 카테고리 선택') {
+          toast('변경할 카테고리를 선택해 주세요 !')
         }
       }
     }
@@ -163,6 +160,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
                 name="changeCategoryInputValue"
                 placeholder="변경할 카테고리 이름 입력"
                 value={changeCategoryInputValue}
+                innerRef={innerRef => (this.changeCategoryInput = innerRef)}
                 onChange={this.handleChange}
               />
               <Button outline={true} color="info">
