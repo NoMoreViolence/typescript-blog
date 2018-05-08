@@ -16,13 +16,12 @@ interface Props {
   loginUsername: string
   handleChangePassword: Function
   loginPassword: string
-  // login success method
-  postLogined: Function
-  postLoginFailed: Function
-  // loginCheck
-  getLoginCheck: Function
+  // 로그인 메소드
+  postLogin: Function
   // logined = true, notLogined = false
-  Logined: boolean
+  loginStatusCode: number
+  loginType: string
+  loginLogined: boolean
 }
 
 const Login = withRouter<Props & RouteComponentProps<any>>(
@@ -32,44 +31,24 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
       // stopping form event
       e.preventDefault()
 
-      const { loginUsername, loginPassword } = this.props
+      const { loginUsername, loginPassword, postLogin, history } = this.props
 
       if (loginUsername !== '' && loginPassword !== '') {
-        fetch('/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            username: loginUsername,
-            password: loginPassword
-          }),
-          mode: 'cors'
-        })
-          .then(res => res.json())
-          .then(res => {
-            if (res.message === true) {
-              // 로그인 성공
-              sessionStorage.setItem('token', res.token)
-              this.props.postLogined()
-              // tslint:disable-next-line:no-console
-              console.log('로그인 성공 - Login.tsx')
-              toast('환영합니다 관리자님 !')
-              // URL 이동
-              this.props.history.push('/')
-            } else {
-              toast('아이디와 비밀번호가 일치하지 않습니다')
-              this.props.postLoginFailed()
-            }
+        postLogin(loginUsername, loginPassword)
+          .then((res: any) => {
+            toast('환영합니다 관리자님')
+            sessionStorage.setItem('token', res.value.data.token)
+            history.push('/')
           })
-          .catch(error => {
-            // tslint:disable-next-line:no-console
-            console.log(error.message)
-            this.props.postLoginFailed()
-            toast('서버의 오류로 로그인에 실패했습니다')
+          .catch((err: any) => {
+            toast(err.message)
           })
       } else {
-        toast('아이디와 비밀번호를 모두 입력해 주세요')
+        if (loginUsername === '') {
+          toast('아이디를 입력해 주세요')
+        } else if (loginPassword) {
+          toast('비밀번호를 입력해 주세요')
+        }
       }
     }
 

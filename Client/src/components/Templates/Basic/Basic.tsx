@@ -1,53 +1,38 @@
-import * as React from 'react';
-import { toast } from 'react-toastify';
+import * as React from 'react'
+import { toast } from 'react-toastify'
 
 interface Props {
-  loginLogined: boolean;
-  getLoginCheck: () => void;
-  loadCategory: () => void;
+  loginLogined: boolean
+  getLogin: () => any
+  loadCategory: () => void
 }
 
 class Basic extends React.Component<Props> {
   // 사이트 초기 로딩 시 토큰 자동 로그인 & 카테고리 데이터 불러오기
   public componentDidMount() {
-    const { loginLogined, loadCategory, getLoginCheck } = this.props;
-    // 자동 로그인 체크
+    const { loadCategory, getLogin, loginLogined } = this.props
+
     if (loginLogined !== true && sessionStorage.getItem('token') !== null) {
-      fetch('/api/auth/check', {
-        method: 'GET',
-        headers: {
-          'x-access-token': `${sessionStorage.getItem('token')}`
-        }
-      })
-        .then(res => res.json())
-        .then(res => {
-          if (res.success === true) {
-            // tslint:disable-next-line:no-console
-            console.log('현재 관리자 상태 - App.tsx');
-            getLoginCheck();
-            toast('관리자님 환영합니다 !');
-          } else {
-            // tslint:disable-next-line:no-console
-            console.log('비 정상적인 토큰 감지 - App.tsx');
-            toast('비정상적인 토큰 감지');
-          }
+      getLogin()
+        .then((res: any) => {
+          // 자동 로그인 성공
+          toast('관리자님 환영합니다 !')
         })
-        .catch(error => {
-          // tslint:disable-next-line:no-console
-          console.log('로그인 실패, or 인증 실패');
-          // tslint:disable-next-line:no-console
-          console.log(error.message);
-          toast('서버의 오류로 로그인에 실패했습니다 !');
-        });
+        .catch((err: any) => {
+          // 에러 상황일 경우
+          toast(err.response.data.message)
+          sessionStorage.clear()
+        })
     } else {
-      toast('환영합니다 !');
+      toast('환영합니다 !')
     }
+
     // 카테고리 로딩
-    loadCategory();
+    loadCategory()
   }
   public render() {
-    return <div />;
+    return <div />
   }
 }
 
-export default Basic;
+export default Basic
