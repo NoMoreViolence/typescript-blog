@@ -7,6 +7,21 @@ function getCategoryAPI() {
   return axios.get('/api/category/all')
 }
 
+function postCategoryAddAPI(newCategory: string) {
+  return axios.post(
+    'api/category/create',
+    {
+      category: newCategory
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': sessionStorage.getItem('token')
+      }
+    }
+  )
+}
+
 // 카테고리 불러오기
 const GET_BRING_CATEGORY = 'GET_BRING_CATEGORY'
 const GET_BRING_CATEGORY_PENDING = 'GET_BRING_CATEGORY_PENDING'
@@ -14,6 +29,7 @@ const GET_BRING_CATEGORY_SUCCESS = 'GET_BRING_CATEGORY_SUCCESS'
 const GET_BRING_CATEGORY_FAILURE = 'GET_BRING_CATEGORY_FAILURE'
 // 카테고리 추가
 const POST_ADD_CATEGORY_INPUT_CHANGE = 'POST_ADD_CATEGORY_INPUT_CHANGE'
+const POST_ADD_CATEGORY = 'POST_ADD_CATEGORY'
 const POST_ADD_CATEGORY_PENDING = 'POST_ADD_CATEGORY_PENDING'
 const POST_ADD_CATEGORY_SUCCESS = 'POST_ADD_CATEGORY_SUCCESS'
 const POST_ADD_CATEGORY_FAILURE = 'POST_ADD_CATEGORY_FAILURE'
@@ -38,24 +54,27 @@ type CategoryInputPayload = string
 
 // 카테고리 가져오는 액션 방출
 export const CategoryActions = {
+  // 카테고리 로딩하는 API
   getCategory: createAction(GET_BRING_CATEGORY, getCategoryAPI),
+
   // 카테고리 추가
   addCategoryInputChange: createAction<CategoryInputPayload>(POST_ADD_CATEGORY_INPUT_CHANGE),
-  addCategoryPending: createAction(POST_ADD_CATEGORY_PENDING),
-  addCategorySuccess: createAction(POST_ADD_CATEGORY_SUCCESS),
-  addCategoryFailure: createAction(POST_ADD_CATEGORY_FAILURE),
+  addCategory: createAction(POST_ADD_CATEGORY, postCategoryAddAPI),
+
   // 카테고리 변경
   changeCategoryInputChange: createAction<CategoryInputPayload>(PATCH_CHANGE_CATEGIRT_INPUT_CHANGE),
   changeCategorySelectChange: createAction<CategoryInputPayload>(PATCH_CHANGE_CATEGORY_SELECT_CHANGE),
   changeCategoryPending: createAction(PATCH_CHANGE_CATEGORY_PENDING),
   changeCategorySuccess: createAction(PATCH_CHANGE_CATEGORY_SUCCESS),
   changeCategoryFailure: createAction(PATCH_CHANGE_CATEGORY_FAILURE),
+
   // 카테고리 삭제
   deleteCategoryInputChange: createAction<CategoryInputPayload>(DELETE_DELETE_CATEGORY_INPUT_CHANGE),
   deleteCategorySelectChange: createAction<CategoryInputPayload>(DELETE_DELETE_CATEGORY_SELECT_CHANGE),
   deleteCategoryPending: createAction(DELETE_DELETE_CATEGORY_PENDING),
   deleteCategorySuccess: createAction(DELETE_DELETE_CATEGORY_SUCCESS),
   deleteCategoryFailure: createAction(DELETE_DELETE_CATEGORY_FAILURE),
+
   // 모든 작업이 끝났을 때 실행해주는 초기화 변수
   categoryDone: createAction(CATEGORY_DONE)
 }

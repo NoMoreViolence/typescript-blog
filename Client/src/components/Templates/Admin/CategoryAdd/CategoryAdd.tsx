@@ -7,12 +7,11 @@ import './CategoryAdd.css'
 
 interface Props {
   loginLogined: boolean
-  categoryLoad: () => void
+  categoryLoad: () => any
   addCategoryInputValue: string
   addCategoryInputChange: (value: string) => void
-  addCategoryPending: () => void
-  addCategorySuccess: () => void
-  addCategoryFailure: () => void
+  addCategory: (value: string) => any
+  logout: () => void
   categoryDone: () => void
 }
 
@@ -32,59 +31,50 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
       e.preventDefault()
 
       const {
-        categoryLoad,
-        addCategoryInputValue,
         loginLogined,
-        addCategoryPending,
-        addCategorySuccess,
-        addCategoryFailure,
-        categoryDone
+        addCategoryInputValue,
+        addCategoryInputChange,
+        addCategory,
+        categoryLoad,
+        logout,
+        categoryDone,
+        history
       } = this.props
 
-      addCategoryPending()
-
-      if (addCategoryInputValue !== '' && loginLogined !== false) {
-        fetch('/api/category/create', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            token: sessionStorage.getItem('token'),
-            category: addCategoryInputValue
-          }),
-          mode: 'cors'
-        })
-          .then(res => res.json())
-          .then(res => {
-            // 카테고리 생성 성공
-            if (res.success === true) {
-              toast('" ' + res.category + ' " 카테고리가 추가 되었습니다')
-              addCategorySuccess()
-              categoryDone()
-              categoryLoad()
-            } else {
-              // 카테고리 생성 실패
-              addCategoryFailure()
-              toast('서버 오류입니다')
-            }
-            // tslint:disable-next-line:no-console
-            console.log(res.message)
+      if (loginLogined !== false && addCategoryInputValue !== '') {
+        addCategory(addCategoryInputValue)
+          .then((res: any) => {
+            // 카테고리 추가 성공
+            toast(res.value.data.message)
+            // 카테고리 Input Select 초기화 & 리로딩
+            categoryDone()
+            categoryLoad()
           })
-          .catch(error => {
-            // tslint:disable-next-line:no-console
-            console.log('서버 오류입니다')
-            // tslint:disable-next-line:no-console
-            console.log(error.message)
-            addCategoryFailure()
+          .catch((err: any) => {
+            // 사용자의 해킹 시도
+            if (err.response.data.type === 'undefinded token' || err.response.data.type === 'invalid token') {
+              toast('인증된 사용자가 아닙니다 !')
+              logout()
+              sessionStorage.clear()
+              history.push('/')
+            }
+            // 사용자의 시도 실패
+            else if (err.response.data.type === 'server error') {
+              toast('카테고리가 중복되었습니다 !')
+              addCategoryInputChange('')
+            }
           })
       } else {
-        addCategoryFailure()
+        // 인가된 사용자가 아닐 경우
         if (loginLogined === false) {
-          toast('허용되지 않은 사용자 입니다.')
-          this.props.history.push('/')
-        } else {
-          toast('추가할 카테고리를 입력해 주세요!')
+          toast('관리자만 접근 / 엑세스 가능합니다 !')
+          logout()
+          sessionStorage.clear()
+          history.push('/')
+        }
+        // 아무 글자도 입력하지 않은 경우
+        else if (addCategoryInputValue === '') {
+          toast('글자를 입력해 주세요 !')
         }
       }
     }
