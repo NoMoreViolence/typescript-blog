@@ -25,7 +25,8 @@
     "interface-over-type-literal": false,
     "ban-types": false,
     "no-shadowed-variable": false,
-    "semi": false
+    "semi": false,
+    "jsx-no-lambda": false
   },
   "exclude": [
     "node_modules",
