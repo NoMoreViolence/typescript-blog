@@ -21,6 +21,9 @@ interface Target {
 
 const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
   class CategoryAdd extends React.Component<Props & RouteComponentProps<any>> {
+    // 인풋 focus 사용 위해
+    public addCategoryInput: HTMLInputElement
+
     // 입력 체인지
     public handleChange = (e: Target) => {
       this.props.addCategoryInputChange(e.target.value)
@@ -41,6 +44,7 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
         history
       } = this.props
 
+      // 카테고리 입력값이 없거나 관리자 권한이 아닐 경우
       if (loginLogined !== false && addCategoryInputValue !== '') {
         addCategory(addCategoryInputValue)
           .then((res: any) => {
@@ -61,6 +65,7 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
             // 사용자의 시도 실패
             else if (err.response.data.type === 'server error') {
               toast('카테고리가 중복되었습니다 !')
+              this.addCategoryInput.focus()
               addCategoryInputChange('')
             }
           })
@@ -75,6 +80,7 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
         // 아무 글자도 입력하지 않은 경우
         else if (addCategoryInputValue === '') {
           toast('글자를 입력해 주세요 !')
+          this.addCategoryInput.focus()
         }
       }
     }
@@ -90,6 +96,7 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
                 placeholder="추가할 카테고리 입력"
                 value={this.props.addCategoryInputValue}
                 onChange={this.handleChange}
+                innerRef={innerRef => (this.addCategoryInput = innerRef)}
               />
               <Button outline={true} color="primary">
                 카테고리 추가
