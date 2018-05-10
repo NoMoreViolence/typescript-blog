@@ -22,7 +22,7 @@ app.set('jwt-secret', config.secret)
 // 모든 api의 요청과 반환을 돌렸습니다
 app.use('/api', require('./routes/api'))
 // 빌드 파일 입니당 이걸로 리액트 클라이언트 파일 끌어와요
-app.use(express.static(path.join(__dirname, '../build')))
+app.use(express.static(path.join(__dirname, '../Client/build')))
 
 /* =======================
   모오옹고디비 서버에 연! 결!

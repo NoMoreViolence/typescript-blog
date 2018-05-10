@@ -24,9 +24,8 @@ interface Props {
   deleteCategoryInputChange: (value: string) => void
   deleteCategorySelectValue: string
   deleteCategorySelectChange: (value: string) => void
-  deleteCategoryPending: () => void
-  deleteCategorySuccess: () => void
-  deleteCategoryFailure: () => void
+  deleteCategory: (value: string) => any
+  logout: () => void
   categoryDone: () => void
 }
 
@@ -40,6 +39,8 @@ interface Dropdown {
 
 const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
   class CategoryDelete extends React.Component<Props & RouteComponentProps<any>> {
+    public deleteCategoryInput: HTMLInputElement
+
     // 드롭다운 State
     public state = {
       deleteCategoryDropdown: false
@@ -69,66 +70,65 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
       const {
         loginLogined,
         deleteCategoryInputValue,
+        deleteCategoryInputChange,
         deleteCategorySelectValue,
-        deleteCategoryPending,
-        deleteCategorySuccess,
-        deleteCategoryFailure,
-        categoryLoad,
-        categoryDone
-      } = this.props
+        deleteCategorySelectChange,
 
-      deleteCategoryPending()
+        categoryLoad,
+        deleteCategory,
+        logout,
+        categoryDone,
+
+        history
+      } = this.props
 
       if (
         deleteCategoryInputValue !== '' &&
-        deleteCategorySelectValue !== '변경할 카테고리 선택' &&
-        loginLogined === true &&
-        sessionStorage.getItem('token') !== null
+        deleteCategorySelectValue !== '삭제할 카테고리 선택' &&
+        loginLogined !== false
       ) {
-        fetch('/api/category/delete', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            token: sessionStorage.getItem('token'),
-            category: deleteCategorySelectValue,
-            categoryDoubleCheck: deleteCategoryInputValue
-          }),
-          mode: 'cors'
-        })
-          .then(res => res.json())
-          .then(res => {
-            // 카테고리 생성 성공
-            if (res.success === true) {
-              toast(res.message)
-              deleteCategorySuccess()
+        // 카테고리 삭제 메소드
+        if (deleteCategoryInputValue === deleteCategorySelectValue) {
+          deleteCategory(deleteCategorySelectValue)
+            .then((res: any) => {
+              toast(res.value.data.message)
+              categoryLoad()
               categoryDone()
-              categoryLoad()
-            } else {
-              // 카테고리 생성 실패
-              deleteCategoryFailure()
-              categoryLoad()
-              toast(res.message)
-            }
-            // tslint:disable-next-line:no-console
-            console.log(res.message)
-          })
-          .catch(error => {
-            // tslint:disable-next-line:no-console
-            console.log('서버 오류입니다')
-            // tslint:disable-next-line:no-console
-            console.log(error.message)
-            deleteCategoryFailure()
-            categoryLoad()
-          })
-      } else {
-        deleteCategoryFailure()
-        if (loginLogined === false) {
-          toast('올바르지 않은 사용자의 접근입니다')
-          this.props.history.push('/')
+            })
+            .catch((err: any) => {
+              // 사용자의 해킹 시도
+              if (
+                err.response.data.type === 'undefinded token' ||
+                err.response.data.type === 'invalid token'
+              ) {
+                toast('인증된 사용자가 아닙니다 !')
+                // 로그아웃 메소드로 loginLogined false & 세션 스토리지 초기화 & 홈페이지로 이동
+                logout()
+                sessionStorage.clear()
+                history.push('/')
+              }
+              // 사용자의 시도 실패
+              else if (err.response.data.type === 'server error') {
+                toast(err.response.data.message)
+                this.deleteCategoryInput.focus()
+                deleteCategoryInputChange('')
+                deleteCategorySelectChange('변경할 카테고리 선택')
+              }
+            })
         } else {
-          toast('올바른 형태로 입력해 주세요')
+          this.deleteCategoryInput.focus()
+          toast('삭제할 카테고리를 올바르게 입력해 주세요')
+        }
+      } else {
+        if (loginLogined === false) {
+          toast('관리자만 접근 / 엑세스 가능합니다 !')
+          logout()
+          history.push('/')
+        } else if (deleteCategoryInputValue === '') {
+          toast('삭제할 카테고리의 값을 넣어 주세요 !')
+          this.deleteCategoryInput.focus()
+        } else if (deleteCategorySelectValue === '삭제할 카테고리 선택') {
+          toast('삭제할 카테고리를 선택해 주세요 !')
         }
       }
     }
@@ -166,6 +166,7 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
                 name="deleteCategoryInput"
                 placeholder="삭제할 카테고리 이름 입력"
                 value={deleteCategoryInputValue}
+                innerRef={innerRef => (this.deleteCategoryInput = innerRef)}
                 onChange={this.handleChange}
               />
               <Button outline={true} color="danger">

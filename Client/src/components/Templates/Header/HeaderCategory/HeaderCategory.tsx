@@ -1,34 +1,34 @@
-import * as React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Breadcrumb, BreadcrumbItem } from 'reactstrap';
-import { CategoryStateInside } from 'store/modules/Category';
-import { toast } from 'react-toastify';
+import * as React from 'react'
+import { NavLink } from 'react-router-dom'
+import { Breadcrumb, BreadcrumbItem } from 'reactstrap'
+import { CategoryStateInside } from 'store/modules/Category'
+import { toast } from 'react-toastify'
 
 interface Props {
-  Category: [CategoryStateInside];
-  Logout: () => void;
-  Logined: boolean;
+  Category: [CategoryStateInside]
+  Logout: () => void
+  Logined: boolean
 }
 
 class HeaderCategory extends React.Component<Props> {
   public handleSignOut = () => {
-    this.props.Logout();
-    sessionStorage.clear();
-    toast('로그아웃 되셨습니다');
-  };
+    this.props.Logout()
+    sessionStorage.clear()
+    toast('로그아웃 되셨습니다')
+  }
 
   public render() {
     // 데이터 받아서 정렬
     const loadCategory = (data: [CategoryStateInside]) => {
       return data.map((object, i) => {
-        const url = `/category/${object.category}`;
+        const url = `/${object.category}`
         return (
           <BreadcrumbItem key={i}>
             <NavLink to={url}>{object.category}</NavLink>
           </BreadcrumbItem>
-        );
-      });
-    };
+        )
+      })
+    }
 
     return (
       <Breadcrumb>
@@ -53,8 +53,8 @@ class HeaderCategory extends React.Component<Props> {
         )}
         <BreadcrumbItem active={true}>Category</BreadcrumbItem>
       </Breadcrumb>
-    );
+    )
   }
 }
 
-export default HeaderCategory;
+export default HeaderCategory

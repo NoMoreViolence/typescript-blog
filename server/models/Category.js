@@ -15,11 +15,12 @@ Category.statics.findAll = function() {
     .exec()
 }
 
+// POST의 title 값만 가져오기
 Category.statics.findPostNames = function(category) {
   // 이렇게 하면 posts의 title 값만 가져올 수 있습니다
   return this.findOne({ category })
-    .populate('posts', 'title')
-    .exec()
+  populate({ path: 'posts', select: 'title' }).exec()
+  // .populate({ path: 'posts', select: 'title', match: { title: '백준 알고리즘 풀이 6' } })
 }
 
 // 카테고리 중복 체크
@@ -43,7 +44,7 @@ Category.statics.changeCategory = function(category, changeCategory) {
 
 // 카테고리 삭제
 Category.statics.deleteCategory = function(category) {
-  return this.findOneAndRemove({ category }).exec()
+  this.findOneAndRemove({ category }).exec()
 }
 
 // 포스트들의 정보가 변경(추가, 변경, 삭제) 되었을 때 Ref 한번에 정리해버리는 함수

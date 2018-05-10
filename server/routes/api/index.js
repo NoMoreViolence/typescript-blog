@@ -9,8 +9,8 @@ router.use('/auth', auth)
 // 사용자 댓글
 router.use('/ripple', ripple)
 // 카테고리 관련된 부분 받아오기
-router.use('/category', category)
+router.use(category)
 // 포스트 관련된 부분
-router.use('/post', post)
+router.use(post)
 
 module.exports = router

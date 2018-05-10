@@ -82,7 +82,8 @@ exports.postNames = (req, res) => {
 */
 // 카테고리 생성
 exports.create = (req, res) => {
-  const { category } = req.body
+  const { category } = req.params
+  console.log(category)
 
   // 중복된 카테고리나, 입력값이 없을 때 오류를 보냄
   const create = exists => {
@@ -98,7 +99,8 @@ exports.create = (req, res) => {
     res.json({
       success: true,
       message: `'${category}' 카테고리가 생성 되었습니다 !`,
-      category
+      info: {},
+      type: 'success'
     })
   }
 
@@ -106,7 +108,9 @@ exports.create = (req, res) => {
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
+      info: {},
+      type: 'server error'
     })
   }
 
@@ -126,7 +130,8 @@ exports.create = (req, res) => {
 */
 // 카테고리 변경
 exports.change = (req, res) => {
-  const { category, changeCategory } = req.body
+  const { category } = req.params
+  const { changeCategory } = req.body
 
   const trimCheck = exists => {
     if (changeCategory.trim() === '') {
@@ -138,6 +143,7 @@ exports.change = (req, res) => {
 
   // 카테고리 변경 부분
   const change = exists => {
+    console.log(exists)
     if (exists) {
       console.log(`'${exists.category}' 카테고리가 '${changeCategory}' 로 변경 되었습니다 !`)
       // 카테고리 변경
@@ -152,9 +158,9 @@ exports.change = (req, res) => {
   const respond = result => {
     res.json({
       success: true,
-      message: `'${exists.category}' 카테고리가 '${changeCategory}' 로 변경 되었습니다 !`,
-      oldCategory: category,
-      newCategory: changeCategory,
+      message: `'${category}' 카테고리가 '${changeCategory}' 로 변경 되었습니다 !`,
+      info: {},
+      type: 'success',
       result
     })
   }
@@ -163,7 +169,9 @@ exports.change = (req, res) => {
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
+      info: {},
+      type: 'server error'
     })
   }
 
@@ -183,21 +191,17 @@ exports.change = (req, res) => {
 */
 // 카테고리 삭제
 exports.delete = (req, res) => {
-  const { category, categoryDoubleCheck } = req.body
-
-  const doubleCheck = exist => {
-    if (category === categoryDoubleCheck) return exist
-    throw new Error('같은 입력값이 아닙니다 !')
-  }
+  const { category } = req.params
 
   // 카테고리 삭제 부분
   const remove = exists => {
-    console.log(`'${exists.category}' 카테고리가 삭제 되었습니다 !`)
     if (exists) {
       // 카테고리 삭제
+      console.log(`'${category}' 카테고리가 삭제 되었습니다 !`)
       return Category.deleteCategory(category) // 카테고리 삭제
     } else {
       // 삭제할 카테고리가 없음
+      console.log('삭제할 카테고리가 존재하지 않습니다 !')
       throw new Error('삭제할 카테고리가 존재하지 않습니다 !')
     }
   }
@@ -206,7 +210,7 @@ exports.delete = (req, res) => {
   const respond = () => {
     res.json({
       success: true,
-      message: `'${exists.category}' 카테고리가 삭제 되었습니다 !`,
+      message: `'${category}' 카테고리가 삭제 되었습니다 !`,
       category
     })
   }
@@ -220,8 +224,13 @@ exports.delete = (req, res) => {
   }
 
   Category.findSameCategory(category)
-    .then(doubleCheck)
     .then(remove)
     .then(respond)
     .catch(onError)
+}
+
+exports.temptmep = async (req, res) => {
+  res.json({
+    data: await Category.findPostNames('Algorithm')
+  })
 }

@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import CategoryDelete from 'components/Templates/Admin/CategoryDelete'
 
+import { LoginActions } from 'store/modules/Login'
 import { CategoryActions, CategoryStateInside } from 'store/modules/Category'
 
 import { connect } from 'react-redux'
@@ -14,6 +15,7 @@ interface Props {
   deleteCategoryInputValue: string
   deleteCategorySelectValue: string
   CategoryActions: typeof CategoryActions
+  LoginActions: typeof LoginActions
 }
 
 const CategoryDeleteContainer = (Props: Props) => {
@@ -26,9 +28,8 @@ const CategoryDeleteContainer = (Props: Props) => {
       deleteCategoryInputChange={Props.CategoryActions.deleteCategoryInputChange}
       deleteCategorySelectValue={Props.deleteCategorySelectValue}
       deleteCategorySelectChange={Props.CategoryActions.deleteCategorySelectChange}
-      deleteCategoryPending={Props.CategoryActions.deleteCategoryPending}
-      deleteCategorySuccess={Props.CategoryActions.deleteCategorySuccess}
-      deleteCategoryFailure={Props.CategoryActions.deleteCategoryFailure}
+      deleteCategory={Props.CategoryActions.deleteCategory}
+      logout={Props.LoginActions.logout}
       categoryDone={Props.CategoryActions.categoryDone}
     />
   )
@@ -42,6 +43,7 @@ export default connect(
     deleteCategorySelectValue: Category.deleteCategorySelectValue
   }),
   dispatch => ({
-    CategoryActions: bindActionCreators(CategoryActions, dispatch)
+    CategoryActions: bindActionCreators(CategoryActions, dispatch),
+    LoginActions: bindActionCreators(LoginActions, dispatch)
   })
 )(CategoryDeleteContainer)

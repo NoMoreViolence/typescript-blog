@@ -4,16 +4,14 @@ import axios from 'axios'
 
 // 모든 카테고리 불러오는 함수
 function getCategoryAPI() {
-  return axios.get('/api/category/all')
+  return axios.get('/api/categories')
 }
 
 // 카테고리를 추가하는 API
 function postCategoryAddAPI(newCategory: string) {
   return axios.post(
-    'api/category/create',
-    {
-      category: newCategory
-    },
+    `/api/${newCategory}`,
+    {},
     {
       headers: {
         'Content-Type': 'application/json',
@@ -26,8 +24,8 @@ function postCategoryAddAPI(newCategory: string) {
 // 카테고리를 변경하는 API
 function patchCategoryChangeAPI(oldCategory: string, newCategory: string) {
   return axios.patch(
-    '/api/category/change',
-    { category: oldCategory, changeCategory: newCategory },
+    `/api/${oldCategory}`,
+    { changeCategory: newCategory },
     {
       headers: {
         'Content-Type': 'application/json',
@@ -35,6 +33,16 @@ function patchCategoryChangeAPI(oldCategory: string, newCategory: string) {
       }
     }
   )
+}
+
+// 카테고리를 삭제하는 API
+function deleteCategoryDeleteAPI(Category: string) {
+  return axios.delete(`/api/${Category}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': sessionStorage.getItem('token')
+    }
+  })
 }
 
 // 카테고리 불러오기
@@ -58,6 +66,7 @@ const PATCH_CHANGE_CATEGORY_FAILURE = 'PATCH_CHANGE_CATEGORY_FAILURE'
 // 카테고리 삭제
 const DELETE_DELETE_CATEGORY_INPUT_CHANGE = 'DELETE_DELETE_CATEGORY_INPUT_CHANGE'
 const DELETE_DELETE_CATEGORY_SELECT_CHANGE = 'DELETE_DELETE_CATEGORY-SELECT_CHANGE'
+const DELETE_DELETE_CATEGORY = 'DELETE_DELETE_CATEGORY'
 const DELETE_DELETE_CATEGORY_PENDING = 'DELETE_DELETE_CATEGORY_PENDING'
 const DELETE_DELETE_CATEGORY_SUCCESS = 'DELETE_DELETE_CATEGORY_SUCCESS'
 const DELETE_DELETE_CATEGORY_FAILURE = 'DELETE_DELETE_CATEGORY_FAILURE'
@@ -85,9 +94,7 @@ export const CategoryActions = {
   // 카테고리 삭제
   deleteCategoryInputChange: createAction<CategoryInputPayload>(DELETE_DELETE_CATEGORY_INPUT_CHANGE),
   deleteCategorySelectChange: createAction<CategoryInputPayload>(DELETE_DELETE_CATEGORY_SELECT_CHANGE),
-  deleteCategoryPending: createAction(DELETE_DELETE_CATEGORY_PENDING),
-  deleteCategorySuccess: createAction(DELETE_DELETE_CATEGORY_SUCCESS),
-  deleteCategoryFailure: createAction(DELETE_DELETE_CATEGORY_FAILURE),
+  deleteCategory: createAction(DELETE_DELETE_CATEGORY, deleteCategoryDeleteAPI),
 
   // 모든 작업이 끝났을 때 실행해주는 초기화 변수
   categoryDone: createAction(CATEGORY_DONE)
