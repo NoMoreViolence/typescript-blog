@@ -1,4 +1,3 @@
-const post = require('./Post')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
@@ -9,26 +8,27 @@ const Category = new Schema({
 })
 
 // 전체 카테고리 출력
-Category.statics.findAll = function() {
+Category.statics.findAllCategories = function() {
   return this.find({})
     .sort({ category: 1 })
     .exec()
 }
 
-// POST의 title 값만 가져오기
+// bring title in posts of category
 Category.statics.findPostNames = function(category) {
   // 이렇게 하면 posts의 title 값만 가져올 수 있습니다
   return this.findOne({ category })
-  populate({ path: 'posts', select: 'title' }).exec()
+    .populate({ path: 'posts', select: 'title' })
+    .exec()
   // .populate({ path: 'posts', select: 'title', match: { title: '백준 알고리즘 풀이 6' } })
 }
 
-// 카테고리 중복 체크
+// Category Double Check
 Category.statics.findSameCategory = function(category) {
   return this.findOne({ category }).exec()
 }
 
-// 카테고리 생성
+// add New Category
 Category.statics.createCategory = function(category) {
   const Cart = new this({
     category
@@ -37,12 +37,12 @@ Category.statics.createCategory = function(category) {
   return Cart.save()
 }
 
-// 카테고리 변경
+// Change Category Name
 Category.statics.changeCategory = function(category, changeCategory) {
   return this.findOneAndUpdate({ category }, { category: changeCategory }).exec()
 }
 
-// 카테고리 삭제
+// Delete Category
 Category.statics.deleteCategory = function(category) {
   this.findOneAndRemove({ category }).exec()
 }
