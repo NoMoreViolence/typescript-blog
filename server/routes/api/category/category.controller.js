@@ -1,61 +1,58 @@
 const Category = require('./../../../models/Category')
 
 /*
-    GET /api/category/all
-    {
-
-    }
+    public
+    GET /api/categories
 */
 // 모든 카테고리만 검색 후 출력
-exports.all = (req, res) => {
-  const show = () => {
-    return Category.findAll()
-  }
+exports.allCategories = (req, res) => {
+  // 카테고리 검색
+  const findAllCategories = () => Category.findAllCategories()
 
-  // respond to the client
-  const respond = result => {
+  const response = data => {
     res.json({
       success: true,
-      message: '모든 카테고리 출력 작업 성공 !',
-      category: result
+      message: '모든 카테고리 불러오는 작업 성공',
+      value: data
     })
   }
 
-  // 에러가 생겼을 때
-  const onError = error => {
-    res.status(409).json({
+  const onError = err => {
+    res.status(403).json({
       success: false,
-      message: error.message
+      message: err.message,
+      value: []
     })
   }
 
-  show() // 실행
-    .then(respond) // 응답
-    .catch(onError) // 에러
+  // 카테고리를 찾는다
+  findAllCategories()
+    .then(response)
+    .catch(onError)
 }
 
 /*
-    GET /api/post/postNames/:categoryName
-    {}
+    public
+    GET /api/:category
 */
-// 특정 카테고리를 선택했을 때의 그 카테고리의 포스트 이름만 가져오게 하는 함수: 오픈 API
-exports.postNames = (req, res) => {
-  const { categoryName } = req.params
+// Bring post names of req.params.category
+exports.selectedPostNames = (req, res) => {
+  // the value of url params  => /api/:category
+  const { category } = req.params
 
-  // 카테고리가 존재할 때 그에 맞는 포스트 찾기
+  // if category exist
   const search = exists => {
     if (exists) {
-      return Category.findPostNames(categoryName)
-    } else {
-      throw new Error('없는 카테고리 값 입니다')
+      return Category.findPostNames(category)
     }
+    throw new Error('없는 카테고리 값 입니다 !')
   }
 
   const respond = result => {
     res.json({
       success: true,
-      message: '특정 카테고리의 포스트 이름 가져오는 작업 성공 !',
-      result
+      message: '특정 카테고리의 포스트들의 이름 가져오는 작업 성공 !',
+      value: result
     })
   }
 
@@ -63,115 +60,118 @@ exports.postNames = (req, res) => {
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
+      value: []
     })
   }
 
-  Category.findSameCategory(categoryName)
+  Category.findSameCategory(category)
     .then(search)
     .then(respond)
     .catch(onError)
 }
 
 /*
-    POST /api/category/create
+    private
+    POST /api/:category
     {
-        token,
-        category
+
+    },
+    {
+      'x-access-token':  sessionStorage.getItem('token')
     }
 */
-// 카테고리 생성
+// Create category
 exports.create = (req, res) => {
   const { category } = req.params
+
   console.log(category)
 
-  // 중복된 카테고리나, 입력값이 없을 때 오류를 보냄
-  const create = exists => {
-    if (exists) {
-      throw new Error('입력값이 없거나 중복된 값 입니다 !')
+  // if there is same category, throws error.
+  const create = value => {
+    if (value) {
+      throw new Error(`이미 '${category}' 가 존재합니다 !`)
     } else {
-      return Category.createCategory(category) // 카테고리 생성
+      return Category.createCategory(category)
     }
   }
 
-  // 응답
-  const respond = () => {
+  // respond to client with message & value
+  const respond = value => {
     res.json({
       success: true,
       message: `'${category}' 카테고리가 생성 되었습니다 !`,
-      info: {},
-      type: 'success'
+      value
     })
   }
 
-  // 에러가 생겼을 때
-  const onError = error => {
+  // respond error with err.message & none value
+  const onError = err => {
     res.status(409).json({
       success: false,
-      message: error.message,
-      info: {},
-      type: 'server error'
+      message: err.message,
+      value: []
     })
   }
 
-  Category.findSameCategory(category) // 중복 카테고리 찾기
-    .then(create) // 중복 카테고리가 없으면 새 카테고리 생성 OR 만들지 않음
-    .then(respond) // 상황에 따라 응답
-    .catch(onError) // 오류 처리
+  Category.findSameCategory(category)
+    .then(create)
+    .then(respond)
+    .catch(onError)
 }
 
 /*
-    PATCH /api/category/change
+    private
+    PATCH /api/:category
     {
-        token,
-        category,
-        changeCategory
+      'changeCategory': string
+    },
+    {
+      'x-access-token': seesionStorage.getItem('token')
     }
 */
 // 카테고리 변경
 exports.change = (req, res) => {
+  // params.category, body.changeCategory
   const { category } = req.params
   const { changeCategory } = req.body
 
+  // if changeCategory value is none, throw Error
   const trimCheck = exists => {
     if (changeCategory.trim() === '') {
-      // 변경할 카테고리가 없음
+      // there is no input body.changeCategory data
       throw new Error('입력값이 없습니다 !')
     }
     return exists
   }
 
-  // 카테고리 변경 부분
+  // category change Part
   const change = exists => {
-    console.log(exists)
+    // if there is category to change
     if (exists) {
       console.log(`'${exists.category}' 카테고리가 '${changeCategory}' 로 변경 되었습니다 !`)
-      // 카테고리 변경
-      return Category.changeCategory(category, changeCategory) // 카테고리 삭제
-    } else {
-      // 변경할 카테고리가 없음
-      throw new Error('변경할 카테고리가 존재하지 않습니다 !')
+      // change Category
+      return Category.changeCategory(category, changeCategory)
     }
+    // there is no category to change
+    throw new Error('변경할 카테고리가 존재하지 않습니다 !')
   }
 
-  // 응답
+  // response to client
   const respond = result => {
     res.json({
       success: true,
       message: `'${category}' 카테고리가 '${changeCategory}' 로 변경 되었습니다 !`,
-      info: {},
-      type: 'success',
-      result
+      value: result
     })
   }
 
-  // 에러가 생겼을 때
+  // reponse error to client
   const onError = error => {
     res.status(409).json({
       success: false,
       message: error.message,
-      info: {},
-      type: 'server error'
+      value: []
     })
   }
 
@@ -183,43 +183,43 @@ exports.change = (req, res) => {
 }
 
 /*
-    DELETE /api/category/delete
+    DELETE /api/:category
     {
-        token,
-        category
+        'x-access-token': sessionStorage.getItem('token')
     }
 */
 // 카테고리 삭제
 exports.delete = (req, res) => {
+  // the category to delete
   const { category } = req.params
 
-  // 카테고리 삭제 부분
+  // category delete Part
   const remove = exists => {
+    // there is category to delete
     if (exists) {
-      // 카테고리 삭제
+      // category delete
       console.log(`'${category}' 카테고리가 삭제 되었습니다 !`)
       return Category.deleteCategory(category) // 카테고리 삭제
-    } else {
-      // 삭제할 카테고리가 없음
-      console.log('삭제할 카테고리가 존재하지 않습니다 !')
-      throw new Error('삭제할 카테고리가 존재하지 않습니다 !')
     }
+    // if there is no category to delete
+    throw new Error('삭제할 카테고리가 존재하지 않습니다 !')
   }
 
-  // 응답
-  const respond = () => {
+  // respond to client
+  const respond = data => {
     res.json({
       success: true,
       message: `'${category}' 카테고리가 삭제 되었습니다 !`,
-      category
+      value: data
     })
   }
 
-  // 에러가 생겼을 때
+  // respond error to client
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
+      value: []
     })
   }
 
@@ -227,10 +227,4 @@ exports.delete = (req, res) => {
     .then(remove)
     .then(respond)
     .catch(onError)
-}
-
-exports.temptmep = async (req, res) => {
-  res.json({
-    data: await Category.findPostNames('Algorithm')
-  })
 }
