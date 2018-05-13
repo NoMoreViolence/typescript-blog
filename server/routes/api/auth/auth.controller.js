@@ -1,12 +1,12 @@
-// jwt 토큰 발급하기 위해서 토큰 불러옵니다 어허~
+// require jwt token
 const jwt = require('jsonwebtoken')
-// 디비 모델을 불러옵니다
+// require user schema
 const User = require('./../../../models/User')
-// 암호화
+// crypto module
 const crypto = require('crypto')
 
 /*
-    POST /api/auth
+    POST /api/auth/register
     {
         username,
         password
@@ -15,17 +15,21 @@ const crypto = require('crypto')
 exports.register = (req, res) => {
   console.log('회원가입 비밀번호: ' + req.body.password)
 
+  // crypto password
   req.body.password = crypto
     .createHash('sha512')
     .update(req.body.password)
     .digest('base64')
+
+  // request value
   const { username, password } = req.body
+  // user database data
   let newUser = null
 
   // create a new user if does not exist
   const create = user => {
     if (user) {
-      throw new Error('username exists')
+      throw new Error('유저네임 중복 - 회원가입 실패')
     } else {
       return User.create(username, password)
     }
@@ -33,14 +37,18 @@ exports.register = (req, res) => {
 
   // count the number of the user
   const count = user => {
+    // the create DB data
     newUser = user
+    // user number
     console.log(User.count({}).exec())
+    // return user count
     return User.count({}).exec()
   }
 
   // assign admin if count is 1
   const assign = count => {
     if (count === 1) {
+      // Upgrade to Admin
       return newUser.assignAdmin()
     } else {
       // if not, return a promise that returns false
@@ -51,7 +59,7 @@ exports.register = (req, res) => {
   // respond to the client
   const respond = isAdmin => {
     res.json({
-      message: 'registered successfully',
+      message: '정상적인 작업 - 회원가입 성공',
       admin: isAdmin ? true : false
     })
   }
@@ -80,17 +88,17 @@ exports.register = (req, res) => {
     }
 */
 exports.login = (req, res) => {
-  console.log('로그인 비밀번호: ' + req.body.password)
-  console.log(req.app.get('jwt-secret'))
-
+  // if compare to DB password, password have to cryptoed, DB has only hash data
   req.body.password = crypto
     .createHash('sha512')
     .update(req.body.password)
     .digest('base64')
   const { username, password } = req.body
-  // JWT 시크릿값 저장해놓았던 거 불러오기
+
+  // require jwt secret Value
   const secret = req.app.get('jwt-secret')
 
+  // if user is not admin, can't login
   const adminCheck = user => {
     if (user.admin === true) return user
     throw new Error('관리자가 아닙니다 !')

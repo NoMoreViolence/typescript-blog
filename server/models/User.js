@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+// User Schema
 const User = new Schema({
   username: String,
   password: String,
@@ -18,18 +19,19 @@ User.statics.create = function(username, password) {
   return user.save()
 }
 
-// 유저네임 찾기!
+// find Useranme
 User.statics.findOneByUsername = function(username) {
   return this.findOne({
     username
   }).exec()
 }
 
-// 패스워드 같은지 확이해주는 함수랍니다
+// check password === password
 User.methods.verify = function(password) {
   return this.password === password
 }
 
+// Upgrade to Admin
 User.methods.assignAdmin = function() {
   this.admin = true
   return this.save()

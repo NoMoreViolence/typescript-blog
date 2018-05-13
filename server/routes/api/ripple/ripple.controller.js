@@ -16,7 +16,7 @@ exports.comment = (req, res) => {
   const create = () => Ripple.create(message)
 
   // 응답
-  const response = data => {
+  const response = () => {
     res.json({
       success: true
     })

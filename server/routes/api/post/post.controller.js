@@ -2,11 +2,11 @@ const Post = require('./../../../models/Post')
 const Category = require('./../../../models/Category')
 
 /*
-    GET /api/post/allPosts
+    GET /api/categories/posts
     {}
 */
 // 모든 포스트의 정보 가져오기
-exports.allPosts = (req, res) => {
+exports.allPostsTitleAndSubTitle = (req, res) => {
   const respond = result => {
     if (result) {
       // 포스트가 한개라도 존재할 때
@@ -79,55 +79,63 @@ exports.post = (req, res) => {
 }
 
 /*
-    POST /api/post/create
+    POST /api/:category/:title
     {
-        token,
-        category,
-        title,
-        subTitle,
-        mainText
+      subTitle: string,
+      mainText: string,
+    }
+    {
+      'x-access-token': sessionStorage.getItem('token')
     }
 */
-// 포스트 생성
+// create Post
 exports.create = (req, res) => {
-  const { category, title, subTitle, mainText } = req.body
+  // category, post's title, subTitle, and mainText of the post
+  const { category, title } = req.params
+  const { subTitle, mainText } = req.body
+  // this is the category's _id
+  let categoryID = null
 
-  // 중복된 카테고리나, 입력값이 없을 때 오류를 보냄
+  // category double check
+  const titleDoubleCheck = exists => {
+    // if the category is real
+    if (exists) {
+      // confirm the category's _id
+      categoryID = exists.id
+      // return the title for check title double check
+      return Post.checkTitle(title)
+    }
+    // if there is no ${category}
+    throw new Error(`'${category}' 카테고리가 존재하지 않습니다 !`)
+  }
+
+  // create part
   const create = exists => {
     if (exists) {
-      throw new Error('입력값이 없거나 중복된 Title 값 입니다')
-    } else {
-      return Post.createPost(category, title, subTitle, mainText) // 카테고리 생성
+      throw new Error(`${title}' 포스트가 이미 존재합니다, 다른 title명을 선택해 주세요 !`)
     }
+    return Post.createPost()
   }
 
-  // 포스트 생성 후 같은 카테고리 포스트의 _id 값 객체만을 전달받았음
-  const categoryRef = newPosts => {
-    // 카테고리와 함께 객체를 보냄
-    return Category.update(newPosts, category)
-  }
-
-  // 모든 작업이 완료가 되면
-  const respond = result => {
+  const respond = data => {
     res.json({
       success: true,
-      message: 'Create Category Success',
-      title,
-      subTitle
+      message: `'${title}' 포스트가 생성 되었습니다 !`,
+      value: data
     })
   }
 
-  // 에러가 생겼을 때
-  const onError = error => {
+  const onError = err => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: err.message,
+      value: []
     })
   }
 
-  Post.checkTitle(title)
+  Category.findSameCategory(category)
+    .then(titleDoubleCheck)
     .then(create)
-    .then(categoryRef)
     .then(respond)
     .catch(onError)
 }
@@ -144,15 +152,16 @@ exports.create = (req, res) => {
 */
 // 포스트 수정
 exports.change = (req, res) => {
-  const { category, title, oldTitle, subTitle, mainText } = req.body
+  const {
+    category, title, oldTitle, subTitle, mainText
+  } = req.body
 
   // 옛날 타이틀로 조회해서 수정할 포스트가 있는지 확인
   const findSamePost = exists => {
     if (exists) {
       return Post.checkTitle(oldTitle)
-    } else {
-      throw new Error(`"${category}" 라는 카테고리 이름이 없습니다.`)
     }
+    throw new Error(`"${category}" 라는 카테고리 이름이 없습니다.`)
   }
 
   // 포스트 변경
@@ -160,9 +169,8 @@ exports.change = (req, res) => {
     if (exists) {
       await Post.Motify(category, title, oldTitle, subTitle, mainText)
       return exists
-    } else {
-      throw new Error(`"${title}" 포스트가 존재하지 않습니다`)
     }
+    throw new Error(`"${title}" 포스트가 존재하지 않습니다`)
   }
 
   // 카테고리의 Ref 변경
@@ -240,15 +248,14 @@ exports.delete = (req, res) => {
       await Post.deletePost(title)
       // 그 포스트의 카테고리값을 전송
       return exists.category
-    } else {
-      throw new Error(`"${title}" 이라는 포스트가 존재하지 않습니다`)
     }
+    throw new Error(`"${title}" 이라는 포스트가 존재하지 않습니다`)
   }
 
   // 카테고리 Ref 업데이트
-  const update = async category => {
+  const update = async category =>
     // 현재 카테고리의 post 상속을 변경
-    return await Category.update(
+    await Category.update(
       await Post.find(
         { category },
         {
@@ -262,7 +269,6 @@ exports.delete = (req, res) => {
       ).exec(),
       category
     )
-  }
 
   const respond = () => {
     res.json({

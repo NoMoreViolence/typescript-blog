@@ -37,7 +37,7 @@ db.once('open', () => {
   console.log("We're connnected")
 })
 
-// 서버 열어 버리기~
+// 서버 열어 버리기
 app.listen(port, () => {
   console.log(`server is running at http://localhost:${port}`)
 })
