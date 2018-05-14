@@ -1,22 +1,42 @@
 const Category = require('./../../../models/Category')
-
+const Post = require('./../../../models/Post')
 /*
     public
     GET /api/categories
+    GET /api/:category
 */
-// 모든 카테고리만 검색 후 출력
-exports.allCategories = (req, res) => {
-  // 카테고리 검색
-  const findAllCategories = () => Category.findAllCategories()
+// print All category
+exports.showTitleAndSubTitle = (req, res) => {
+  const { category } = req.params
 
+  // All category Search data === data
   const response = data => {
-    res.json({
-      success: true,
-      message: '모든 카테고리 불러오는 작업 성공',
-      value: data
-    })
+    // respond to client with all category and all category data ( title, subTitle )
+    if (category === 'categories') {
+      res.json({
+        success: true,
+        message: '모든 카테고리 정보 불러오는 작업 성공 !',
+        value: data
+      })
+      return
+    }
+
+    // if the category is fake or none
+    if (data.length === 0) {
+      throw new Error(`'${category}' 카테고리가 존재하지 않습니다 !`)
+    }
+
+    if (category !== 'categories') {
+      // respond to client with category and category data ( title, subTitle )
+      res.json({
+        success: true,
+        message: `'${category}' 카테고리 정보 불러오는 작업 성공 !`,
+        value: data
+      })
+    }
   }
 
+  // if Error
   const onError = err => {
     res.status(403).json({
       success: false,
@@ -25,49 +45,9 @@ exports.allCategories = (req, res) => {
     })
   }
 
-  // 카테고리를 찾는다
-  findAllCategories()
+  // find Category
+  Category.findCategoryOrCategories(category)
     .then(response)
-    .catch(onError)
-}
-
-/*
-    public
-    GET /api/:category
-*/
-// Bring post names of req.params.category
-exports.selectedPostNames = (req, res) => {
-  // the value of url params  => /api/:category
-  const { category } = req.params
-
-  // if category exist
-  const search = exists => {
-    if (exists) {
-      return Category.findPostNames(category)
-    }
-    throw new Error('없는 카테고리 값 입니다 !')
-  }
-
-  const respond = result => {
-    res.json({
-      success: true,
-      message: '특정 카테고리의 포스트들의 이름 가져오는 작업 성공 !',
-      value: result
-    })
-  }
-
-  // 에러가 생겼을 때
-  const onError = error => {
-    res.status(409).json({
-      success: false,
-      message: error.message,
-      value: []
-    })
-  }
-
-  Category.findSameCategory(category)
-    .then(search)
-    .then(respond)
     .catch(onError)
 }
 
@@ -82,7 +62,7 @@ exports.selectedPostNames = (req, res) => {
     }
 */
 // Create category
-exports.create = (req, res) => {
+exports.categoryCreate = (req, res) => {
   const { category } = req.params
 
   console.log(category)
@@ -114,6 +94,7 @@ exports.create = (req, res) => {
     })
   }
 
+  // Promise
   Category.findSameCategory(category)
     .then(create)
     .then(respond)
@@ -130,8 +111,8 @@ exports.create = (req, res) => {
       'x-access-token': seesionStorage.getItem('token')
     }
 */
-// 카테고리 변경
-exports.change = (req, res) => {
+// change Category
+exports.categoryChange = (req, res) => {
   // params.category, body.changeCategory
   const { category } = req.params
   const { changeCategory } = req.body
@@ -175,6 +156,7 @@ exports.change = (req, res) => {
     })
   }
 
+  // Promise
   Category.findSameCategory(category)
     .then(trimCheck)
     .then(change)
@@ -185,25 +167,32 @@ exports.change = (req, res) => {
 /*
     DELETE /api/:category
     {
+
+    },
+    {
         'x-access-token': sessionStorage.getItem('token')
     }
 */
-// 카테고리 삭제
-exports.delete = (req, res) => {
+// delete Category
+exports.categoryDelete = (req, res) => {
   // the category to delete
   const { category } = req.params
 
-  // category delete Part
-  const remove = exists => {
-    // there is category to delete
+  // delete category
+  const removeCategory = async exists => {
     if (exists) {
       // category delete
-      console.log(`'${category}' 카테고리가 삭제 되었습니다 !`)
-      return Category.deleteCategory(category) // 카테고리 삭제
+      console.log(`'${exists.category}' 카테고리가 삭제 되었습니다 !`)
+      return await Category.deleteCategory(exists.category) // delete Category
     }
     // if there is no category to delete
     throw new Error('삭제할 카테고리가 존재하지 않습니다 !')
   }
+
+  // delete posts
+  const removePosts = categoryID =>
+    // delte posts that has deleted category's _id
+    Post.deletePostsOfDeletedCategory(categoryID)
 
   // respond to client
   const respond = data => {
@@ -223,8 +212,10 @@ exports.delete = (req, res) => {
     })
   }
 
+  // Promise
   Category.findSameCategory(category)
-    .then(remove)
+    .then(removeCategory)
+    .then(removePosts)
     .then(respond)
     .catch(onError)
 }
