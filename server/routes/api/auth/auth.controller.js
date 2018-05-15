@@ -13,7 +13,7 @@ const crypto = require('crypto')
     }
 */
 exports.register = (req, res) => {
-  console.log('회원가입 비밀번호: ' + req.body.password)
+  console.log(`회원가입 비밀번호: ${req.body.password}`)
 
   // crypto password
   req.body.password = crypto
@@ -46,21 +46,20 @@ exports.register = (req, res) => {
   }
 
   // assign admin if count is 1
-  const assign = count => {
-    if (count === 1) {
+  const assign = adminCount => {
+    if (adminCount === 1) {
       // Upgrade to Admin
       return newUser.assignAdmin()
-    } else {
-      // if not, return a promise that returns false
-      return Promise.resolve(false)
     }
+    // if not, return a promise that returns false
+    return Promise.resolve(false)
   }
 
   // respond to the client
   const respond = isAdmin => {
     res.json({
       message: '정상적인 작업 - 회원가입 성공',
-      admin: isAdmin ? true : false
+      admin: !!isAdmin
     })
   }
 
@@ -76,7 +75,7 @@ exports.register = (req, res) => {
     .then(create)
     .then(count)
     .then(assign)
-    .then(respon)
+    .then(respond)
     .catch(onError)
 }
 
@@ -100,6 +99,7 @@ exports.login = (req, res) => {
 
   // if user is not admin, can't login
   const adminCheck = user => {
+    console.log(user)
     if (user.admin === true) return user
     throw new Error('관리자가 아닙니다 !')
   }
@@ -108,6 +108,7 @@ exports.login = (req, res) => {
   const check = user => {
     if (!user) {
       // user does not exist
+      console.log("login failed, user doesn't exists ")
       throw new Error('유저가 존재하지 않습니다 !')
     } else {
       // user exists, check the password
@@ -133,9 +134,8 @@ exports.login = (req, res) => {
           )
         })
         return p
-      } else {
-        throw new Error('아이디 비밀번호 오류입니다 !')
       }
+      throw new Error('아이디 비밀번호 오류입니다 !')
     }
   }
 
@@ -143,7 +143,8 @@ exports.login = (req, res) => {
   const respond = token => {
     console.log('로그인 성공 !')
     res.json({
-      message: true,
+      success: true,
+      message: 'login success',
       token
     })
   }
@@ -151,7 +152,8 @@ exports.login = (req, res) => {
   // error occured
   const onError = error => {
     res.status(409).json({
-      message: false
+      success: false,
+      message: error.message
     })
   }
 

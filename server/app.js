@@ -27,6 +27,7 @@ app.use(express.static(path.join(__dirname, '../Client/build')))
 /* =======================
   모오옹고디비 서버에 연! 결!
 ========================== */
+mongoose.set('debug', true)
 mongoose.connect(config.mongodbUri)
 const db = mongoose.connection
 // 에러나면

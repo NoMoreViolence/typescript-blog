@@ -119,8 +119,11 @@ exports.categoryChange = (req, res) => {
 
   // if changeCategory value is none, throw Error
   const trimCheck = exists => {
-    if (changeCategory.trim() === '') {
-      // there is no input body.changeCategory data
+    if (exists) {
+      // if changeCategory === Existing category
+      throw new Error('중복된 카테고리로는 변경이 불가능 합니다 !')
+    } else if (changeCategory.trim() === '') {
+      // if changeCategory === ''
       throw new Error('입력값이 없습니다 !')
     }
     return exists

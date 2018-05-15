@@ -12,33 +12,47 @@ const Post = new Schema({
   date: { type: Date, default: Date.now } // 포스팅 날짜
 })
 
-// 모든 포스트의
-Post.statics.viewMainPage = function () {
+// show the title, subTitle and category
+Post.statics.findAllPostsTitleAndSubTitle = function () {
   // 포스트의 카테고리, 타이틀, 부제목만 리턴
   return this.find(
     {},
     {
-      title: 1,
-      subTitle: 1,
-      category: 1
+      _id: 0,
+      __v: 0,
+      mainText: 0,
+      comment: 0
     }
   )
+    .populate({ path: 'category', select: 'category -_id' })
     .sort({ date: -1 })
     .exec()
 }
 
-// 포스트 이름 중복 체크, 포스트 이름 찾기
+// show the one Post
+Post.statics.findPost = function (title) {
+  return this.findOne({ title }, { __v: 0 }).populate({ path: 'category', select: '__v' })
+}
+
+// post name double Check
 Post.statics.checkTitle = function (title) {
   return this.findOne({ title }).exec()
 }
 
-// 포스트 생성 메소드
+// post Create
 Post.statics.createPost = async function (category, title, subTitle, mainText) {
-  return this.
+  const post = new this({
+    title,
+    subTitle,
+    mainText,
+    category
+  })
+
+  return post.save()
 }
 
-// 포스트 수정 함수
-Post.statics.Motify = function (category, title, oldTitle, subTitle, mainText) {
+// post Change
+Post.statics.changePost = function (category, oldTitle, title, subTitle, mainText) {
   return this.findOneAndUpdate(
     { title: oldTitle },
     {
@@ -55,9 +69,17 @@ Post.statics.findComment = function (title) {
   return this.find({ title }).exec()
 }
 
-// 포스트 삭제
+/*
+  delete Post Task
+*/
+// post Remove
 Post.statics.deletePost = function (title) {
   return this.remove({ title }).exec()
+}
+
+// delete posts when category deleted
+Post.statics.deletePostsOfDeletedCategory = function (categoryID) {
+  return this.remove({ category: categoryID }).exec()
 }
 
 module.exports = mongoose.model('post', Post)

@@ -5,17 +5,17 @@ const Category = require('./../../../models/Category')
     GET /api/categories/posts
     {}
 */
-// 모든 포스트의 정보 가져오기
+// return all posts data
 exports.allPostsTitleAndSubTitle = (req, res) => {
   const respond = result => {
+    // return post data to client
     if (result) {
-      // 포스트가 한개라도 존재할 때
       res.json({
         success: true,
-        result
+        value: result
       })
     } else {
-      // 포스트가 존재하지 않을 때
+      // if post data is not exists
       throw new Error('포스트가 존재하지 않습니다')
     }
   }
@@ -24,56 +24,65 @@ exports.allPostsTitleAndSubTitle = (req, res) => {
     res.status(409).json({
       success: false,
       message: error.message,
-      result: []
+      value: []
     })
   }
 
-  Post.viewMainPage()
+  // Promise
+  Post.findAllPostsTitleAndSubTitle()
     .then(respond)
     .catch(onError)
 }
 
 /*
-    GET /api/post/:postName
+    GET /api/:category/:title
     {}
 */
-// 특정 포스트의 정보 가져오기
-exports.post = (req, res) => {
-  const { title } = req.params
+// Bring the data of :title
+exports.showPost = (req, res) => {
+  const { category, title } = req.params
 
-  // 타이틀 값 받아서 응답하는 부분
+  const dummyData = {
+    posts: [],
+    category: ''
+  }
+
+  // return to client with post value
   const respond = result => {
+    // there is post data
     if (result) {
-      res.json({
-        success: true,
-        message: 'search post success',
-        result
-      })
+      // there is title
+      if (result.posts.length !== 0) {
+        res.json({
+          success: true,
+          message: '포스트 불러오기 성공',
+          value: result
+        })
+      } else {
+        // title is not real
+        throw new Error(`'${title}' 포스트가 존재하지 않습니다`)
+      }
     } else {
+      // if there is no data
       res.json({
         success: false,
-        message: "can't find title",
-        result: {
-          _id: '',
-          title: '',
-          subTitle: '',
-          mainText: '',
-          comment: []
-        }
+        message: `'${category}' 카테고리가 존재하지 않습니다`,
+        value: dummyData
       })
     }
   }
 
-  // 에러
+  // error, I dont' know
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
+      value: dummyData
     })
   }
 
-  // 응답
-  Post.checkTitle(title)
+  // Promise
+  Category.showPost(category, title)
     .then(respond)
     .catch(onError)
 }
@@ -89,7 +98,7 @@ exports.post = (req, res) => {
     }
 */
 // create Post
-exports.create = (req, res) => {
+exports.postCreate = (req, res) => {
   // category, post's title, subTitle, and mainText of the post
   const { category, title } = req.params
   const { subTitle, mainText } = req.body
@@ -114,7 +123,17 @@ exports.create = (req, res) => {
     if (exists) {
       throw new Error(`${title}' 포스트가 이미 존재합니다, 다른 title명을 선택해 주세요 !`)
     }
-    return Post.createPost()
+    return Post.createPost(categoryID, title, subTitle, mainText)
+  }
+
+  // category Ref Update
+  const categoryRefPush = data => {
+    // if the post data is exist
+    if (data) {
+      // update category posts _id
+      return Category.PostsRefPush(category, data.id)
+    }
+    throw new Error('포스트 생성 과정 중 에러 발생 !')
   }
 
   const respond = data => {
@@ -136,102 +155,115 @@ exports.create = (req, res) => {
   Category.findSameCategory(category)
     .then(titleDoubleCheck)
     .then(create)
+    .then(categoryRefPush)
     .then(respond)
     .catch(onError)
 }
 
 /*
-    PUT /api/post/change
+    PUT /api/:category/:title
     {
-        token,
-        category,
-        title,
-        subTitle,
-        mainText
+      changeCategory: category
+      changeTitle: string,
+      changeSubTitle: string,
+      changeMainText: string
+    },
+    {
+      'x-access-token': sessionStorage.getItem('token')
     }
 */
 // 포스트 수정
-exports.change = (req, res) => {
+exports.postChange = async (req, res) => {
+  // :category, :title
+  const { category, title } = req.params
+  // body. body. body. body.
   const {
-    category, title, oldTitle, subTitle, mainText
+    changeCategory, changeTitle, changeSubTitle, changeMainText
   } = req.body
 
-  // 옛날 타이틀로 조회해서 수정할 포스트가 있는지 확인
-  const findSamePost = exists => {
+  let postID = null
+  let changeCategoryID = null
+
+  const dummyData = {}
+
+  // check category & title is exist
+  const categoryAndTitleCheck = exists => {
+    // there is category data
     if (exists) {
-      return Post.checkTitle(oldTitle)
+      // there is category & title datea
+      if (exists.posts.length !== 0) {
+        // return changeCategory's existence
+        postID = exists.posts[0].id
+        return Category.findSameCategory(changeCategory)
+      }
+      // title none
+      throw new Error(`'${title}' 포스트가 존재하지 않습니다`)
+    } else {
+      // category none
+      throw new Error(`'${category}' 카테고리가 존재하지 않습니다`)
     }
-    throw new Error(`"${category}" 라는 카테고리 이름이 없습니다.`)
   }
 
-  // 포스트 변경
-  const motify = async exists => {
+  // check changeCategory is exist
+  const changeCategoryCheck = exists => {
+    // if changeCategory is exist
     if (exists) {
-      await Post.Motify(category, title, oldTitle, subTitle, mainText)
-      return exists
+      changeCategoryID = exists.id
+      // return changeTitle's existence
+      return Post.findPost(changeTitle)
     }
-    throw new Error(`"${title}" 포스트가 존재하지 않습니다`)
+    // changeCategory none
+    throw new Error(`'${changeCategory}' 가 존재하지 않아 변경이 불가능 합니다 !`)
   }
 
-  // 카테고리의 Ref 변경
-  const update = async post => {
-    // 옛날 카테고리의 post 상속을 변경
-    await Category.update(
-      await Post.find(
-        { category: post.category },
-        {
-          title: 0,
-          subTitle: 0,
-          mainText: 0,
-          category: 0,
-          comment: 0,
-          date: 0
-        }
-      ).exec(),
-      post.category
-    )
-    // 현재 카테고리의 post 상속을 변경
-    await Category.update(
-      await Post.find(
-        { category },
-        {
-          title: 0,
-          subTitle: 0,
-          mainText: 0,
-          category: 0,
-          comment: 0,
-          date: 0
-        }
-      ).exec(),
-      category
-    )
-    return true
+  // check changeTitle is exist
+  const changeTitleCheckAndChangePost = exists => {
+    // if changeTitle is exist
+    if (exists) {
+      // Duplicate changeTitle
+      throw new Error(`'${changeTitle}' 타이틀은 이미 존재하는 타이틀이라 변경이 불가능 합니다 !`)
+    }
+    // return changePost()
+    return Post.changePost(changeCategoryID, title, changeTitle, changeSubTitle, changeMainText)
   }
 
-  const respond = () => {
+  // category & changeCategory Ref Update
+  const categoryRefUpdate = async () => {
+    await Category.PostsRefPop(category, postID)
+    await Category.PostsRefPush(changeCategory, postID)
+    return Category.showPost(changeCategory, changeTitle)
+  }
+
+  // Post change Success
+  const respond = data => {
     res.json({
       success: true,
-      message: 'Motify Post Success'
+      message: `'${title}' 포스트 변경 성공 !`,
+      value: data
     })
   }
 
+  // error, I dont' know
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
+      value: dummyData
     })
   }
 
-  Category.findSameCategory(category)
-    .then(findSamePost)
-    .then(motify)
-    .then(update)
+  // Promise
+  Category.showPost(category, title)
+    .then(categoryAndTitleCheck)
+    .then(changeCategoryCheck)
+    .then(changeTitleCheckAndChangePost)
+    .then(categoryRefUpdate)
     .then(respond)
     .catch(onError)
 }
 
 /*
-    DELETE /api/post/delete
+    DELETE /api/:category/:title
     {
         token,
         title,
@@ -239,55 +271,54 @@ exports.change = (req, res) => {
 */
 // 포스트 삭제
 exports.delete = (req, res) => {
-  const { title } = req.body
-  console.log(title)
-  // 포스트 삭제
-  const remove = async exists => {
+  const { category, title } = req.params
+  // req.params.title._id
+  let postID = null
+
+  const deletePost = exists => {
+    // there is category data
     if (exists) {
-      // 포스트는 삭제하고
-      await Post.deletePost(title)
-      // 그 포스트의 카테고리값을 전송
-      return exists.category
+      // there is category & title datea
+      if (exists.posts.length !== 0) {
+        // return changeCategory's existence
+        postID = exists.posts[0].id
+        return Post.deletePost(title)
+      }
+      // title none
+      throw new Error(`'${title}' 포스트가 존재하지 않습니다 !`)
+    } else {
+      // category none
+      throw new Error(`'${category}' 카테고리가 존재하지 않습니다 !`)
     }
-    throw new Error(`"${title}" 이라는 포스트가 존재하지 않습니다`)
   }
 
-  // 카테고리 Ref 업데이트
-  const update = async category =>
-    // 현재 카테고리의 post 상속을 변경
-    await Category.update(
-      await Post.find(
-        { category },
-        {
-          title: 0,
-          subTitle: 0,
-          mainText: 0,
-          category: 0,
-          comment: 0,
-          date: 0
-        }
-      ).exec(),
-      category
-    )
+  // pop deleted posts id
+  const categoryRefPop = exists => {
+    if (exists) {
+      return Category.PostsRefPop(category, postID)
+    }
+    throw new Error(`${category} 삭제되지 않았습니다 !`)
+  }
 
   const respond = () => {
     res.json({
       success: true,
-      message: `"${title}" 포스트의 삭제 성공`
+      message: `'${title}' 포스트 삭제 성공 !`,
+      value: `category: ${category}, title: ${title}`
     })
   }
 
-  // 에러 상황일 때
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
+      value: []
     })
   }
 
-  Post.checkTitle(title) // 존재하는 타이틀인지 체크
-    .then(remove) // 진짜 있는 타이틀이면 삭제
-    .then(update) // 삭제했기 때문에 없어진 카테고리의 포스트 Ref 재정의
-    .then(respond) // 서버에 응답
-    .catch(onError) // 에러 시
+  Category.showPost(category, title)
+    .then(deletePost)
+    .then(categoryRefPop)
+    .then(respond)
+    .catch(onError)
 }

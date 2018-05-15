@@ -68,10 +68,28 @@ Category.statics.deleteCategory = function (category) {
 
 */
 
-// $category$ show
+// $category$ ref push
 // return category
-Category.statics.PostsRefUpdate = function (postID, category) {
+Category.statics.PostsRefPush = function (category, postID) {
   return this.findOneAndUpdate({ category }, { $push: { posts: postID } })
+}
+
+// $category$ ref pop
+// return category
+Category.statics.PostsRefPop = function (category, postID) {
+  return this.findOneAndUpdate({ category }, { $pop: { posts: postID } })
+}
+
+// $post$ show
+// return post data
+Category.statics.showPost = function (category, title) {
+  return this.findOne(
+    { category },
+    {
+      _id: 0,
+      __v: 0
+    }
+  ).populate({ path: 'posts', select: '-__v -category', match: { title } })
 }
 
 // export
