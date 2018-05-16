@@ -16,6 +16,7 @@ Category.statics.findCategoryOrCategories = function (category) {
       .populate({
         path: 'posts',
         select: 'title subTitle date',
+        options: { sort: { date: -1 } },
         populate: { path: 'category', select: 'category' }
       })
       .sort({ category: 1 })
@@ -23,7 +24,7 @@ Category.statics.findCategoryOrCategories = function (category) {
   }
   // seleted category
   return this.find({ category }, { category: 1 })
-    .populate({ path: 'posts', select: 'title subTitle date' })
+    .populate({ path: 'posts', select: 'title subTitle date', options: { sort: { date: -1 } } })
     .sort({ category: 1 })
     .exec()
 }
