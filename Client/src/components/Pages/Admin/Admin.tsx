@@ -7,38 +7,41 @@ import CategoryAddContainer from 'containers/Admin/CategoryAddContainer'
 import CategoryChangeContainer from 'containers/Admin/CategoryChangeContainer'
 import CategoryDeleteContainer from 'containers/Admin/CategoryDeleteContainer'
 
-const Admin = ({}) => {
-  return (
+const Admin: React.SFC = () => (
+  <Container>
     <Container>
-      <Container>
-        <Row>
-          <Col>
-            <h1 className="category-container">Category</h1>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <CurrentCategoryContainer />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <CategoryAddContainer />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <CategoryChangeContainer />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <CategoryDeleteContainer />
-          </Col>
-        </Row>
-      </Container>
+      <Row>
+        <Col>
+          <h1 className="category-container">Category</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <CurrentCategoryContainer />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <CategoryAddContainer />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <CategoryChangeContainer />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <CategoryDeleteContainer />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <h1 className="post-container">Post</h1>
+        </Col>
+      </Row>
     </Container>
-  )
-}
+  </Container>
+)
 
 export default Admin
