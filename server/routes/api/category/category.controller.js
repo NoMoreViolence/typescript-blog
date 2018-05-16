@@ -118,27 +118,22 @@ exports.categoryChange = (req, res) => {
   const { changeCategory } = req.body
 
   // if changeCategory value is none, throw Error
-  const trimCheck = exists => {
+  const changeCategoryCheck = exists => {
     if (exists) {
-      // if changeCategory === Existing category
-      throw new Error('중복된 카테고리로는 변경이 불가능 합니다 !')
-    } else if (changeCategory.trim() === '') {
-      // if changeCategory === ''
-      throw new Error('입력값이 없습니다 !')
+      return Category.findSameCategory(changeCategory)
     }
-    return exists
+    throw new Error(`'${category}' 카테고리가 존재하지 않습니다 !`)
   }
 
   // category change Part
   const change = exists => {
     // if there is category to change
     if (exists) {
-      console.log(`'${exists.category}' 카테고리가 '${changeCategory}' 로 변경 되었습니다 !`)
-      // change Category
-      return Category.changeCategory(category, changeCategory)
+      // there is no category to change
+      throw new Error(`'${changeCategory}' 카테고리가 이미 존재해서 변경이 불가능 합니다 !`)
     }
-    // there is no category to change
-    throw new Error('변경할 카테고리가 존재하지 않습니다 !')
+    // change Category
+    return Category.changeCategory(category, changeCategory)
   }
 
   // response to client
@@ -161,7 +156,7 @@ exports.categoryChange = (req, res) => {
 
   // Promise
   Category.findSameCategory(category)
-    .then(trimCheck)
+    .then(changeCategoryCheck)
     .then(change)
     .then(respond)
     .catch(onError)
@@ -180,13 +175,20 @@ exports.categoryChange = (req, res) => {
 exports.categoryDelete = (req, res) => {
   // the category to delete
   const { category } = req.params
+  const { doubleCheck } = req.query
 
   // delete category
-  const removeCategory = async exists => {
+  const removeCategory = exists => {
+    console.log(exists.category)
     if (exists) {
-      // category delete
-      console.log(`'${exists.category}' 카테고리가 삭제 되었습니다 !`)
-      return await Category.deleteCategory(exists.category) // delete Category
+      // category Double Check Success
+      if (exists.category === doubleCheck) {
+        // category delete
+        console.log(`'${exists.category}' 카테고리가 삭제 되었습니다 !`)
+        return Category.deleteCategory(exists.category) // delete Category
+      }
+      // category Double Check Failed
+      throw new Error('카테고리 중복 체크 실패 !')
     }
     // if there is no category to delete
     throw new Error('삭제할 카테고리가 존재하지 않습니다 !')
@@ -198,13 +200,12 @@ exports.categoryDelete = (req, res) => {
     Post.deletePostsOfDeletedCategory(categoryID)
 
   // respond to client
-  const respond = data => {
+  const respond = data =>
     res.json({
       success: true,
       message: `'${category}' 카테고리가 삭제 되었습니다 !`,
       value: data
     })
-  }
 
   // respond error to client
   const onError = error => {

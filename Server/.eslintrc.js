@@ -8,6 +8,8 @@ module.exports = {
     semi: [2, 'never'],
     'func-names': 0,
     'prefer-destructuring': 0,
-    'arrow-parens': 0
+    'arrow-parens': 0,
+    'no-return-await': 0,
+    'max-len': ['error', { code: 115 }]
   }
 }
