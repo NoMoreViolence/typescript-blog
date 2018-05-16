@@ -11,9 +11,9 @@ import { StoreState } from 'store/modules'
 
 interface Props {
   loginLogined: boolean
-  category: [CategoryStateInside]
+  category: CategoryStateInside[]
   deleteCategoryInputValue: string
-  deleteCategorySelectValue: string
+  deleteCategoryCategoryValue: string
   CategoryActions: typeof CategoryActions
   LoginActions: typeof LoginActions
 }
@@ -26,8 +26,8 @@ const CategoryDeleteContainer = (Props: Props) => {
       categoryLoad={Props.CategoryActions.getCategory}
       deleteCategoryInputValue={Props.deleteCategoryInputValue}
       deleteCategoryInputChange={Props.CategoryActions.deleteCategoryInputChange}
-      deleteCategorySelectValue={Props.deleteCategorySelectValue}
-      deleteCategorySelectChange={Props.CategoryActions.deleteCategorySelectChange}
+      deleteCategoryCategoryValue={Props.deleteCategoryCategoryValue}
+      deleteCategoryCategoryChange={Props.CategoryActions.deleteCategoryCategoryChange}
       deleteCategory={Props.CategoryActions.deleteCategory}
       logout={Props.LoginActions.logout}
       categoryDone={Props.CategoryActions.categoryDone}
@@ -40,7 +40,7 @@ export default connect(
     loginLogined: Login.loginLogined,
     category: Category.categoryCategory,
     deleteCategoryInputValue: Category.deleteCategoryInputValue,
-    deleteCategorySelectValue: Category.deleteCategorySelectValue
+    deleteCategoryCategoryValue: Category.deleteCategoryCategoryValue
   }),
   dispatch => ({
     CategoryActions: bindActionCreators(CategoryActions, dispatch),

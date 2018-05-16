@@ -13,11 +13,11 @@ interface Props {
   // 로그인 변수
   loginLogined: boolean
   // 카테고리
-  category: [CategoryStateInside]
+  category: CategoryStateInside[]
   // 카테고리 체인지 인풋
   changeCategoryInputValue: string
   // 카테고리 체인지 셀렉트값
-  changeCategorySelectValue: string
+  changeCategoryCategoryValue: string
   // 각종 카테고리 변경 액션
   CategoryActions: typeof CategoryActions
   LoginActions: typeof LoginActions
@@ -31,8 +31,8 @@ const CategoryChangeContainer = (Props: Props) => {
       categoryLoad={Props.CategoryActions.getCategory}
       changeCategoryInputValue={Props.changeCategoryInputValue}
       changeCategoryInputChange={Props.CategoryActions.changeCategoryInputChange}
-      changeCategorySelectValue={Props.changeCategorySelectValue}
-      changeCategorySelectChange={Props.CategoryActions.changeCategorySelectChange}
+      changeCategoryCategoryValue={Props.changeCategoryCategoryValue}
+      changeCategoryCategoryChange={Props.CategoryActions.changeCategoryCategoryChange}
       changeCategory={Props.CategoryActions.changeCategory}
       logout={Props.LoginActions.logout}
       categoryDone={Props.CategoryActions.categoryDone}
@@ -45,7 +45,7 @@ export default connect(
     loginLogined: Login.loginLogined,
     category: Category.categoryCategory,
     changeCategoryInputValue: Category.changeCategoryInputValue,
-    changeCategorySelectValue: Category.changeCategorySelectValue
+    changeCategoryCategoryValue: Category.changeCategoryCategoryValue
   }),
   dispatch => ({
     CategoryActions: bindActionCreators(CategoryActions, dispatch),

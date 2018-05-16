@@ -18,13 +18,13 @@ import './CategoryDelete.css'
 
 interface Props {
   loginLogined: boolean
-  category: [CategoryStateInside]
+  category: CategoryStateInside[]
   categoryLoad: () => void
   deleteCategoryInputValue: string
   deleteCategoryInputChange: (value: string) => void
-  deleteCategorySelectValue: string
-  deleteCategorySelectChange: (value: string) => void
-  deleteCategory: (value: string) => any
+  deleteCategoryCategoryValue: string
+  deleteCategoryCategoryChange: (value: string) => void
+  deleteCategory: (category: string, doubleCheck: string) => any
   logout: () => void
   categoryDone: () => void
 }
@@ -60,7 +60,7 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
 
     // 삭제할 카테고리 선택
     public handleSelect = (e: Dropdown) => {
-      this.props.deleteCategorySelectChange(e.currentTarget.textContent)
+      this.props.deleteCategoryCategoryChange(e.currentTarget.textContent)
     }
 
     // 카테고리 삭제 요청
@@ -71,8 +71,8 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
         loginLogined,
         deleteCategoryInputValue,
         deleteCategoryInputChange,
-        deleteCategorySelectValue,
-        deleteCategorySelectChange,
+        deleteCategoryCategoryValue,
+        deleteCategoryCategoryChange,
 
         categoryLoad,
         deleteCategory,
@@ -84,12 +84,12 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
 
       if (
         deleteCategoryInputValue !== '' &&
-        deleteCategorySelectValue !== '삭제할 카테고리 선택' &&
+        deleteCategoryCategoryValue !== '삭제할 카테고리 선택' &&
         loginLogined !== false
       ) {
         // 카테고리 삭제 메소드
-        if (deleteCategoryInputValue === deleteCategorySelectValue) {
-          deleteCategory(deleteCategorySelectValue)
+        if (deleteCategoryInputValue === deleteCategoryCategoryValue) {
+          deleteCategory(deleteCategoryCategoryValue, deleteCategoryInputValue)
             .then((res: any) => {
               toast(res.value.data.message)
               categoryLoad()
@@ -112,7 +112,10 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
                 toast(err.response.data.message)
                 this.deleteCategoryInput.focus()
                 deleteCategoryInputChange('')
-                deleteCategorySelectChange('변경할 카테고리 선택')
+                deleteCategoryCategoryChange('변경할 카테고리 선택')
+              } else {
+                toast(err.response.data.message)
+                this.deleteCategoryInput.focus()
               }
             })
         } else {
@@ -127,7 +130,7 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
         } else if (deleteCategoryInputValue === '') {
           toast('삭제할 카테고리의 값을 넣어 주세요 !')
           this.deleteCategoryInput.focus()
-        } else if (deleteCategorySelectValue === '삭제할 카테고리 선택') {
+        } else if (deleteCategoryCategoryValue === '삭제할 카테고리 선택') {
           toast('삭제할 카테고리를 선택해 주세요 !')
         }
       }
@@ -135,10 +138,10 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
 
     public render() {
       const { deleteCategoryDropdown } = this.state
-      const { deleteCategoryInputValue, deleteCategorySelectValue } = this.props
+      const { deleteCategoryInputValue, deleteCategoryCategoryValue } = this.props
 
       // 데이터 받아서 정렬
-      const CurrentCategoryChangeBar = (data: [CategoryStateInside]) => {
+      const CurrentCategoryChangeBar = (data: CategoryStateInside[]) => {
         return data.map((object, i) => {
           return (
             <DropdownItem key={i} onClick={this.handleSelect}>
@@ -155,7 +158,7 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
             <InputGroup>
               <Dropdown isOpen={deleteCategoryDropdown} toggle={this.handleToogle}>
                 <DropdownToggle outline={true} color="danger" caret={true}>
-                  {deleteCategorySelectValue}
+                  {deleteCategoryCategoryValue}
                 </DropdownToggle>
                 <DropdownMenu>
                   <DropdownItem onClick={this.handleSelect}>변경할 카테고리 선택</DropdownItem>

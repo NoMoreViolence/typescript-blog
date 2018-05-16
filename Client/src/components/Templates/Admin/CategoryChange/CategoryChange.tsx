@@ -17,12 +17,12 @@ import './CategoryChange.css'
 
 interface Props {
   loginLogined: boolean
-  category: [CategoryStateInside]
+  category: CategoryStateInside[]
 
   changeCategoryInputValue: string
   changeCategoryInputChange: (value: string) => void
-  changeCategorySelectValue: string
-  changeCategorySelectChange: (value: string) => void
+  changeCategoryCategoryValue: string
+  changeCategoryCategoryChange: (value: string) => void
 
   categoryLoad: () => void
   changeCategory: (oldCategory: string, newCategory: string) => any
@@ -60,7 +60,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
 
     // 변경할 카테고리 선택
     public handleSelect = (e: Dropdown) => {
-      this.props.changeCategorySelectChange(e.currentTarget.textContent)
+      this.props.changeCategoryCategoryChange(e.currentTarget.textContent)
     }
 
     // 제출
@@ -70,8 +70,8 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       const {
         loginLogined,
         changeCategoryInputChange,
-        changeCategorySelectChange,
-        changeCategorySelectValue,
+        changeCategoryCategoryChange,
+        changeCategoryCategoryValue,
         changeCategoryInputValue,
 
         categoryLoad,
@@ -84,11 +84,11 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
 
       if (
         changeCategoryInputValue !== '' &&
-        changeCategorySelectValue !== '변경할 카테고리 선택' &&
+        changeCategoryCategoryValue !== '변경할 카테고리 선택' &&
         loginLogined !== false
       ) {
         // 카테고리 변경 메소드
-        changeCategory(changeCategorySelectValue, changeCategoryInputValue)
+        changeCategory(changeCategoryCategoryValue, changeCategoryInputValue)
           // 카테고리 변경 성공
           .then((res: any) => {
             toast(res.value.data.message)
@@ -110,7 +110,10 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
               toast(err.response.data.message)
               this.changeCategoryInput.focus()
               changeCategoryInputChange('')
-              changeCategorySelectChange('변경할 카테고리 선택')
+              changeCategoryCategoryChange('변경할 카테고리 선택')
+            } else {
+              toast(err.response.data.message)
+              this.changeCategoryInput.focus()
             }
           })
       } else {
@@ -121,7 +124,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
         } else if (changeCategoryInputValue === '') {
           toast('변경할 카테고리의 값을 넣어 주세요 !')
           this.changeCategoryInput.focus()
-        } else if (changeCategorySelectValue === '변경할 카테고리 선택') {
+        } else if (changeCategoryCategoryValue === '변경할 카테고리 선택') {
           toast('변경할 카테고리를 선택해 주세요 !')
         }
       }
@@ -129,10 +132,10 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
 
     public render() {
       const { changeCategoryDropdown } = this.state
-      const { changeCategoryInputValue, changeCategorySelectValue } = this.props
+      const { changeCategoryInputValue, changeCategoryCategoryValue } = this.props
 
       // 데이터 받아서 정렬
-      const CurrentCategoryChangeBar = (data: [CategoryStateInside]) => {
+      const CurrentCategoryChangeBar = (data: CategoryStateInside[]) => {
         return data.map((object, i) => {
           return (
             <DropdownItem key={i} onClick={this.handleSelect}>
@@ -149,7 +152,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
             <InputGroup>
               <Dropdown isOpen={changeCategoryDropdown} toggle={this.handleToogle}>
                 <DropdownToggle outline={true} color="info" caret={true}>
-                  {changeCategorySelectValue}
+                  {changeCategoryCategoryValue}
                 </DropdownToggle>
                 <DropdownMenu>
                   <DropdownItem onClick={this.handleSelect}>변경할 카테고리 선택</DropdownItem>
