@@ -11,7 +11,7 @@ import { StoreState } from 'store/modules'
 
 type Props = {
   // 메시지
-  Category: [CategoryStateInside]
+  Category: CategoryStateInside[]
   loginActions: typeof LoginActions
   loginLogined: boolean
 }

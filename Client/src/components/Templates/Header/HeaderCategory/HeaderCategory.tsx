@@ -5,7 +5,7 @@ import { CategoryStateInside } from 'store/modules/Category'
 import { toast } from 'react-toastify'
 
 interface Props {
-  Category: [CategoryStateInside]
+  Category: CategoryStateInside[]
   Logout: () => void
   Logined: boolean
 }
@@ -19,7 +19,7 @@ class HeaderCategory extends React.Component<Props> {
 
   public render() {
     // 데이터 받아서 정렬
-    const loadCategory = (data: [CategoryStateInside]) => {
+    const loadCategory = (data: any[]) => {
       return data.map((object, i) => {
         const url = `/${object.category}`
         return (
