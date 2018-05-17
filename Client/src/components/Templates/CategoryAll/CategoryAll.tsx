@@ -24,9 +24,7 @@ interface Props {
 class CategoryAll extends React.Component<Props> {
   // state
   public state = {
-    load: 10,
-    loaded: false,
-    postCount: 0
+    load: 10
   }
 
   // the load value, if it increase, the viewer can see many posts before
