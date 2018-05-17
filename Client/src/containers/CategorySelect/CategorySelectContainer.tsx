@@ -2,18 +2,16 @@ import * as React from 'react'
 import CategorySelect from 'components/Templates/CategorySelect'
 
 // category Actions
-import { CategoryActions, CategoryStateInside } from 'store/modules/Category'
+import { CategoryStateInside } from 'store/modules/Category'
 
 // redux modules & State Type
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import { StoreState } from 'store/modules'
 
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 interface Props {
   Category: CategoryStateInside[]
-  CategoryActions: typeof CategoryActions
 }
 
 class CategorySelectContainer extends React.Component<Props & RouteComponentProps<any>> {
@@ -33,8 +31,6 @@ export default withRouter(
     ({ Category }: StoreState) => ({
       Category: Category.categoryCategory
     }),
-    dispatch => ({
-      CategoryActions: bindActionCreators(CategoryActions, dispatch)
-    })
+    dispatch => ({})
   )(CategorySelectContainer)
 )

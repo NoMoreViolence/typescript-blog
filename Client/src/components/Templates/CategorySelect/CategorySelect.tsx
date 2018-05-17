@@ -69,7 +69,7 @@ class CategorySelect extends React.Component<Props> {
     }
 
     return (
-      <Container className="category-selected category-all">
+      <Container className="category-selected">
         <Row>
           <Col>
             <CardColumns>{postViewer(this.props.posts)}</CardColumns>

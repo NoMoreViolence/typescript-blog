@@ -120,9 +120,16 @@ export const CategoryActions = {
   // EveryThing is Gone
   categoryDone: createAction(CATEGORY_DONE)
 }
+export interface PostsStateInside {
+  date: Date
+  title: string
+  subTitle: string
+  category: { category: string }
+}
+
 // Category in Category State
 export interface CategoryStateInside {
-  posts: object[]
+  posts: PostsStateInside[]
   _id: string
   category: string
   __v: number
@@ -192,7 +199,7 @@ export default handleActions(
       produce(state, (draft: CategoryState) => {
         draft.categoryPending = false
         draft.categoryError = true
-        draft.categoryCategory = [{ posts: [{}], _id: '', category: '', __v: 0 }]
+        draft.categoryCategory = [{ posts: [], _id: '', category: '', __v: 0 }]
       }),
 
     // 추가할 카테고리 인풋값 변경
