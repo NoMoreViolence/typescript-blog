@@ -20,7 +20,7 @@ function postLogin(username: string, password: string) {
 
 // 자동로그인
 function getLogin() {
-  return axios.get('api/auth/check', {
+  return axios.get('/api/auth/check', {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': sessionStorage.getItem('token')
