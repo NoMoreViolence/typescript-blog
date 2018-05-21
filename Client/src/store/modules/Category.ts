@@ -90,7 +90,7 @@ export const CategoryActions = {
     // parameter,             payload
     text => text
   ),
-  addCategory: createAction(POST_ADD_CATEGORY, postCategoryAddAPI),
+  addCategory: createAction<any, string>(POST_ADD_CATEGORY, postCategoryAddAPI),
   // category Add
 
   // category Change
@@ -102,7 +102,7 @@ export const CategoryActions = {
     PATCH_CHANGE_CATEGORY_CATEGORY_CHANGE,
     value => value
   ),
-  changeCategory: createAction(PATCH_CHANGE_CATEGORY, patchCategoryChangeAPI),
+  changeCategory: createAction<any, string, string>(PATCH_CHANGE_CATEGORY, patchCategoryChangeAPI),
   // category Change
 
   // category Delete
@@ -114,14 +114,14 @@ export const CategoryActions = {
     DELETE_DELETE_CATEGORY_CATEGORY_CHANGE,
     value => value
   ),
-  deleteCategory: createAction(DELETE_DELETE_CATEGORY, deleteCategoryDeleteAPI),
+  deleteCategory: createAction<any, string, string>(DELETE_DELETE_CATEGORY, deleteCategoryDeleteAPI),
   // category Delete
 
   // EveryThing is Gone
   categoryDone: createAction(CATEGORY_DONE)
 }
 export interface PostsStateInside {
-  date: Date
+  date: number
   title: string
   subTitle: string
   category: { category: string }
