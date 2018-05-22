@@ -106,8 +106,8 @@ const PUT_CHANGE_POST_SUCCESS = 'PUT_CHANGE_POST_SUCCESS'
 const PUT_CHANGE_POST_FAILURE = 'PUT_CHANGE_POST_FAILURE'
 // Deleting Post
 // dropdonw of delete Post
-const DELETE_CHANGE_CATEGORY_SELECT_CHANGE = 'DELETE_CHANGE_CATEGORY_SELECT_CHANGE'
-const DELETE_CHANGE_POST_SELECT_CHANGE = 'DELETE_CHANGE_POST_SELECT_CHANGE'
+const DELETE_DELETE_CATEGORY_SELECT_CHANGE = 'DELETE_CHANGE_CATEGORY_SELECT_CHANGE'
+const DELETE_DELETE_POST_SELECT_CHANGE = 'DELETE_CHANGE_POST_SELECT_CHANGE'
 // api
 const DELETE_DELETE_POST = 'DELETE_DELETE_POST'
 const DELETE_DELETE_POST_PENDING = 'DELETE_DELETE_POST_PENDING'
@@ -122,10 +122,10 @@ export const PostActions = {
   getPost: createAction(GET_BRING_POST_INFO, getPostAPI),
 
   // Method of Adding Post
-  addPostCategorySelectChange: createAction<string, string>(POST_ADD_POST_CATEGORY_CHANGE, value => value),
-  addPostTitleChange: createAction<string, string>(POST_ADD_POST_TITLE_CHANGE, value => value),
-  addPostSubTitleChange: createAction<string, string>(POST_ADD_POST_SUBTITLE_CHANGE, value => value),
-  addPostMainTextChange: createAction<string, string>(POST_ADD_POST_MAINTEXT_CHANGE, value => value),
+  addPostCategoryChange: createAction<string, string>(POST_ADD_POST_CATEGORY_CHANGE, value => value),
+  addPostPostTitleChange: createAction<string, string>(POST_ADD_POST_TITLE_CHANGE, value => value),
+  addPostPostSubTitleChange: createAction<string, string>(POST_ADD_POST_SUBTITLE_CHANGE, value => value),
+  addPostPostMainTextChange: createAction<string, string>(POST_ADD_POST_MAINTEXT_CHANGE, value => value),
   addPostPost: createAction<any, PostAddAPIInterface>(POST_ADD_POST, postPostAddAPI),
 
   // Method of Changing Post
@@ -138,8 +138,8 @@ export const PostActions = {
   changePutPost: createAction<any, PutChangeAPIInterface>(PUT_CHANGE_POST, putPostChangeAPI),
 
   // Method of Deleting Post
-  deletePostCategorySelectChange: createAction<string, string>(DELETE_CHANGE_CATEGORY_SELECT_CHANGE, value => value),
-  deletePostPostSelectChange: createAction<string, string>(DELETE_CHANGE_POST_SELECT_CHANGE, value => value),
+  deleteDeleteCategorySelectChange: createAction<string, string>(DELETE_DELETE_CATEGORY_SELECT_CHANGE, value => value),
+  deleteDeletePostSelectChange: createAction<string, string>(DELETE_DELETE_POST_SELECT_CHANGE, value => value),
   deleteDeletePost: createAction<any, string, string>(DELETE_DELETE_POST, deletePostDeleteAPI),
 
   // Everything is Gone
@@ -175,10 +175,20 @@ export interface AddPostState {
 export interface ChangePostState {
   pending: boolean
   error: boolean
+  selectCategory?: string
+  selectTitle?: string
   category?: string
   title?: string
   subTitle?: string
   mainText?: string
+  date?: number
+}
+// state of delete Post
+export interface DeletePostState {
+  pending: boolean
+  error: boolean
+  category?: string
+  title?: string
   date?: number
 }
 // Post basic state
@@ -187,23 +197,36 @@ export interface PostState {
   show: ShowPostState
   add: AddPostState
   change: ChangePostState
+  delete: DeletePostState
 }
 const initialState: PostState = {
   load: { pending: false, error: false },
   show: { pending: false, error: false },
   add: { pending: false, error: false },
-  change: { pending: false, error: false }
+  change: { pending: false, error: false },
+  delete: { pending: false, error: false }
 }
 
 // return Types
 // add
 type AddPostCategoryPayload = ReturnType<typeof PostActions.addPostCategoryChange>
-type AddPostTitleInputPayload = ReturnType<typeof PostActions.addPostTitleChange>
-type AddPostSubTitleInputPayload = ReturnType<typeof PostActions.addPostTitleChange>
-type AddPostMainTextInputPayload = ReturnType<typeof PostActions.addPostMainTextChange>
+type AddPostPostTitlePayload = ReturnType<typeof PostActions.addPostPostTitleChange>
+type AddPostPostSubTitlePayload = ReturnType<typeof PostActions.addPostPostSubTitleChange>
+type AddPostPostMainTextPayload = ReturnType<typeof PostActions.addPostPostMainTextChange>
 // change
-type ChangePostCategorySelectPayload = ReturnType<typeof PostActions.changePostCategorySelectChange>
-type ChangePostCategoryPayload = ReturnType<typeof PostActions.changePostCategoryChange>
+// select category, post
+type ChangePutCategorySelectPayload = ReturnType<typeof PostActions.changePutCategorySelectChange>
+type ChangePutCategoryPayload = ReturnType<typeof PostActions.changePutPostCategoryChange>
+// real change return type
+type ChangePutPostSelectPayload = ReturnType<typeof PostActions.changePutPostSelectChange>
+type ChangePutPostTitlePayload = ReturnType<typeof PostActions.changePutPostTitleChange>
+type ChangePutPostSubTilePayload = ReturnType<typeof PostActions.changePutPostSubTitleChange>
+type ChangePutPostMainTextPayload = ReturnType<typeof PostActions.changePutPostMainTextChange>
+
+type DeleteDeleteCategorySelectPayload = ReturnType<typeof PostActions.deleteDeleteCategorySelectChange>
+type DeleteDeletePostSelectPayload = ReturnType<typeof PostActions.deleteDeletePostSelectChange>
+
+// reducer
 const reducer = handleActions<PostState, any>(
   {
     // call certain post's all Information
@@ -255,15 +278,15 @@ const reducer = handleActions<PostState, any>(
       produce(state, draft => {
         draft.add.category = action.payload
       }),
-    [POST_ADD_POST_TITLE_CHANGE]: (state, action: AddPostTitleInputPayload) =>
+    [POST_ADD_POST_TITLE_CHANGE]: (state, action: AddPostPostTitlePayload) =>
       produce(state, draft => {
         draft.add.category = action.payload
       }),
-    [POST_ADD_POST_SUBTITLE_CHANGE]: (state, action: AddPostSubTitleInputPayload) =>
+    [POST_ADD_POST_SUBTITLE_CHANGE]: (state, action: AddPostPostSubTitlePayload) =>
       produce(state, draft => {
         draft.add.category = action.payload
       }),
-    [POST_ADD_POST_MAINTEXT_CHANGE]: (state, action: AddPostMainTextInputPayload) =>
+    [POST_ADD_POST_MAINTEXT_CHANGE]: (state, action: AddPostPostMainTextPayload) =>
       produce(state, draft => {
         draft.add.category = action.payload
       }),
@@ -284,21 +307,30 @@ const reducer = handleActions<PostState, any>(
         draft.add.error = true
       }),
 
-    [PUT_CHANGE_CATEGORY_SELECT_CHANGE]: (state, action: ChangePostCategorySelectPayload) =>
+    // CHANGE
+    [PUT_CHANGE_CATEGORY_SELECT_CHANGE]: (state, action: ChangePutCategorySelectPayload) =>
+      produce(state, draft => {
+        draft.change.selectCategory = action.payload
+      }),
+    [PUT_CHANGE_POST_CATEGORY_CHANGE]: (state, action: ChangePutCategoryPayload) =>
       produce(state, draft => {
         draft.change.category = action.payload
       }),
-    [PUT_CHANGE_POST_CATEGORY_CHANGE]: (state, action: ChangePostCategoryPayload) =>
+    [PUT_CHANGE_POST_SELECT_CHANGE]: (state, action: ChangePutPostSelectPayload) =>
       produce(state, draft => {
-        draft.change.category = action.payload
+        draft.change.selectTitle = action.payload
       }),
-    [PUT_CHANGE_POST_SELECT_CHANGE]: (state, action: ChangePostPostSelectPayload) =>
+    [PUT_CHANGE_POST_TITLE_CHANGE]: (state, action: ChangePutPostTitlePayload) =>
       produce(state, draft => {
         draft.change.title = action.payload
       }),
-    [PUT_CHANGE_POST_TITLE_CHANGE]: (state, action: ChangePostTitleSelectPayload) =>
+    [PUT_CHANGE_POST_SUBTITLE_CHANGE]: (state, action: ChangePutPostSubTilePayload) =>
       produce(state, draft => {
-        draft.change.title = action.payload
+        draft.change.subTitle = action.payload
+      }),
+    [PUT_CHANGE_POST_MAINTEXT_CHANGE]: (state, action: ChangePutPostMainTextPayload) =>
+      produce(state, draft => {
+        draft.change.mainText = action.payload
       }),
     // post change event handler
     [PUT_CHANGE_POST_PENDING]: state =>
@@ -315,6 +347,31 @@ const reducer = handleActions<PostState, any>(
       produce(state, draft => {
         draft.change.pending = false
         draft.change.error = true
+      }),
+
+    // DELETE
+    [DELETE_DELETE_CATEGORY_SELECT_CHANGE]: (state, action: DeleteDeleteCategorySelectPayload) =>
+      produce(state, draft => {
+        draft.delete.category = action.payload
+      }),
+    [DELETE_DELETE_POST_SELECT_CHANGE]: (state, action: DeleteDeletePostSelectPayload) =>
+      produce(state, draft => {
+        draft.delete.title = action.payload
+      }),
+    [DELETE_DELETE_POST_PENDING]: (state, action) =>
+      produce(state, draft => {
+        draft.delete.pending = true
+        draft.delete.error = false
+      }),
+    [DELETE_DELETE_POST_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        draft.delete.pending = false
+        draft.delete.error = false
+      }),
+    [DELETE_DELETE_POST_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        draft.delete.pending = false
+        draft.delete.error = true
       }),
 
     // when the task is done, this is will be excute

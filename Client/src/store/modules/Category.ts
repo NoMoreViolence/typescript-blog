@@ -76,7 +76,6 @@ const CATEGORY_DONE = 'CATEGORY_DONE'
 // 카테고리 페이로드 정의 근데 내 실력이 부족해서 명확하게 쓸 부분만 정의할 수가 없었다, 그래서 any값을 우겨넣었다
 // 이제 페이로드 값에 대한 것들을 정의할 수 있게 되었다
 type CategoryPayload = any
-type InputPayload = string
 
 // 카테고리 가져오는 액션 방출
 export const CategoryActions = {
@@ -84,36 +83,20 @@ export const CategoryActions = {
   getCategory: createAction(GET_BRING_CATEGORYS, getCategorysAPI),
 
   // category Add
-  // <payload, parameter>
-  addCategoryInputChange: createAction<InputPayload, InputPayload>(
-    POST_ADD_CATEGORY_INPUT_CHANGE,
-    // parameter,             payload
-    text => text
-  ),
+  // <payload, parameter>                                                 // parameter,             payload
+  addCategoryInputChange: createAction<string, string>(POST_ADD_CATEGORY_INPUT_CHANGE, text => text),
   addCategory: createAction<any, string>(POST_ADD_CATEGORY, postCategoryAddAPI),
   // category Add
 
   // category Change
-  changeCategoryInputChange: createAction<InputPayload, InputPayload>(
-    PATCH_CHANGE_CATEGORY_INPUT_CHANGE,
-    text => text
-  ),
-  changeCategoryCategoryChange: createAction<InputPayload, InputPayload>(
-    PATCH_CHANGE_CATEGORY_CATEGORY_CHANGE,
-    value => value
-  ),
+  changeCategoryInputChange: createAction<string, string>(PATCH_CHANGE_CATEGORY_INPUT_CHANGE, text => text),
+  changeCategoryCategoryChange: createAction<string, string>(PATCH_CHANGE_CATEGORY_CATEGORY_CHANGE, value => value),
   changeCategory: createAction<any, string, string>(PATCH_CHANGE_CATEGORY, patchCategoryChangeAPI),
   // category Change
 
   // category Delete
-  deleteCategoryInputChange: createAction<InputPayload, InputPayload>(
-    DELETE_DELETE_CATEGORY_INPUT_CHANGE,
-    text => text
-  ),
-  deleteCategoryCategoryChange: createAction<InputPayload, InputPayload>(
-    DELETE_DELETE_CATEGORY_CATEGORY_CHANGE,
-    value => value
-  ),
+  deleteCategoryInputChange: createAction<string, string>(DELETE_DELETE_CATEGORY_INPUT_CHANGE, text => text),
+  deleteCategoryCategoryChange: createAction<string, string>(DELETE_DELETE_CATEGORY_CATEGORY_CHANGE, value => value),
   deleteCategory: createAction<any, string, string>(DELETE_DELETE_CATEGORY, deleteCategoryDeleteAPI),
   // category Delete
 
