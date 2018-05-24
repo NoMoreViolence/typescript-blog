@@ -1,0 +1,48 @@
+.markdown-render blockquote {
+  border-left: 4px solid blue;
+  padding: 1rem;
+  background: gray;
+  margin-left: 0;
+  margin-right: 0;
+}
+.markdown-render blockquote p {
+  margin: 0;
+}
+.markdown-render h1, .markdown-render h2, .markdown-render h3, .markdown-render h4 {
+  font-weight: 500;
+}
+.markdown-render h1 code, .markdown-render h2 code, .markdown-render h3 code, .markdown-render h4 code, .markdown-render h5 code, .markdown-render p code {
+  font-family: 'D2 Coding';
+  background: gray;
+  padding: 0.25rem;
+  color: blue;
+  border: 1px solid gray;
+  border-radius: 2px;
+}
+.markdown-render code[class*="language-"], .markdown-render pre[class*="language-"] {
+  font-family: 'D2 Coding';
+}
+.markdown-render a {
+  color: blue;
+}
+.markdown-render a:hover {
+  color: blue;
+  text-decoration: underline;
+}
+.markdown-render table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.markdown-render table, .markdown-render th, .markdown-render td {
+  border: 1px solid gray;
+}
+.markdown-render th, .markdown-render td {
+  font-size: 0.9rem;
+  padding: 0.25rem;
+  text-align: left;
+}
+.markdown-render img {
+  max-width: 100%;
+  margin: 0 auto;
+  display: block;
+}
