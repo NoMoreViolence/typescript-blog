@@ -1,6 +1,6 @@
 /* body, 타이포그래피 등의 기본 스타일 설정 */
-@import url("//fonts.googleapis.com/earlyaccess/notosanskr.css");
-@import url("//cdn.jsdelivr.net/gh/velopert/font-d2coding@1.2.1/d2coding.css");
+@import url("https://fonts.googleapis.com/earlyaccess/notosanskr.css");
+
 body {
   margin: 0;
   padding: 0;
