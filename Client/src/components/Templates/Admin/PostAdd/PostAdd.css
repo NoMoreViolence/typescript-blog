@@ -1,0 +1,87 @@
+@import url("https://cdn.jsdelivr.net/gh/velopert/font-d2coding@1.2.1/d2coding.css");
+
+.add-post-editor-template {
+  height: calc(100vh - 4rem); 
+  display: flex;
+  position: relative; 
+}
+
+
+
+.add-post-editor-container {
+  display: flex;
+  min-width: 0; 
+  overflow: auto; 
+}
+.add-editor {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+}
+.add-editor-title::-webkit-input-placeholder {
+  color: rgba(255,255,255,0.75);
+}
+.add-editor-title {
+  background: gray;
+  border: none;
+  outline: none;
+  font-size: 1.5rem;
+  padding: 1rem;
+  color: white;
+  font-weight: 500;
+}
+.add-editor-sub-title::-webkit-input-placeholder {
+  color: rgba(255,255,255,0.75);
+}
+.add-editor-sub-title {
+  background: gray;
+  border: none;
+  outline: none;
+  font-size: 1.1rem;
+  padding: 1rem;
+  color: white;
+  font-weight: 300;
+}
+.add-editor-content {
+  flex: 1;
+  background: rgb(37, 37, 37);
+}
+
+
+
+.add-post-preview-container {
+  display: flex;
+  min-width: 0; 
+  overflow: auto; 
+}
+.add-preview {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto; 
+  font-size: 1.125rem;
+}
+.add-preview-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid gray;
+}
+
+
+.add-post-separator {
+  width: 1rem; 
+  height: 100%;
+  position: absolute;
+  transform: translate(-50%); 
+  cursor: col-resize; 
+}
+
+/* 미디어 쿼리요 씨발년아 */
+@media screen and (max-width: 600px) {
+  .add-post-editor-container {
+    flex: 1 !important;
+  }
+  .add-post-preview-container, .add-post-separator {
+    display: none;
+  }
+}
