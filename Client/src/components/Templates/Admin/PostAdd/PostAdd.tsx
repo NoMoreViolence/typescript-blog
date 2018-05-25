@@ -3,12 +3,16 @@ import * as React from 'react'
 import './PostAdd.css'
 
 import { AddPostState } from 'store/modules/Post'
+import { CategoryState, CategoryStateInside } from 'store/modules/Category'
 
 import * as CodeMirror from 'codemirror'
 import MarkdownRenderer from 'lib/MarkDownRenderer/MarkDownRenderer'
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 
 interface Props {
+  category: CategoryState
   add: AddPostState
+  changeCategory: (value: string) => any
   changeTitle: (value: string) => any
   changeSubTitle: (value: string) => any
   changeMainText: (value: string) => any
@@ -18,15 +22,22 @@ interface Target {
   target: HTMLInputElement
 }
 
+interface Dropdown {
+  currentTarget: { textContent: string }
+}
+
 class PostAdd extends React.Component<Props> {
   public state = {
-    leftPercentage: 0.5
+    leftPercentage: 0.5,
+    showNone: false,
+    dropdown: false
   }
 
-  public editor: any // 에디터 ref
-  public codeMirror: any // CodeMirror 인스턴스
-  public cursor: any // 에디터의 텍스트 cursor 위치
-  public initializeEditor = () => {
+  public editor: any = null // 에디터 ref
+  public codeMirror: any = null // CodeMirror 인스턴스
+  public cursor: any = null // 에디터의 텍스트 cursor 위치
+  public initializeEditor = async () => {
+    await this.editor
     this.codeMirror = CodeMirror(this.editor, {
       mode: 'markdown',
       theme: 'monokai',
@@ -71,24 +82,27 @@ class PostAdd extends React.Component<Props> {
   //
   //
   //
-  //
-  //
-  // separator 클릭 후 마우스를 움직이면 그에 따라 leftPercentage 업데이트
+  // separator click, and mouse move
   public handleMouseMove = (e: MouseEvent) => {
     this.setState({
       leftPercentage: e.clientX / window.innerWidth
     })
   }
-  // 마우스를 땠을 때 등록한 이벤트 제거
+  // hand off
   public handleMouseUp = (e: MouseEvent) => {
     document.body.removeEventListener('mousemove', this.handleMouseMove)
     window.removeEventListener('mouseup', this.handleMouseUp)
   }
-  // separator 클릭시
+  // separator click
   public handleSeparatorMouseDown = (e: React.MouseEvent<any>) => {
     document.body.addEventListener('mousemove', this.handleMouseMove)
     window.addEventListener('mouseup', this.handleMouseUp)
   }
+  //
+  //
+  //
+  //
+  //
 
   // title & subTitle change
   public handleChange = (e: Target) => {
@@ -99,54 +113,114 @@ class PostAdd extends React.Component<Props> {
     }
   }
 
+  // button click
+  public handleShowNone = async () => {
+    this.setState({
+      showNone: !this.state.showNone
+    })
+    // the setState method is call lifecycle method.
+    // therefore, Although I did setState, the showNone value is false
+    if (this.state.showNone === false) {
+      await this.initializeEditor()
+      await this.codeMirror
+      this.codeMirror.setValue(this.props.add.mainText)
+    }
+  }
+
+  // dropdown toogle
+  public handleToogle = () => {
+    this.setState({
+      dropdown: !this.state.dropdown
+    })
+  }
+  // category Change
+  public handleSelect = (e: Dropdown) => {
+    this.props.changeCategory(e.currentTarget.textContent)
+  }
+
   public render() {
     const { leftPercentage } = this.state
-    // 각 섹션에 flex 값 적용
+    // flex value
     const leftStyle = {
       flex: leftPercentage
     }
     const rightStyle = {
       flex: 1 - leftPercentage
     }
-    // separator 위치 설정
+    // separator state config
     const separatorStyle = {
       left: `${leftPercentage * 100}%`
     }
 
+    // show all category
+    const CurrentCategoryChangeBar = (data: CategoryStateInside[]) => {
+      return data.map((object, i) => {
+        return (
+          <DropdownItem key={i} onClick={this.handleSelect}>
+            {object.category}
+          </DropdownItem>
+        )
+      })
+    }
+
     return (
-      <div className="editor-template">
-        <div className="add-editor-and-viewer">
-          <div className="add-editor" style={leftStyle}>
-            {}
-            <div className="add-editor-inside">
-              <input
-                className="add-editor-title"
-                placeholder="제목을 입력하세요"
-                name="title"
-                value={this.props.add.title}
-                onChange={this.handleChange}
-              />
-              <input
-                className="add-editor-sub-title"
-                placeholder="부제목을 입력하세요"
-                name="sub-title"
-                value={this.props.add.subTitle}
-                onChange={this.handleChange}
-              />
-              <div className="code-editor" ref={ref => (this.editor = ref)} />
+      <div className="add-editor-template">
+        <Button block={true} color="primary" onClick={this.handleShowNone}>
+          포스트 추가하기 !
+        </Button>
+        {this.state.showNone && (
+          <React.Fragment>
+            <div className="add-editor-select-category">
+              <Dropdown
+                className="add-editor-dropdown-button"
+                isOpen={this.state.dropdown}
+                toggle={this.handleToogle}
+                size="lg"
+              >
+                <DropdownToggle outline={true} color="primary" caret={true}>
+                  {this.props.category.post.addCategory}
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem onClick={this.handleSelect}>카테고리 선택</DropdownItem>
+                  {CurrentCategoryChangeBar(this.props.category.categoryCategory)}
+                </DropdownMenu>
+              </Dropdown>
             </div>
-            {}
-          </div>
-          <div className="add-preview" style={rightStyle}>
-            <div className="add-preview-inside">
-              <h1 className="add-preview-title">{this.props.add.title}</h1>
-              <div>
-                <MarkdownRenderer markdown={this.props.add.mainText} />
+            <div className="add-editor-and-viewer">
+              <div className="add-editor" style={leftStyle}>
+                {}
+                <div className="add-editor-inside">
+                  <input
+                    className="add-editor-title"
+                    placeholder="제목을 입력하세요"
+                    name="title"
+                    value={this.props.add.title}
+                    onChange={this.handleChange}
+                  />
+                  <input
+                    className="add-editor-sub-title"
+                    placeholder="부제목을 입력하세요"
+                    name="sub-title"
+                    value={this.props.add.subTitle}
+                    onChange={this.handleChange}
+                  />
+                  <div className="code-editor" ref={ref => (this.editor = ref)} />
+                </div>
+                {}
               </div>
+              <div className="add-preview" style={rightStyle}>
+                <div className="add-preview-inside">
+                  <h1 className="add-preview-title">{this.props.add.title}</h1>
+                  <h3 className="add-preview-sub-title">{this.props.add.subTitle}</h3>
+                  <div>
+                    <MarkdownRenderer markdown={this.props.add.mainText} />
+                  </div>
+                </div>
+              </div>
+              <div className="add-separator" style={separatorStyle} onMouseDown={this.handleSeparatorMouseDown} />
             </div>
-          </div>
-          <div className="add-separator" style={separatorStyle} onMouseDown={this.handleSeparatorMouseDown} />
-        </div>
+          </React.Fragment>
+        )}
       </div>
     )
   }

@@ -1,9 +1,18 @@
 @import url("https://cdn.jsdelivr.net/gh/velopert/font-d2coding@1.2.1/d2coding.css");
 
+.add-editor-template {
+  margin-top: 5%;
+}
+
+.add-editor-dropdown-button {
+  margin-top: 5%;
+}
+
 .add-editor-and-viewer {
   height: calc(100vh - 4rem); 
   display: flex;
   position: relative; 
+  margin-top: 5%;
 }
 
 
@@ -26,6 +35,21 @@
   padding: 1rem;
   color: white;
   font-weight: 500;
+}
+.add-editor-sub-title {
+  background: gray;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  padding: 1rem;
+  color: white;
+  font-weight: 500;
+}
+.add-editor-title::-webkit-input-placeholder {
+  color: rgb(66, 62, 62);
+}
+.add-editor-sub-title::-webkit-input-placeholder {
+  color: rgb(66, 62, 62);
 }
 .code-editor {
   flex: 1; 
@@ -58,6 +82,12 @@
   font-weight: 300;
   padding-bottom: 2rem;
   border-bottom: 1px solid gray;
+}
+.add-preview-sub-title {
+  font-size: 1.3rem;
+  font-weight: 200;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
 }
 
 .add-separator {
