@@ -100,8 +100,11 @@ exports.login = (req, res) => {
   // if user is not admin, can't login
   const adminCheck = user => {
     console.log(user)
-    if (user.admin === true) return user
-    throw new Error('관리자가 아닙니다 !')
+    if (user) {
+      if (user.admin === true) return user
+      throw new Error('관리자가 아닙니다 !')
+    }
+    throw new Error('유저가 존재하지 않습니다 !')
   }
 
   // 유저를 체크하고 JWT 토큰을 발급합니다
@@ -151,6 +154,7 @@ exports.login = (req, res) => {
 
   // error occured
   const onError = error => {
+    console.log(error.message)
     res.status(409).json({
       success: false,
       message: error.message

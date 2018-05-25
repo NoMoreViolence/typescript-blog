@@ -36,17 +36,17 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
       if (loginUsername !== '' && loginPassword !== '') {
         postLogin(loginUsername, loginPassword)
           .then((res: any) => {
-            toast('환영합니다 관리자님')
+            toast('관리자님 환영합니다 !')
             sessionStorage.setItem('token', res.value.data.token)
             history.push('/')
           })
           .catch((err: any) => {
-            toast(err.message)
+            toast(err.response.data.message)
           })
       } else {
         if (loginUsername === '') {
           toast('아이디를 입력해 주세요')
-        } else if (loginPassword) {
+        } else if (loginPassword === '') {
           toast('비밀번호를 입력해 주세요')
         }
       }
