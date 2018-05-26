@@ -72,6 +72,13 @@ class MarkDownEditor extends React.Component<Props> {
     }
   }
 
+  // unmount
+  public componentWillUnmount() {
+    this.editor = null
+    this.cursor = null
+    this.codeMirror = null
+  }
+
   public render() {
     return (
       <React.Fragment>
