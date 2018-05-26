@@ -116,19 +116,23 @@ class PostAdd extends React.Component<Props> {
       // 수정 수정 수정
       this.props
         .addPost(post)
+        // request call success
         .then(async (res: { value: any; action: any }) => {
           await this.props.postDone()
           await this.props.categoryDone()
           toast(res.action.payload.data.message)
         })
+        // request call failure
         .catch((err: any) => {
           toast(err.response.data.message)
         })
     }
 
+    // take all insert error
     const onError = (err: Error) => {
       toast(err.message)
     }
+
     categoryCheck({
       category: this.props.add.category,
       title: this.props.add.title,
