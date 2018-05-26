@@ -5,20 +5,20 @@ import axios from 'axios'
 // Bring Category & SubTitle of Posts & type
 // Type is the mark that can Recognize the api caller
 function getPostAPI(type: number) {
-  return axios.get(`/api/:category/:post?type=${type}`)
+  return axios.get(`/api/:category/:post`)
 }
 
 // interface of postPostAPI fun's parameter
 export interface PostAddAPIInterface {
   category: string
-  post: string
+  title: string
   subTitle: string
   mainText: string
 }
 // API of Adding Post
 function postPostAddAPI(value: PostAddAPIInterface) {
   return axios.post(
-    `/api/${value.category}/${value.post}`,
+    `/api/${value.category}/${value.title}`,
     {
       subTitle: value.subTitle,
       mainText: value.mainText
@@ -95,10 +95,10 @@ const POST_ADD_POST_FAILURE = 'POST_ADD_POST_FAILURE'
 const PUT_CHANGE_CATEGORY_SELECT_CHANGE = 'PUT_CHANGE_CATEGORY_SELECT_CHANGE'
 const PUT_CHANGE_POST_SELECT_CHANGE = 'PUT_CHANGE_POST_SELECT_CHANGE'
 // real change part
-const PUT_CHANGE_POST_CATEGORY_CHANGE = 'POST_ADD_POST_CATEGORY_CHANGE'
-const PUT_CHANGE_POST_TITLE_CHANGE = 'POST_ADD_POST_TITLE_CHANGE'
-const PUT_CHANGE_POST_SUBTITLE_CHANGE = 'POST_ADD_POST_SUB_TITLE_CHANGE'
-const PUT_CHANGE_POST_MAINTEXT_CHANGE = 'POST_ADD_POST_MAINTEXT_CHANGE'
+const PUT_CHANGE_POST_CATEGORY_CHANGE = 'PUT_CHANGE_POST_CATEGORY_CHANGE'
+const PUT_CHANGE_POST_TITLE_CHANGE = 'PUT_CHANGE_POST_TITLE_CHANGE'
+const PUT_CHANGE_POST_SUBTITLE_CHANGE = 'PUT_CHANGE_POST_SUBTITLE_CHANGE'
+const PUT_CHANGE_POST_MAINTEXT_CHANGE = 'PUT_CHANGE_POST_MAINTEXT_CHANGE'
 // api
 const PUT_CHANGE_POST = 'PUT_CHANGE_POST'
 const PUT_CHANGE_POST_PENDING = 'PUT_CHANGE_POST_PENDING'
@@ -202,7 +202,7 @@ export interface PostState {
 const initialState: PostState = {
   load: { pending: false, error: false },
   show: { pending: false, error: false },
-  add: { pending: false, error: false },
+  add: { pending: false, error: false, category: '카테고리 선택', title: '', subTitle: '', mainText: '' },
   change: { pending: false, error: false },
   delete: { pending: false, error: false }
 }
@@ -280,15 +280,15 @@ const reducer = handleActions<PostState, any>(
       }),
     [POST_ADD_POST_TITLE_CHANGE]: (state, action: AddPostPostTitlePayload) =>
       produce(state, draft => {
-        draft.add.category = action.payload
+        draft.add.title = action.payload
       }),
     [POST_ADD_POST_SUBTITLE_CHANGE]: (state, action: AddPostPostSubTitlePayload) =>
       produce(state, draft => {
-        draft.add.category = action.payload
+        draft.add.subTitle = action.payload
       }),
     [POST_ADD_POST_MAINTEXT_CHANGE]: (state, action: AddPostPostMainTextPayload) =>
       produce(state, draft => {
-        draft.add.category = action.payload
+        draft.add.mainText = action.payload
       }),
     // post add api action
     [POST_ADD_POST_PENDING]: (state, action) =>
