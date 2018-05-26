@@ -46,34 +46,38 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
 
       // 카테고리 입력값이 없거나 관리자 권한이 아닐 경우
       if (loginLogined !== false && addCategoryInputValue !== '') {
-        addCategory(addCategoryInputValue)
-          .then((res: any) => {
-            // 카테고리 추가 성공
-            toast(res.value.data.message)
-            // 카테고리 Input Select 초기화 & 리로딩
-            categoryDone()
-            categoryLoad()
-          })
-          .catch((err: any) => {
-            // tslint:disable-next-line:no-console
-            console.log(err.response)
-            // 사용자의 해킹 시도
-            if (err.response.data.type === 'undefinded token' || err.response.data.type === 'invalid token') {
-              toast('인증된 사용자가 아닙니다 !')
-              // 로그아웃 메소드로 loginLogined false & 세션 스토리지 초기화 & 홈페이지로 이동
-              // logout()
-              // sessionStorage.clear()
-              // history.push('/')
-            }
-            // 사용자의 시도 실패
-            else if (err.response.data.type === 'server error') {
-              toast('카테고리가 중복되었습니다 !')
-              this.addCategoryInput.focus()
-              addCategoryInputChange('')
-            } else {
-              toast('알 수 없는 에러입니다 !')
-            }
-          })
+        if (addCategoryInputValue.toLowerCase() !== 'admin') {
+          addCategory(addCategoryInputValue)
+            .then((res: any) => {
+              // 카테고리 추가 성공
+              toast(res.value.data.message)
+              // 카테고리 Input Select 초기화 & 리로딩
+              categoryDone()
+              categoryLoad()
+            })
+            .catch((err: any) => {
+              // tslint:disable-next-line:no-console
+              console.log(err.response)
+              // 사용자의 해킹 시도
+              if (err.response.data.type === 'undefinded token' || err.response.data.type === 'invalid token') {
+                toast('인증된 사용자가 아닙니다 !')
+                // 로그아웃 메소드로 loginLogined false & 세션 스토리지 초기화 & 홈페이지로 이동
+                // logout()
+                // sessionStorage.clear()
+                // history.push('/')
+              }
+              // 사용자의 시도 실패
+              else if (err.response.data.type === 'server error') {
+                toast('카테고리가 중복되었습니다 !')
+                this.addCategoryInput.focus()
+                addCategoryInputChange('')
+              } else {
+                toast('알 수 없는 에러입니다 !')
+              }
+            })
+        } else {
+          toast('관리자 페이지 url 로 카테고리 등록은 불가능 합니다 !')
+        }
       } else {
         // 인가된 사용자가 아닐 경우
         if (loginLogined === false) {
