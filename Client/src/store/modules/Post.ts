@@ -5,15 +5,15 @@ import axios from 'axios'
 // Bring Category & SubTitle of Posts & type
 // Type is the mark that can Recognize the api caller
 function getPostAPI(type: number) {
-  return axios.get(`/api/:category/:post`)
+  return axios.get(`/api/:category/:post?type=${type}`)
 }
 
 // interface of postPostAPI fun's parameter
 export interface PostAddAPIInterface {
-  category: string
-  title: string
-  subTitle: string
-  mainText: string
+  category?: string
+  title?: string
+  subTitle?: string
+  mainText?: string
 }
 // API of Adding Post
 function postPostAddAPI(value: PostAddAPIInterface) {
@@ -119,7 +119,7 @@ const POST_DONE = 'POST_DONE'
 type APIPayload = any
 export const PostActions = {
   // get Specific post's information
-  getPost: createAction(GET_BRING_POST_INFO, getPostAPI),
+  getPost: createAction<any, number>(GET_BRING_POST_INFO, getPostAPI),
 
   // Method of Adding Post
   addPostCategoryChange: createAction<string, string>(POST_ADD_POST_CATEGORY_CHANGE, value => value),
@@ -143,7 +143,7 @@ export const PostActions = {
   deleteDeletePost: createAction<any, string, string>(DELETE_DELETE_POST, deletePostDeleteAPI),
 
   // Everything is Gone
-  postDone: createAction<any, any>(POST_DONE, value => value)
+  postDone: createAction(POST_DONE)
 }
 
 // state of handle loading
@@ -153,8 +153,6 @@ export interface LoadPostState {
 }
 // state of show Post
 export interface ShowPostState {
-  pending: boolean
-  error: boolean
   category?: string
   title?: string
   subTitle?: string
@@ -187,8 +185,12 @@ export interface ChangePostState {
 export interface DeletePostState {
   pending: boolean
   error: boolean
+  selectCategory?: string
+  selectTitle?: string
   category?: string
   title?: string
+  subTitle?: string
+  mainText?: string
   date?: number
 }
 // Post basic state
@@ -201,10 +203,28 @@ export interface PostState {
 }
 const initialState: PostState = {
   load: { pending: false, error: false },
-  show: { pending: false, error: false },
+  show: { category: '', title: '', subTitle: '', mainText: '' },
   add: { pending: false, error: false, category: '카테고리 선택', title: '', subTitle: '', mainText: '' },
-  change: { pending: false, error: false },
-  delete: { pending: false, error: false }
+  change: {
+    pending: false,
+    error: false,
+    selectCategory: '카테고리 선택',
+    selectTitle: '변경할 포스트 선택',
+    category: '',
+    title: '',
+    subTitle: '',
+    mainText: ''
+  },
+  delete: {
+    pending: false,
+    error: false,
+    selectCategory: '카테고리 선택',
+    selectTitle: '삭제할 포스트 선택',
+    category: '',
+    title: '',
+    subTitle: '',
+    mainText: ''
+  }
 }
 
 // return Types
@@ -234,6 +254,13 @@ const reducer = handleActions<PostState, any>(
       produce(state, draft => {
         draft.load.pending = true
         draft.load.error = false
+
+        // clean post show data
+        draft.show.category = ''
+        draft.show.title = ''
+        draft.show.subTitle = ''
+        draft.show.mainText = ''
+        draft.show.date = Date.now()
       }),
     [GET_BRING_POST_INFO_SUCCESS]: (state, action: Action<APIPayload>) => {
       if (action.payload.data.value.type === 0) {
@@ -259,6 +286,18 @@ const reducer = handleActions<PostState, any>(
           draft.change.subTitle = action.payload.data.value.posts[0].subTitle
           draft.change.mainText = action.payload.data.value.posts[0].mainText
           draft.change.date = action.payload.data.value.posts[0].date
+        })
+      } else if (action.payload.data.value.type === 2) {
+        // call info for delete post
+        return produce(state, draft => {
+          draft.load.pending = false
+          draft.load.error = false
+          // post delete data
+          draft.delete.category = action.payload.data.value.category
+          draft.delete.title = action.payload.data.value.posts[0].title
+          draft.delete.subTitle = action.payload.data.value.posts[0].subTitle
+          draft.delete.mainText = action.payload.data.value.posts[0].mainText
+          draft.delete.date = action.payload.data.value.posts[0].date
         })
       }
       return produce(state, draft => {
@@ -382,6 +421,31 @@ const reducer = handleActions<PostState, any>(
         draft.show.subTitle = ''
         draft.show.mainText = ''
         draft.show.date = Date.now()
+
+        // add state
+        draft.add.category = '카테고리 선택'
+        draft.add.title = ''
+        draft.add.subTitle = ''
+        draft.add.mainText = ''
+        draft.add.date = Date.now()
+
+        // change state
+        draft.change.selectCategory = '카테고리 선택'
+        draft.change.selectTitle = '변경할 포스트 선택'
+        draft.change.category = '카테고리 선택'
+        draft.change.title = ''
+        draft.change.subTitle = ''
+        draft.change.mainText = ''
+        draft.change.date = Date.now()
+
+        // delete state
+        draft.delete.selectCategory = '카테고리 선택'
+        draft.delete.selectTitle = '삭제할 포스트 선택'
+        draft.delete.category = '카테고리 선택'
+        draft.delete.title = ''
+        draft.delete.subTitle = ''
+        draft.delete.mainText = ''
+        draft.delete.date = Date.now()
       })
   },
   initialState
