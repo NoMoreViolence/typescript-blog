@@ -4,18 +4,12 @@ import './PostAdd.css'
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 import { toast } from 'react-toastify'
 
-import { AddPostState } from 'store/modules/Post'
+import { AddPostState, PostAddAPIInterface } from 'store/modules/Post'
 import { CategoryStateInside } from 'store/modules/Category'
 
 import MarkdownEditor from 'lib/MarkDownEditor'
 import MarkdownRenderer from 'lib/MarkDownRenderer'
 
-interface AddPost {
-  category?: string
-  title?: string
-  subTitle?: string
-  mainText?: string
-}
 interface Props {
   category: CategoryStateInside[]
   add: AddPostState
@@ -23,7 +17,9 @@ interface Props {
   changeTitle: (value: string) => any
   changeSubTitle: (value: string) => any
   changeMainText: (value: string) => any
-  addPost: (AddPost: AddPost) => any
+  addPost: (AddPost: PostAddAPIInterface) => any
+  postDone: () => void
+  categoryDone: () => void
 }
 
 interface Dropdown {
@@ -67,7 +63,8 @@ class PostAdd extends React.Component<Props> {
 
   // Submit => Post Add
   public handleSubmit = () => {
-    const categoryCheck = (post: AddPost) => {
+    // category value check
+    const categoryCheck = (post: PostAddAPIInterface) => {
       if (post.category !== '카테고리 선택') {
         return new Promise(function(resolve, reject) {
           resolve(post)
@@ -78,7 +75,8 @@ class PostAdd extends React.Component<Props> {
       })
     }
 
-    const titleCheck = (post: AddPost) => {
+    // title value check
+    const titleCheck = (post: PostAddAPIInterface) => {
       if (post.title !== '') {
         return new Promise(function(resolve, reject) {
           resolve(post)
@@ -89,7 +87,8 @@ class PostAdd extends React.Component<Props> {
       })
     }
 
-    const subTitleCheck = (post: AddPost) => {
+    // subTitle value check
+    const subTitleCheck = (post: PostAddAPIInterface) => {
       if (post.subTitle !== '') {
         return new Promise(function(resolve, reject) {
           resolve(post)
@@ -100,7 +99,8 @@ class PostAdd extends React.Component<Props> {
       })
     }
 
-    const mainTextCheck = (post: AddPost) => {
+    // mainText value check
+    const mainTextCheck = (post: PostAddAPIInterface) => {
       if (post.mainText !== '') {
         return new Promise(function(resolve, reject) {
           resolve(post)
@@ -111,8 +111,19 @@ class PostAdd extends React.Component<Props> {
       })
     }
 
-    const requestToServer = (post: AddPost) => {
-      toast('포스트 추가가 완료되었습니다 !')
+    // request to server => post add function
+    const requestToServer = (post: PostAddAPIInterface) => {
+      // 수정 수정 수정
+      this.props
+        .addPost(post)
+        .then(async (res: { value: any; action: any }) => {
+          await this.props.postDone()
+          await this.props.categoryDone()
+          toast(res.action.payload.data.message)
+        })
+        .catch((err: any) => {
+          toast(err.response.data.message)
+        })
     }
 
     const onError = (err: Error) => {

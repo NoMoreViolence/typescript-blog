@@ -4,9 +4,18 @@
   margin-top: 5%;
 }
 
-.add-editor-dropdown-button {
-  margin-top: 5%;
+/* dropdown button & post button*/
+.add-editor-select-category {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 10%;
+  padding-left: 10%;
 }
+.add-editor-button {
+  padding-top: 5%;
+}
+
+
 
 .add-editor-and-viewer {
   height: calc(100vh - 4rem); 
@@ -14,7 +23,6 @@
   position: relative; 
   margin-top: 5%;
 }
-
 
 
 .add-editor {
@@ -27,43 +35,6 @@
   display: flex;
   flex-direction: column;
 }
-.add-editor-title {
-  background: gray;
-  border: none;
-  outline: none;
-  font-size: 1.5rem;
-  padding: 1rem;
-  color: white;
-  font-weight: 500;
-}
-.add-editor-sub-title {
-  background: gray;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  padding: 1rem;
-  color: white;
-  font-weight: 500;
-}
-.add-editor-title::-webkit-input-placeholder {
-  color: rgb(66, 62, 62);
-}
-.add-editor-sub-title::-webkit-input-placeholder {
-  color: rgb(66, 62, 62);
-}
-.code-editor {
-  flex: 1; 
-  background: gray;
-  display: flex;
-  flex-direction: column;
-}
-.CodeMirror {
-  font-size: 1rem;
-  flex: 1;
-  font-family: 'D2 Coding';
-}
-
-
 
 
 .add-preview {
@@ -96,4 +67,18 @@
   position: absolute;
   transform: translate(-50%); 
   cursor: col-resize; 
+}
+
+
+
+@media only screen and (max-width: 768px) {
+  .add-editor {
+    flex: 1 !important;
+  }
+  .add-separator {
+    display: none;
+  }
+  .add-preview {
+    display: none;
+  }
 }
