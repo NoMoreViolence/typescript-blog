@@ -26,7 +26,8 @@
     "ban-types": false,
     "no-shadowed-variable": false,
     "semi": false,
-    "jsx-no-lambda": false
+    "jsx-no-lambda": false,
+    "only-arrow-functions": false
   },
   "exclude": [
     "node_modules",

@@ -1,5 +1,5 @@
 {
-  "name": "typescript-blog",
+  "name": "temp",
   "version": "0.1.1",
   "private": true,
   "dependencies": {
@@ -32,7 +32,7 @@
     "@types/codemirror": "^0.0.56",
     "@types/jest": "^22.2.3",
     "@types/marked": "^0.3.0",
-    "@types/node": "^9.6.6",
+    "@types/node": "^10.1.2",
     "@types/prismjs": "^1.9.0",
     "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.5",
@@ -45,3 +45,5 @@
   },
   "proxy": "http://localhost:3001"
 }
+
+

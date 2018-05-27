@@ -15,6 +15,7 @@
     "ban-types": false,
     "no-shadowed-variable": false,
     "semicolon": false,
-    "jsx-no-lambda": false
+    "jsx-no-lambda": false,
+    "only-arrow-functions": false
   }
 }
