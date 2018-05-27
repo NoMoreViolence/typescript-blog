@@ -1,7 +1,6 @@
 import * as React from 'react'
 
-import './PostAdd.css'
-import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
 import { AddPostState, PostAddAPIInterface } from 'store/modules/Post'
@@ -22,9 +21,9 @@ interface Props {
   categoryDone: () => void
 }
 
-interface Dropdown {
+/*interface Dropdown {
   currentTarget: { textContent: string }
-}
+}*/
 
 class PostAdd extends React.Component<Props> {
   public state = {
@@ -57,8 +56,11 @@ class PostAdd extends React.Component<Props> {
     })
   }
   // Category Select Change
-  public handleSelect = (e: Dropdown) => {
-    this.props.changeCategory(e.currentTarget.textContent)
+  public handleSelect = (e: any) => {
+    this.setState({
+      dropdown: false
+    })
+    this.props.changeCategory(e.currentTarget.innerText)
   }
 
   // Submit => Post Add
@@ -175,44 +177,41 @@ class PostAdd extends React.Component<Props> {
       left: `${leftPercentage * 100}%`
     }
 
-    // show all category
-    const CurrentCategoryChangeBar = (data: CategoryStateInside[]) => {
+    const CurrentCategoryChange = (data: CategoryStateInside[]) => {
       return data.map((object, i) => {
         return (
-          <DropdownItem key={i} onClick={this.handleSelect}>
+          <button key={i} onClick={this.handleSelect} className="editor-category-child-button">
             {object.category}
-          </DropdownItem>
+          </button>
         )
       })
     }
 
     return (
-      <div className="add-editor-template">
-        <Button block={true} color="primary" onClick={this.handleShowNone}>
+      <div className="editor-template">
+        <Button block={true} outline={true} color="primary" onClick={this.handleShowNone}>
           {this.state.postAddMessage}
         </Button>
         {this.state.showNone && (
           <React.Fragment>
-            <div className="add-editor-select-category">
-              <Dropdown className="add-editor-button" isOpen={this.state.dropdown} toggle={this.handleToogle} size="lg">
-                <DropdownToggle outline={true} color="primary" caret={true}>
-                  {this.props.add.category}
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem onClick={this.handleSelect}>카테고리 선택</DropdownItem>
-                  {CurrentCategoryChangeBar(this.props.category)}
-                </DropdownMenu>
-              </Dropdown>
-
-              <div className="add-editor-button">
-                <Button onClick={this.handleSubmit} color="primary" size="lg">
-                  포스트 생성 하기 !
-                </Button>
-              </div>
-            </div>
-            <div className="add-editor-and-viewer">
-              <div className="add-editor" style={leftStyle}>
-                <div className="add-editor-inside">
+            <div className="editor-and-viewer">
+              <div className="editor" style={leftStyle}>
+                <div className="editor-category">
+                  <button onClick={this.handleToogle}>{this.props.add.category}</button>
+                  {this.state.dropdown && (
+                    <div className="editor-category-child-container">
+                      <div className="editor-category-child">
+                        {this.props.add.category !== '카테고리 선택' && (
+                          <button onClick={this.handleSelect} className="editor-category-child-button">
+                            카테고리 선택
+                          </button>
+                        )}
+                        {CurrentCategoryChange(this.props.category)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="editor-inside">
                   <MarkdownEditor
                     title={this.props.add.title}
                     changeTitle={this.props.changeTitle}
@@ -224,16 +223,20 @@ class PostAdd extends React.Component<Props> {
                   />
                 </div>
               </div>
-              <div className="add-preview" style={rightStyle}>
-                <div className="add-preview-inside">
-                  <h1 className="add-preview-title">{this.props.add.title}</h1>
-                  <h3 className="add-preview-sub-title">{this.props.add.subTitle}</h3>
+              <div className="preview" style={rightStyle}>
+                <div className="preview-submit">
+                  <button onClick={this.handleSubmit}>포스트 생성 하기 !</button>
+                </div>
+
+                <div className="preview-inside">
+                  <h1 className="preview-title">{this.props.add.title}</h1>
+                  <h3 className="preview-sub-title">{this.props.add.subTitle}</h3>
                   <div>
                     <MarkdownRenderer markdown={this.props.add.mainText} />
                   </div>
                 </div>
               </div>
-              <div className="add-separator" style={separatorStyle} onMouseDown={this.handleSeparatorMouseDown} />
+              <div className="separator" style={separatorStyle} onMouseDown={this.handleSeparatorMouseDown} />
             </div>
           </React.Fragment>
         )}

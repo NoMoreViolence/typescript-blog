@@ -1,23 +1,23 @@
 @import url("https://cdn.jsdelivr.net/gh/velopert/font-d2coding@1.2.1/d2coding.css");
 
-.add-editor-template {
+.editor-template {
   margin-top: 5%;
 }
 
 /* dropdown button & post button*/
-.add-editor-select-category {
+.editor-select-category {
   display: flex;
   justify-content: space-between;
   padding-right: 10%;
   padding-left: 10%;
 }
-.add-editor-button {
+.editor-button {
   padding-top: 5%;
 }
 
 
 
-.add-editor-and-viewer {
+.editor-and-viewer {
   height: calc(100vh - 4rem); 
   display: flex;
   position: relative; 
@@ -25,43 +25,43 @@
 }
 
 
-.add-editor {
+.editor {
   display: flex;
   min-width: 0; 
   overflow: auto; 
 }
-.add-editor-inside {
+.editor-inside {
   flex: 1; 
   display: flex;
   flex-direction: column;
 }
 
 
-.add-preview {
+.preview {
   display: flex;
   min-width: 0; 
   overflow: auto; 
 }
-.add-preview-inside {
+.preview-inside {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
   font-size: 1.125rem;
 }
-.add-preview-title {
+.preview-title {
   font-size: 2.5rem;
   font-weight: 300;
   padding-bottom: 2rem;
   border-bottom: 1px solid gray;
 }
-.add-preview-sub-title {
+.preview-sub-title {
   font-size: 1.3rem;
   font-weight: 200;
   padding-top: 0.8rem;
   padding-bottom: 0.8rem;
 }
 
-.add-separator {
+.separator {
   width: 1rem; 
   height: 100%;
   position: absolute;
@@ -72,13 +72,13 @@
 
 
 @media only screen and (max-width: 768px) {
-  .add-editor {
+  .editor {
     flex: 1 !important;
   }
-  .add-separator {
+  .separator {
     display: none;
   }
-  .add-preview {
+  .preview {
     display: none;
   }
 }
