@@ -1,6 +1,7 @@
 import * as React from 'react'
 import './Admin.css'
-import { Container, Row, Col } from 'reactstrap'
+// 공통 에디터 전용 css 적용
+import 'components/commonCSS/editor.css'
 
 // category
 import CurrentCategoryContainer from 'containers/Admin/CurrentCategoryContainer'
@@ -24,56 +25,27 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/monokai.css'
 import 'codemirror/theme/material.css'
 
-const Admin: React.SFC = () => (
-  <Container>
-    <Container>
-      <Row>
-        <Col>
-          <h1 className="category-container">Category</h1>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <CurrentCategoryContainer />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <CategoryAddContainer />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <CategoryChangeContainer />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <CategoryDeleteContainer />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <h1 className="post-container">Post</h1>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <PostAddContainer />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <PostChangeContainer />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <PostDeleteContainer />
-        </Col>
-      </Row>
-    </Container>
-  </Container>
-)
+const Admin: React.SFC = () => {
+  const styled = {
+    marginTop: '5%'
+  }
+  return (
+    <React.Fragment>
+      <div className="layout-container">
+        <h1 style={styled}>Category</h1>
+        <CurrentCategoryContainer />
+        <CategoryAddContainer />
+        <CategoryChangeContainer />
+        <CategoryDeleteContainer />
+      </div>
+      <div className="layout-container">
+        <h1 style={styled}>Post</h1>
+      </div>
+      <PostAddContainer />
+      <PostChangeContainer />
+      <PostDeleteContainer />
+    </React.Fragment>
+  )
+}
 
 export default Admin
