@@ -34,12 +34,12 @@ function postPostAddAPI(value: PostAddAPIInterface) {
 
 // interface of putPostAPI fun's parameter
 export interface PutChangeAPIInterface {
-  oldCategory: string
-  newCategory: string
-  oldTitle: string
-  newTitle: string
-  subTitle: string
-  mainText: string
+  oldCategory?: string
+  newCategory?: string
+  oldTitle?: string
+  newTitle?: string
+  subTitle?: string
+  mainText?: string
 }
 // API of Changing Post
 function putPostChangeAPI(value: PutChangeAPIInterface) {
@@ -62,8 +62,8 @@ function putPostChangeAPI(value: PutChangeAPIInterface) {
 
 // interface of deltePostAPI fun's parameter
 export interface DeleteDeleteAPIInterface {
-  category: string
-  title: string
+  category?: string
+  title?: string
 }
 // API of Deleting Post
 function deletePostDeleteAPI(category: string, title: string) {
