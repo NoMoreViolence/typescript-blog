@@ -1,26 +1,22 @@
 import * as React from 'react'
-import { Row, Col, Container } from 'reactstrap'
 import HeaderLogoContainer from 'containers/Header/HeaderLogoContainer'
 import HeaderCategoryContainer from 'containers/Header/HeaderCategoryContainer'
 import HeaderMessageContainer from 'containers/Header/HeaderMessageToAdminContainer'
 
 const Header = ({}) => {
+  const styled = {
+    display: 'flex',
+    justifyContent: 'space-between'
+  }
   return (
-    <Container>
-      <Row>
-        <Col>
-          <HeaderLogoContainer />
-        </Col>
-        <Col>
-          <HeaderCategoryContainer />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <HeaderMessageContainer />
-        </Col>
-      </Row>
-    </Container>
+    <div className="layout-container">
+      <div style={styled}>
+        <HeaderLogoContainer />
+        <HeaderCategoryContainer />
+      </div>
+
+      <HeaderMessageContainer />
+    </div>
   )
 }
 export default Header
