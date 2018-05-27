@@ -1,0 +1,160 @@
+@import url("https://cdn.jsdelivr.net/gh/velopert/font-d2coding@1.2.1/d2coding.css");
+
+.editor-template {
+  margin-top: 5%;
+}
+
+
+
+.editor-and-viewer {
+  height: calc(100vh - 4rem); 
+  display: flex;
+  position: relative; 
+  padding-top: 5%;
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; 
+  overflow: auto; 
+}
+
+.editor-category {
+  display: flex;
+  flex-direction: column;
+  border-color: #aeb87a;
+}
+.editor-category button {
+  height: 4rem;
+  color: #aeb87a;
+  background-color: white;
+  border-color: #aeb87a;
+}
+.editor-category button:hover {
+  cursor: pointer;
+  color: white;
+  background-color: #aeb87a;
+}
+.editor-category button:focus {
+  outline: none;
+}
+.editor-category button:active {
+  border-style: outset;
+  border: none;
+  outline: none;
+}
+.editor-category button::after {
+  box-sizing: border-box;
+}
+.editor-category-child-container {
+  height: 150px;
+  overflow-y: auto;
+}
+.editor-category-child {
+  display: flex;
+  flex-direction: column;
+}
+.editor-category-child button {
+  color: #aeb87a;
+  background-color: white;
+  border-color: #aeb87a;
+}
+.editor-category-child button:hover {
+  cursor: pointer;
+  color: white;
+  background-color: #aeb87a
+}
+.editor-category-child button:focus {
+  outline: none;
+}
+.editor-category-child button:active {
+  border-style: outset;
+  border: none;
+  outline: none;
+}
+.editor-category-child button::after {
+  box-sizing: border-box;
+}
+
+.editor-inside {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; 
+  overflow: auto; 
+}
+
+.preview-submit {
+  display: flex;
+  flex-direction: column;
+}
+.preview-submit button {
+  height: 4rem;
+  color: #007bff;
+  border-color: #007bff;
+  background-color: transparent;
+}
+.preview-submit button:hover {
+  color: white;
+  background: #007bff;
+  cursor: pointer;
+}
+.preview-submit button:focus {
+  outline: none;
+}
+.preview-submit button:active {
+  border-style: outset;
+  border: none;
+}
+.preview-submit button::after {
+  box-sizing: border-box;
+}
+
+.preview-inside {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  font-size: 1.125rem;
+}
+.preview-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid gray;
+}
+.preview-sub-title {
+  font-size: 1.3rem;
+  font-weight: 200;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+}
+
+.separator {
+  width: 1rem; 
+  height: 100%;
+  position: absolute;
+  transform: translate(-50%); 
+  cursor: col-resize; 
+}
+
+
+
+@media only screen and (max-width: 768px) {
+  .editor {
+    flex: 1 !important;
+  }
+  .separator {
+    display: none;
+  }
+  .preview {
+    display: none;
+  }
+}
