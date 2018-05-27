@@ -1,0 +1,11 @@
+.layout-container {
+  width: 75%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media only screen and (max-width: 500px) {
+  .layout-container {
+    width: 100% !important;
+  }
+}
