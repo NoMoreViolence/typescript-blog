@@ -1,20 +1,6 @@
 import * as React from 'react'
 
-import './CategorySelect.css'
-
 import { NavLink } from 'react-router-dom'
-import {
-  CardColumns,
-  Card,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-  CardText,
-  Button,
-  Container,
-  Row,
-  Col
-} from 'reactstrap'
 
 import { CategoryStateInside } from 'store/modules/Category'
 
@@ -68,6 +54,11 @@ class CategorySelect extends React.Component<Props> {
   }
 
   public render() {
+    // style
+    const marginStyled = {
+      marginTop: '2.5%'
+    }
+
     // button show or hide
     let ShowOrHideButton = false
     // this code is shit, so I will reWrite Code
@@ -88,16 +79,16 @@ class CategorySelect extends React.Component<Props> {
         return SelectedPosts[0].posts.map((object, i: number) => {
           if (i < this.state.load) {
             return (
-              <Card key={i}>
-                <CardBody>
-                  <CardTitle>{object.title}</CardTitle>
-                  <CardSubtitle>{this.props.url}</CardSubtitle>
-                  <CardText>{object.subTitle}</CardText>
-                  <NavLink to={'/' + this.props.url + '/' + object.title}>
-                    <Button color="primary">See Post!</Button>
+              <div className="category-all-child" key={i}>
+                <div className="category-child-title">{object.title}</div>
+                <div className="category-child-category">{object.category.category}</div>
+                <div className="category-child-subTitle">{object.subTitle}</div>
+                <div className="category-child-link">
+                  <NavLink to={'/' + object.category.category + '/' + object.title}>
+                    <button className="primary category-child-button">포스트 보러 가기 !</button>
                   </NavLink>
-                </CardBody>
-              </Card>
+                </div>
+              </div>
             )
           } else {
             return null
@@ -107,22 +98,14 @@ class CategorySelect extends React.Component<Props> {
     }
 
     return (
-      <Container className="category-selected">
-        <Row>
-          <Col>
-            <CardColumns>{postViewer(this.props.posts)}</CardColumns>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            {ShowOrHideButton && (
-              <Button color="primary" size="lg" block={true} onClick={this.handleShow}>
-                More...
-              </Button>
-            )}
-          </Col>
-        </Row>
-      </Container>
+      <div className="layout-container" style={marginStyled}>
+        <div className="category-all-container">{postViewer(this.props.posts)}</div>
+        {ShowOrHideButton && (
+          <button className="primary block" onClick={this.handleShow}>
+            더보기 ...
+          </button>
+        )}
+      </div>
     )
   }
 }
