@@ -59,8 +59,12 @@ class CategoryAll extends React.Component<Props> {
               <div className="category-child-category">{object.category.category}</div>
               <div className="category-child-subTitle">{object.subTitle}</div>
               <div className="category-child-link">
+                <div className="category-child-date">
+                  {object.date[0] + object.date[1] + object.date[2] + object.date[3]}년{' '}
+                  {object.date[5] + object.date[6]}월 {object.date[8] + object.date[9]}일
+                </div>
                 <NavLink to={'/' + object.category.category + '/' + object.title}>
-                  <button className="primary category-child-button">포스트 보러 가기 !</button>
+                  <button className="primary category-child-button">자세히 보기</button>
                 </NavLink>
               </div>
             </div>

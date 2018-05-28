@@ -17,7 +17,7 @@
   }
 }
 
-@media only screen and (min-width: 684px) and (max-width: 1230px) {
+@media only screen and (min-width: 735px) and (max-width: 1230px) {
   .category-all-container {
     -webkit-column-count: 2;
     column-count: 2;
@@ -76,14 +76,18 @@
 
 .category-child-link {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+}
+
+.category-child-date {
+  padding: 0.5rem;
 }
 
 .category-child-button {
   font-weight: 400;
   font-size: 1rem;
   text-align: center;
-  padding: 10px;
+  padding: 0.5rem;
 }
 
 .category-child-button:hover {

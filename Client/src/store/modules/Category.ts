@@ -104,7 +104,7 @@ export const CategoryActions = {
   categoryDone: createAction(CATEGORY_DONE)
 }
 export interface PostsStateInside {
-  date: number
+  date: Date
   title: string
   subTitle: string
   category: { category: string }
