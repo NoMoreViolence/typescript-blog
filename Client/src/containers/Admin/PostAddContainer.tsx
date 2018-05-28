@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { CategoryStateInside, CategoryActions } from 'store/modules/Category'
 import { AddPostState, PostActions } from 'store/modules/Post'
-import PostAdd from 'components/Templates/Admin/PostAdd/PostAdd'
+import PostAdd from 'components/Templates/Admin/PostAdd'
 
 import { connect } from 'react-redux'
 import { StoreState } from 'store/modules'
