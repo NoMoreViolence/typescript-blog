@@ -22,7 +22,7 @@ interface Target {
 const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
   class CategoryAdd extends React.Component<Props & RouteComponentProps<any>> {
     // 인풋 focus 사용 위해
-    public addCategoryInput: HTMLInputElement
+    public addCategoryInput: any
 
     // 입력 체인지
     public handleChange = (e: Target) => {

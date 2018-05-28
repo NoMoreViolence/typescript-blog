@@ -2,16 +2,7 @@ import * as React from 'react'
 
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { CategoryStateInside } from 'store/modules/Category'
-import {
-  Form,
-  InputGroup,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Input,
-  Button
-} from 'reactstrap'
+import { Form, InputGroup, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
 import './CategoryDelete.css'
@@ -33,13 +24,13 @@ interface Target {
   target: HTMLInputElement
 }
 
-interface Dropdown {
+interface Current {
   currentTarget: { textContent: string }
 }
 
 const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
   class CategoryDelete extends React.Component<Props & RouteComponentProps<any>> {
-    public deleteCategoryInput: HTMLInputElement
+    public deleteCategoryInput: any
 
     // 드롭다운 State
     public state = {
@@ -59,7 +50,7 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
     }
 
     // 삭제할 카테고리 선택
-    public handleSelect = (e: Dropdown) => {
+    public handleSelect = (e: Current) => {
       this.props.deleteCategoryCategoryChange(e.currentTarget.textContent)
     }
 
@@ -97,10 +88,7 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
             })
             .catch((err: any) => {
               // 사용자의 해킹 시도
-              if (
-                err.response.data.type === 'undefinded token' ||
-                err.response.data.type === 'invalid token'
-              ) {
+              if (err.response.data.type === 'undefinded token' || err.response.data.type === 'invalid token') {
                 toast('인증된 사용자가 아닙니다 !')
                 // 로그아웃 메소드로 loginLogined false & 세션 스토리지 초기화 & 홈페이지로 이동
                 logout()
