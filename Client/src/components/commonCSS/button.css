@@ -1,0 +1,133 @@
+.primary {
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: #007bff;
+  border-color: #007bff;
+  background: white;
+  border-radius: .3rem;
+}
+.primary:hover {
+  cursor: pointer;
+  color: white;
+  border-color: #007bff;
+  background: #007bff;
+}
+
+.outline-primary {
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: white;
+  border-color: #007bff;
+  background: #007bff;
+  border-radius: .3rem;
+}
+.outline-primary:hover {
+  cursor: pointer;
+  color: #007bff;
+  border-color: #007bff;
+  background: white;
+}
+
+.info {
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: #17a2b8;
+  border-color: #17a2b8;
+  background: white;
+  border-radius: .3rem;
+}
+.info:hover {
+  cursor: pointer;
+  color: white;
+  border-color: #17a2b8;
+  background: #17a2b8;
+}
+
+.outline-info {
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: white;
+  border-color: #17a2b8;
+  background: #17a2b8;
+  border-radius: .3rem;
+}
+.outline-info:hover {
+  cursor: pointer;
+  color: #17a2b8;
+  border-color: #17a2b8;
+  background: white;
+}
+
+.danger {
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: #dc3545;
+  border-color: #dc3545;
+  background: white;
+  border-radius: .3rem;
+}
+.danger:hover {
+  cursor: pointer;
+  color: white;
+  border-color: #dc3545;
+  background: #dc3545;
+}
+
+.outline-danger {
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: white;
+  border-color: #dc3545;
+  background: #dc3545;
+  border-radius: .3rem;
+}
+.outline-danger:hover {
+  cursor: pointer;
+  color: #dc3545;
+  border-color: #dc3545;
+  background: white;
+}
+
+.select {
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: #aeb87a;
+  border-color: #aeb87a;
+  background: white;
+  border-radius: .3rem;
+}
+.select:hover {
+  cursor: pointer;
+  color: white;
+  border-color: #aeb87a;
+  background: #aeb87a;
+}
+
+.outline-select {
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: white;
+  border-color: #aeb87a;
+  background: #aeb87a;
+  border-radius: .3rem;
+}
+.outline-select:hover {
+  cursor: pointer;
+  color: #aeb87a;
+  border-color: #aeb87a;
+  background: white;
+}
+
+.block {
+  font-size: 1.44rem;
+  width: 100%;
+  padding: 10px;
+}
