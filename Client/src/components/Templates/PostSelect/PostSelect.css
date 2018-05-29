@@ -1,0 +1,52 @@
+/* post view container, this is post root */
+.post-view-container {
+  width: 100%; 
+  background-color: transparent;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: .25rem;
+  padding: 15px;
+}
+
+/* part of Title and Sub Title */
+.post-view-title-and-category {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid gray;
+}
+
+/* Reactive font size */
+@media only screen and (min-width: 0px) and (max-width: 500px) {
+  .post-view-title {
+    font-size: 1.15rem;
+    font-weight: 450;
+  }
+
+  .post-view-category {
+    font-size: 1.15rem;
+    font-weight: 350;
+  }
+
+  .post-view-sub-title {
+    font-size: 1.1rem;
+    font-weight: 250;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
+}
+
+@media only screen and (min-width: 501px) and (max-width: 683px) {
+
+}
+
+@media only screen and (min-width: 684px) and (max-width: 1230px) {
+
+}
+
+@media only screen and (min-width: 1231px) and (max-width: 1680px) {
+
+}
+
+@media only screen and (min-width: 1681px) {
+
+}
