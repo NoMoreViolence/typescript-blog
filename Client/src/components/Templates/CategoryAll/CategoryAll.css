@@ -1,0 +1,28 @@
+.welcome-message {
+  font-size: 3rem;
+  font-weight: 350;
+  padding: 1rem;
+}
+
+.welcome-message:nth-of-type(1) {
+  color: #007bff;
+  animation: colordancing3 4s infinite;
+}
+
+@keyframes colordancing3 {
+  0% {
+    color: #fdb674;
+  }
+  25% {
+    color: #007bff;
+  }
+  50% {
+    color: #b3f063;
+  }
+  75% {
+    color: #F56991;
+  }
+  100% {
+    color: #FFC48C;
+  }
+}

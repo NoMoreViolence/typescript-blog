@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+import './CategoryAll.css'
+
 import { CategoryStateInside, PostsStateInside } from 'store/modules/Category'
 import { NavLink } from 'react-router-dom'
 
@@ -10,7 +12,8 @@ interface Props {
 class CategoryAll extends React.Component<Props> {
   // state
   public state = {
-    load: 10
+    load: 10,
+    randomMessage: ['블로그 구경 많이 하고 가세요~', '좋은 하루 보내세요~', 'Carpe diem.', 'YOLO.', 'Blog Debugging...']
   }
 
   // the load value, if it increase, the viewer can see many posts before
@@ -76,6 +79,7 @@ class CategoryAll extends React.Component<Props> {
     }
     return (
       <div className="layout-container" style={marginStyled}>
+        <div className="welcome-message">환영합니다 !</div>
         <div className="category-all-container">{postViewer(this.props.category)}</div>
         {ShowOrHideButton && (
           <button className="primary block" onClick={this.handleShow}>
