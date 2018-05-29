@@ -46,3 +46,55 @@
   margin: 0 auto;
   display: block;
 }
+
+/* 모바일 뷰만을 위한 하나하나의 카테고리 설정 */
+@media only screen and (min-width: 0px) and (max-width: 500px) {
+  .markdown-render pre {
+    font-size: 1rem;
+  }
+
+  .markdown-render p {
+    font-size: 1rem;
+  }
+}
+
+/* 포스트 1개씩 늘어뜨릴지, 2개씩 할지, 3개씩 할지 볼 수 있는 미디어 쿼리 */
+@media only screen and (min-width: 501px) and (max-width: 683px) {
+  .markdown-render pre {
+    font-size: 1.05rem
+  }
+
+  .markdown-render p {
+    font-size: 1.05rem;
+  }
+}
+
+@media only screen and (min-width: 684px) and (max-width: 1230px) {
+  .markdown-render pre {
+    font-size: 1.1rem;
+  }
+
+  .markdown-render p {
+    font-size: 1.1rem;
+  }
+}
+
+@media only screen and (min-width: 1231px) and (max-width: 1680px) {
+  .markdown-render pre {
+    font-size: 1.2rem;
+  }
+
+  .markdown-render p {
+    font-size: 1.2rem;
+  }
+}
+
+@media only screen and (min-width: 1681px) {
+  .markdown-render pre {
+    font-size: 1.3rem;
+  }
+
+  .markdown-render p {
+    font-size: 1.3rem;
+  }
+}
