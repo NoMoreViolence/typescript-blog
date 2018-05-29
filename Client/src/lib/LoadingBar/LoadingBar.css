@@ -1,0 +1,78 @@
+.loading-bar-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.loading-bar, .loading-bar * {
+  box-sizing: border-box;
+}
+
+.loading-bar {
+  height: 70px;
+  width: 70px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-bar .spinnerBlock {
+  animation: intersecting-circles-spinners-animation 1200ms linear infinite;
+  transform-origin: center;
+  display: block;
+  height: 35px;
+  width: 35px;
+}
+
+.loading-bar .circle {
+  display: block;
+  border: 2px solid #0056b3;
+  border-radius: 50%;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.loading-bar .circle:nth-child(1) {
+  left: 0;
+  top: 0;
+}
+
+.loading-bar .circle:nth-child(2) {
+  left: calc(35px * -0.36);
+  top: calc(35px * 0.2);
+}
+
+.loading-bar .circle:nth-child(3) {
+  left: calc(35px * -0.36);
+  top: calc(35px * -0.2);
+}
+
+.loading-bar .circle:nth-child(4) {
+  left: 0;
+  top: calc(35px * -0.36);
+}
+
+.loading-bar .circle:nth-child(5) {
+  left: calc(35px * 0.36);
+  top: calc(35px * -0.2);
+}
+
+.loading-bar .circle:nth-child(6) {
+  left: calc(35px * 0.36);
+  top: calc(35px * 0.2);
+}
+
+.loading-bar .circle:nth-child(7) {
+  left: 0;
+  top: calc(35px * 0.36);
+}
+
+@keyframes intersecting-circles-spinners-animation {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
