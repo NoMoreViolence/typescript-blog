@@ -81,7 +81,7 @@
   }
 }
 
-/* 501 ~ 683 I don't know what it is */
+/* tablet */
 @media only screen and (min-width: 426px) and (max-width: 768px) {
   .post-view-title {
     font-size: 1.6rem;
@@ -101,7 +101,7 @@
   }
 }
 
-/* for tablet, or small laptop and desktop */
+/* laptop */
 @media only screen and (min-width: 769px) and (max-width: 1024px) {
   .post-view-title {
     font-size: 2rem;
@@ -114,15 +114,15 @@
   }
 
   .post-view-sub-title {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 250;
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
   }
 }
 
-/* for large DeskTop or LapTop */
-@media only screen and (min-width: 1025px) and (max-width: 1440px) {
+/* default desktop */
+@media only screen and (min-width: 1025px) and (max-width: 2000px) {
   .post-view-title {
     font-size: 2.5rem;
     font-weight: 450;
@@ -134,7 +134,7 @@
   }
 
   .post-view-sub-title {
-    font-size: 2.25rem;
+    font-size: 2rem;
     font-weight: 250;
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
@@ -142,19 +142,19 @@
 }
 
 /* for 4K display */
-@media only screen and (min-width: 1441px) {
+@media only screen and (min-width: 2001px) {
   .post-view-title {
-    font-size: 4rem;
+    font-size: 2rem;
     font-weight: 450;
   }
 
   .post-view-category {
-    font-size: 3.65rem;
+    font-size: 2.65rem;
     font-weight: 350;
   }
 
   .post-view-sub-title {
-    font-size: 3.75rem;
+    font-size: 2.5rem;
     font-weight: 250;
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;

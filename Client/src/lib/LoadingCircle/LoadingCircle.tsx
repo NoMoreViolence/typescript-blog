@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import './LoadingBar.css'
+import './LoadingCircle.css'
 
 const LoadingBar: React.SFC = () => (
   <div className="loading-bar-container">
