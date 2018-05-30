@@ -1,0 +1,17 @@
+.progress-container {
+	width: 100%;
+	position: fixed;
+  top: 0px;
+  left: 0px;
+}
+
+.progress-bar-custom {
+	height: 5px;
+	background-color: #f7f7f7;
+}
+
+.progress-loading-bar {
+	height: 5px;
+	background-color: #007bff;
+	transition: 0.4s linear;
+}
