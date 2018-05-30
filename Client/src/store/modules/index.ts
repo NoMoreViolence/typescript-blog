@@ -1,13 +1,11 @@
 import { combineReducers } from 'redux'
 import Category, { CategoryState } from './Category'
-import MessageToAdmin, { AdminRippleState } from './MessageToAdmin'
 import Login, { LoginState } from './Login'
 import Post, { PostState } from './Post'
 
 export default combineReducers({
   // hello
   Category,
-  MessageToAdmin,
   Login,
   Post
 })
@@ -16,7 +14,6 @@ export default combineReducers({
 export interface StoreState {
   // it will be king
   Category: CategoryState
-  MessageToAdmin: AdminRippleState
   Login: LoginState
   Post: PostState
 }
