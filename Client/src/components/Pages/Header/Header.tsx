@@ -1,21 +1,17 @@
 import * as React from 'react'
+
+import './Header.css'
+
 import HeaderLogoContainer from 'containers/Header/HeaderLogoContainer'
 import HeaderCategoryContainer from 'containers/Header/HeaderCategoryContainer'
-import HeaderMessageContainer from 'containers/Header/HeaderMessageToAdminContainer'
 
-const Header = ({}) => {
-  const styled = {
-    display: 'flex',
-    justifyContent: 'space-between'
-  }
+const Header: React.SFC = () => {
   return (
     <div className="layout-container">
-      <div style={styled}>
+      <div className="header-menu">
         <HeaderLogoContainer />
         <HeaderCategoryContainer />
       </div>
-
-      <HeaderMessageContainer />
     </div>
   )
 }
