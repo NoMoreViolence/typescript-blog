@@ -4,8 +4,13 @@ import axios from 'axios'
 
 // Bring Category & SubTitle of Posts & type
 // Type is the mark that can Recognize the api caller
-function getPostAPI(type: number) {
-  return axios.get(`/api/:category/:post?type=${type}`)
+export interface GetPostBringAPIInterface {
+  category: string
+  title: string
+  type: number
+}
+function getPostAPI(value: GetPostBringAPIInterface) {
+  return axios.get(`/api/${value.category}/${value.title}?type=${value.type}`)
 }
 
 // interface of postPostAPI fun's parameter
@@ -76,10 +81,10 @@ function deletePostDeleteAPI(category: string, title: string) {
 }
 
 // Bring All info of Post
-const GET_BRING_POST_INFO = 'GET_BRING_POST_ALL'
-const GET_BRING_POST_INFO_PENDING = 'GET_BRING_POST_ALL_PENDING'
-const GET_BRING_POST_INFO_SUCCESS = 'GET_BRING_POST_ALL_SUCCESS'
-const GET_BRING_POST_INFO_FAILURE = 'GET_BRING_POST_ALL_FAILURE'
+const GET_BRING_POST_INFO = 'GET_BRING_POST_INFO'
+const GET_BRING_POST_INFO_PENDING = 'GET_BRING_POST_INFO_PENDING'
+const GET_BRING_POST_INFO_SUCCESS = 'GET_BRING_POST_INFO_SUCCESS'
+const GET_BRING_POST_INFO_FAILURE = 'GET_BRING_POST_INFO_FAILURE'
 // Adding Post
 const POST_ADD_POST_CATEGORY_CHANGE = 'POST_ADD_POST_CATEGORY_CHANGE'
 const POST_ADD_POST_TITLE_CHANGE = 'POST_ADD_POST_TITLE_CHANGE'
@@ -119,7 +124,7 @@ const POST_DONE = 'POST_DONE'
 type APIPayload = any
 export const PostActions = {
   // get Specific post's information
-  getPost: createAction<any, number>(GET_BRING_POST_INFO, getPostAPI),
+  getPost: createAction<any, GetPostBringAPIInterface>(GET_BRING_POST_INFO, getPostAPI),
 
   // Method of Adding Post
   addPostCategoryChange: createAction<string, string>(POST_ADD_POST_CATEGORY_CHANGE, value => value),
