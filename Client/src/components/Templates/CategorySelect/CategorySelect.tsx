@@ -4,23 +4,7 @@ import { NavLink } from 'react-router-dom'
 
 import { CategoryStateInside } from 'store/modules/Category'
 
-// props
-/*
-  posts: [
-    { 
-      posts: PostsStateInside[]
-      _id: string
-      category: string
-      __v: number
-    }
-  ]
-
-  posts[number]posts: [
-    date: string
-    title: string
-    subTitle: string
-  ]
-*/
+import NotFound from '../../Pages/NotFound'
 
 interface Props {
   posts: CategoryStateInside[]
@@ -65,42 +49,45 @@ class CategorySelect extends React.Component<Props> {
       // Before loaded first API, there is no data, so, I made the data is zero
       // Or Wrong category
       if (SelectedPosts.length === 0) {
-        return null
+        return <NotFound />
       } else {
         // if the posts number is bigger than this.state.load, activate load more button
         if (SelectedPosts[0].posts.length > this.state.load) {
           ShowOrHideButton = true
         }
-
-        // show value
-        return SelectedPosts[0].posts.map((object, i: number) => {
-          if (i < this.state.load) {
-            return (
-              <div className="category-all-child" key={i}>
-                <div className="category-child-title">{object.title}</div>
-                <div className="category-child-category">{object.category.category}</div>
-                <div className="category-child-subTitle">{object.subTitle}</div>
-                <div className="category-child-link">
-                  <div className="category-child-date">
-                    {object.date[0] + object.date[1] + object.date[2] + object.date[3]}년{' '}
-                    {object.date[5] + object.date[6]}월 {object.date[8] + object.date[9]}일
+        return (
+          <div className="category-all-container">
+            {/* show value */}
+            {SelectedPosts[0].posts.map((object, i: number) => {
+              if (i < this.state.load) {
+                return (
+                  <div className="category-all-child" key={i}>
+                    <div className="category-child-title">{object.title}</div>
+                    <div className="category-child-category">{object.category.category}</div>
+                    <div className="category-child-sub-title">{object.subTitle}</div>
+                    <div className="category-child-link">
+                      <div className="category-child-date">
+                        {object.date[0] + object.date[1] + object.date[2] + object.date[3]}년{' '}
+                        {object.date[5] + object.date[6]}월 {object.date[8] + object.date[9]}일
+                      </div>
+                      <NavLink to={'/' + object.category.category + '/' + object.title}>
+                        <button className="primary category-child-button">자세히 보기</button>
+                      </NavLink>
+                    </div>
                   </div>
-                  <NavLink to={'/' + object.category.category + '/' + object.title}>
-                    <button className="primary category-child-button">자세히 보기</button>
-                  </NavLink>
-                </div>
-              </div>
-            )
-          } else {
-            return null
-          }
-        })
+                )
+              } else {
+                return null
+              }
+            })}
+          </div>
+        )
       }
     }
 
     return (
       <div className="layout-container" style={marginStyled}>
-        <div className="category-all-container">{postViewer(this.props.posts)}</div>
+        {postViewer(this.props.posts)}
         {ShowOrHideButton && (
           <button className="primary block" onClick={this.handleShow}>
             더보기 ...
