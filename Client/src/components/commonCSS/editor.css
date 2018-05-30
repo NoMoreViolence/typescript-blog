@@ -13,6 +13,8 @@
   padding-top: 5%;
 }
 
+
+
 .editor {
   display: flex;
   flex-direction: column;
@@ -76,7 +78,7 @@
 .editor-category-child button::after {
   box-sizing: border-box;
 }
-
+/* cover the markdown editor */
 .editor-inside {
   flex: 1; 
   display: flex;
@@ -118,12 +120,39 @@
   box-sizing: border-box;
 }
 
+.editor-submit-mobile {
+  display: flex;
+  flex-direction: column;
+}
+.editor-submit-mobile button {
+  height: 4rem;
+  color: #007bff;
+  border-color: #007bff;
+  background-color: transparent;
+}
+.editor-submit-mobile button:hover {
+  color: white;
+  background: #007bff;
+  cursor: pointer;
+}
+.editor-submit-mobile button:focus {
+  outline: none;
+}
+.editor-submit-mobile button:active {
+  border-style: outset;
+  border: none;
+}
+.editor-submit-mobile button::after {
+  box-sizing: border-box;
+}
+/* cover the markdown renderer */
 .preview-inside {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
   font-size: 1.125rem;
 }
+
 .preview-title {
   font-size: 2.5rem;
   font-weight: 300;
@@ -137,6 +166,9 @@
   padding-bottom: 0.8rem;
 }
 
+
+
+/* the separator to handle size that between editor and renderer */
 .separator {
   width: 1rem; 
   height: 100%;
@@ -147,6 +179,7 @@
 
 
 
+/* mobile editor view, unvisible preview */
 @media only screen and (max-width: 768px) {
   .editor {
     flex: 1 !important;
@@ -155,6 +188,12 @@
     display: none;
   }
   .preview {
+    display: none;
+  }
+}
+/* if the width longer than 768px, unvisivle the submit button for mobile */
+@media only screen and (min-width: 769px) {
+  .preview-submit-mobile {
     display: none;
   }
 }

@@ -13,10 +13,11 @@
 }
 .markdown-render h1 code, .markdown-render h2 code, .markdown-render h3 code, .markdown-render h4 code, .markdown-render h5 code, .markdown-render p code {
   font-family: 'D2 Coding';
+  color: #383e41;
   font-weight: 300;
-  background: gray;
+  background: #f3f6fa;
   padding: 0.25rem;
-  border: 1px solid gray;
+  border: 1px solid #f3f6fa;
   border-radius: 2px;
 }
 .markdown-render code[class*="language-"], .markdown-render pre[class*="language-"] {
