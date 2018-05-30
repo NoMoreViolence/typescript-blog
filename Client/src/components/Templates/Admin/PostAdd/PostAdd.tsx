@@ -189,9 +189,11 @@ class PostAdd extends React.Component<Props> {
 
     return (
       <div className="editor-template">
-        <Button block={true} outline={true} color="primary" onClick={this.handleShowNone}>
-          {this.state.postAddMessage}
-        </Button>
+        <div className="layout-container">
+          <Button block={true} outline={true} color="primary" onClick={this.handleShowNone}>
+            {this.state.postAddMessage}
+          </Button>
+        </div>
         {this.state.showNone && (
           <React.Fragment>
             <div className="editor-and-viewer">
@@ -222,6 +224,11 @@ class PostAdd extends React.Component<Props> {
                     state={this.state.showNone}
                   />
                 </div>
+                {/* only can see mobile view */}
+                <div className="editor-submit-mobile">
+                  <button onClick={this.handleSubmit}>포스트 생성 하기 !</button>
+                </div>
+                {/* only can see mobile view */}
               </div>
               <div className="preview" style={rightStyle}>
                 <div className="preview-submit">
