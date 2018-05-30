@@ -38,6 +38,6 @@
     "jest",
     "src/setupTests.ts",
     "server",
-    "Redux-Thunk.tsx"
+    "Redux-Thunk.ts"
   ]
 }
