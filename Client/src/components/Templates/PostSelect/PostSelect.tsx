@@ -5,7 +5,7 @@ import './PostSelect.css'
 import { GetPostBringAPIInterface } from 'store/modules/Post'
 
 import NotFound from 'components/Pages/NotFound'
-import LoadingBar from 'lib/LoadingBar'
+import LoadingCircle from 'lib/LoadingCircle'
 
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import MarkdownRender from 'lib/MarkDownRenderer'
@@ -45,7 +45,7 @@ class PostSelect extends React.Component<Props & HomeProps> {
     return (
       <div style={marginStyle} className="layout-container">
         {this.props.loading === true ? (
-          <LoadingBar />
+          <LoadingCircle />
         ) : (
           <React.Fragment>
             {this.state.thereIsNoAdminCategory !== true ? (
