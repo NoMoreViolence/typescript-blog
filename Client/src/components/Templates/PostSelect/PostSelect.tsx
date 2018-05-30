@@ -1,12 +1,17 @@
 import * as React from 'react'
+
+import './PostSelect.css'
+
 import { GetPostBringAPIInterface } from 'store/modules/Post'
 
 import NotFound from 'components/Pages/NotFound'
+import LoadingBar from 'lib/LoadingBar'
 
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import MarkdownRender from 'lib/MarkDownRenderer'
 
 interface Props {
+  loading?: boolean
   category?: string
   title?: string
   subTitle?: string
@@ -39,17 +44,23 @@ class PostSelect extends React.Component<Props & HomeProps> {
     }
     return (
       <div style={marginStyle} className="layout-container">
-        {this.state.thereIsNoAdminCategory !== true ? (
-          <div className="post-view-container">
-            <div className="post-view-title-and-category">
-              <h1 className="post-view-title">{this.props.title}</h1>
-              <h2 className="post-view-category">{this.props.category}</h2>
-            </div>
-            <p className="post-view-subTitle">{this.props.subTitle}</p>
-            <MarkdownRender markdown={this.props.mainText} />
-          </div>
+        {this.props.loading === true ? (
+          <LoadingBar />
         ) : (
-          <NotFound />
+          <React.Fragment>
+            {this.state.thereIsNoAdminCategory !== true ? (
+              <div className="post-view-container">
+                <div className="post-view-title-and-category">
+                  <h1 className="post-view-title">{this.props.title}</h1>
+                  <h2 className="post-view-category">{this.props.category}</h2>
+                </div>
+                <p className="post-view-sub-title">{this.props.subTitle}</p>
+                <MarkdownRender markdown={this.props.mainText} />
+              </div>
+            ) : (
+              <NotFound />
+            )}
+          </React.Fragment>
         )}
       </div>
     )

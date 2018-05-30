@@ -15,38 +15,148 @@
   border-bottom: 1px solid gray;
 }
 
+/* iphone SE */
+/* very small mobie view */
 /* Reactive font size */
-@media only screen and (min-width: 0px) and (max-width: 500px) {
+@media only screen and (min-width: 0px) and (max-width: 320px) {
   .post-view-title {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 450;
   }
 
   .post-view-category {
-    font-size: 1.15rem;
+    font-size: 0.7rem;
+    font-weight: 350;
+  }
+
+  .post-view-sub-title {
+    font-size: 0.8rem;
+    font-weight: 300;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
+}
+
+/* iphone 6 7 8, galaxy S5 */
+/* small mobie view */
+/* Reactive font size */
+@media only screen and (min-width: 321px) and (max-width: 375px) {
+  .post-view-title {
+    font-size: 1.2rem;
+    font-weight: 450;
+  }
+
+  .post-view-category {
+    font-size: 0.85rem;
+    font-weight: 350;
+  }
+
+  .post-view-sub-title {
+    font-size: 0.95rem;
+    font-weight: 300;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
+}
+
+/* iphone 6+, 7+, 8+, galaxy Note, Nexus 5X */
+/* large mobie view */
+/* Reactive font size */
+@media only screen and (min-width: 376px) and (max-width: 425px) {
+  .post-view-title {
+    font-size: 1.35rem;
+    font-weight: 450;
+  }
+
+  .post-view-category {
+    font-size: 1rem;
     font-weight: 350;
   }
 
   .post-view-sub-title {
     font-size: 1.1rem;
+    font-weight: 300;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
+}
+
+/* 501 ~ 683 I don't know what it is */
+@media only screen and (min-width: 426px) and (max-width: 768px) {
+  .post-view-title {
+    font-size: 1.6rem;
+    font-weight: 450;
+  }
+
+  .post-view-category {
+    font-size: 1.25rem;
+    font-weight: 350;
+  }
+
+  .post-view-sub-title {
+    font-size: 1.35rem;
     font-weight: 250;
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
   }
 }
 
-@media only screen and (min-width: 501px) and (max-width: 683px) {
+/* for tablet, or small laptop and desktop */
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  .post-view-title {
+    font-size: 2rem;
+    font-weight: 450;
+  }
 
+  .post-view-category {
+    font-size: 1.65rem;
+    font-weight: 350;
+  }
+
+  .post-view-sub-title {
+    font-size: 1.75rem;
+    font-weight: 250;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
 }
 
-@media only screen and (min-width: 684px) and (max-width: 1230px) {
+/* for large DeskTop or LapTop */
+@media only screen and (min-width: 1025px) and (max-width: 1440px) {
+  .post-view-title {
+    font-size: 2.5rem;
+    font-weight: 450;
+  }
 
+  .post-view-category {
+    font-size: 2.15rem;
+    font-weight: 350;
+  }
+
+  .post-view-sub-title {
+    font-size: 2.25rem;
+    font-weight: 250;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
 }
 
-@media only screen and (min-width: 1231px) and (max-width: 1680px) {
+/* for 4K display */
+@media only screen and (min-width: 1441px) {
+  .post-view-title {
+    font-size: 4rem;
+    font-weight: 450;
+  }
 
-}
+  .post-view-category {
+    font-size: 3.65rem;
+    font-weight: 350;
+  }
 
-@media only screen and (min-width: 1681px) {
-
+  .post-view-sub-title {
+    font-size: 3.75rem;
+    font-weight: 250;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
 }
