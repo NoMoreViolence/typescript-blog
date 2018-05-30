@@ -196,4 +196,7 @@
   .preview-submit-mobile {
     display: none;
   }
+  .editor-submit-mobile {
+    display: none;
+  }
 }
