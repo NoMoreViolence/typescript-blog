@@ -1,0 +1,29 @@
+.primary-color {
+  color: #007bff;
+  border-color: #007bff;
+  background-color: transparent;
+}
+.primary-color:hover {
+  color: white;
+  background: #007bff;
+}
+
+.info-color {
+  color: #17a2b8;
+  border-color: #17a2b8;
+  background-color: transparent;
+}
+.info-color:hover {
+  color: white;
+  background: #17a2b8;
+}
+
+.danger-color { 
+  color: #dc3545;
+  border-color: #dc3545;
+  background-color: transparent;
+}
+.danger-color:hover {
+  color: white;
+  background: #dc3545;
+}

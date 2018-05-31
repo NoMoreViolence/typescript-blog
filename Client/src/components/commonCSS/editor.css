@@ -100,13 +100,8 @@
 }
 .preview-submit button {
   height: 4rem;
-  color: #007bff;
-  border-color: #007bff;
-  background-color: transparent;
 }
 .preview-submit button:hover {
-  color: white;
-  background: #007bff;
   cursor: pointer;
 }
 .preview-submit button:focus {
@@ -126,13 +121,8 @@
 }
 .editor-submit-mobile button {
   height: 4rem;
-  color: #007bff;
-  border-color: #007bff;
-  background-color: transparent;
 }
 .editor-submit-mobile button:hover {
-  color: white;
-  background: #007bff;
   cursor: pointer;
 }
 .editor-submit-mobile button:focus {
