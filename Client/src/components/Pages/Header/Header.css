@@ -1,4 +1,10 @@
-.header-menu {
-  display: flex;
-  justify-content: space-between;
+@media only screen and (min-width: 769px) {
+  .header-menu {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+
+@media only screen and (min-width: 0px) and (max-width: 768px) {
 }
