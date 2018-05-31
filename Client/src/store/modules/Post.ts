@@ -134,9 +134,9 @@ export const PostActions = {
   addPostPost: createAction<any, PostAddAPIInterface>(POST_ADD_POST, postPostAddAPI),
 
   // Method of Changing Post
-  changePutCategorySelectChange: createAction<string, string>(PUT_CHANGE_CATEGORY_SELECT_CHANGE, value => value),
-  changePutPostSelectChange: createAction<string, string>(PUT_CHANGE_POST_SELECT_CHANGE, value => value),
+  changePutPostCategorySelectChange: createAction<string, string>(PUT_CHANGE_CATEGORY_SELECT_CHANGE, value => value),
   changePutPostCategoryChange: createAction<string, string>(PUT_CHANGE_POST_CATEGORY_CHANGE, value => value),
+  changePutPostTitleSelectChange: createAction<string, string>(PUT_CHANGE_POST_SELECT_CHANGE, value => value),
   changePutPostTitleChange: createAction<string, string>(PUT_CHANGE_POST_TITLE_CHANGE, value => value),
   changePutPostSubTitleChange: createAction<string, string>(PUT_CHANGE_POST_SUBTITLE_CHANGE, value => value),
   changePutPostMainTextChange: createAction<string, string>(PUT_CHANGE_POST_MAINTEXT_CHANGE, value => value),
@@ -215,7 +215,7 @@ const initialState: PostState = {
     error: false,
     selectCategory: '카테고리 선택',
     selectTitle: '변경할 포스트 선택',
-    category: '',
+    category: '카테고리 선택',
     title: '',
     subTitle: '',
     mainText: ''
@@ -240,10 +240,10 @@ type AddPostPostSubTitlePayload = ReturnType<typeof PostActions.addPostPostSubTi
 type AddPostPostMainTextPayload = ReturnType<typeof PostActions.addPostPostMainTextChange>
 // change
 // select category, post
-type ChangePutCategorySelectPayload = ReturnType<typeof PostActions.changePutCategorySelectChange>
+type ChangePutCategorySelectPayload = ReturnType<typeof PostActions.changePutPostCategorySelectChange>
 type ChangePutCategoryPayload = ReturnType<typeof PostActions.changePutPostCategoryChange>
 // real change return type
-type ChangePutPostSelectPayload = ReturnType<typeof PostActions.changePutPostSelectChange>
+type ChangePutPostSelectPayload = ReturnType<typeof PostActions.changePutPostTitleSelectChange>
 type ChangePutPostTitlePayload = ReturnType<typeof PostActions.changePutPostTitleChange>
 type ChangePutPostSubTilePayload = ReturnType<typeof PostActions.changePutPostSubTitleChange>
 type ChangePutPostMainTextPayload = ReturnType<typeof PostActions.changePutPostMainTextChange>
