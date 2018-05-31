@@ -355,6 +355,11 @@ const reducer = handleActions<PostState, any>(
     [PUT_CHANGE_CATEGORY_SELECT_CHANGE]: (state, action: ChangePutCategorySelectPayload) =>
       produce(state, draft => {
         draft.change.selectCategory = action.payload
+        draft.change.category = '카테고리 선택'
+        draft.change.title = ''
+        draft.change.subTitle = ''
+        draft.change.mainText = ''
+        draft.change.date = 1111111111
       }),
     [PUT_CHANGE_POST_CATEGORY_CHANGE]: (state, action: ChangePutCategoryPayload) =>
       produce(state, draft => {
