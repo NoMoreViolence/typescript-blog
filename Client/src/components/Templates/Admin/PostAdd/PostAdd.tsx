@@ -21,20 +21,20 @@ interface Props {
   categoryDone: () => void
 }
 
-/*interface Dropdown {
-  currentTarget: { textContent: string }
-}*/
+interface CTarget {
+  currentTarget: { innerText: string }
+}
 
 class PostAdd extends React.Component<Props> {
   public state = {
     leftPercentage: 0.5,
-    postAddMessage: '포스트 추가하기 !',
+    postAddMessage: '포스트 추가 하기 !',
     showNone: false,
     dropdown: false
   }
 
-  // button click
-  public handleShowNone = async () => {
+  // handle Category add part show none
+  public handlePostAddShowNone = () => {
     if (this.state.showNone === false) {
       this.setState({
         showNone: !this.state.showNone,
@@ -44,19 +44,19 @@ class PostAdd extends React.Component<Props> {
     } else {
       this.setState({
         showNone: !this.state.showNone,
-        postAddMessage: '포스트 추가하기 !'
+        postAddMessage: '포스트 추가 하기 !'
       })
     }
   }
 
-  // Dropdown Toogle
-  public handleToogle = () => {
+  // handle Category Select show none
+  public handleCategorySelectShowNone = () => {
     this.setState({
       dropdown: !this.state.dropdown
     })
   }
   // Category Select Change
-  public handleSelect = (e: any) => {
+  public handleCategorySelectChange = (e: CTarget) => {
     this.setState({
       dropdown: false
     })
@@ -149,20 +149,20 @@ class PostAdd extends React.Component<Props> {
   }
 
   // separator click, and mouse move
-  public handleMouseMove = (e: MouseEvent) => {
+  public handleSeparatorMouseMove = (e: MouseEvent) => {
     this.setState({
       leftPercentage: e.clientX / window.innerWidth
     })
   }
   // hand off
-  public handleMouseUp = (e: MouseEvent) => {
-    document.body.removeEventListener('mousemove', this.handleMouseMove)
-    window.removeEventListener('mouseup', this.handleMouseUp)
+  public handleSeparatorMouseUp = (e: MouseEvent) => {
+    document.body.removeEventListener('mousemove', this.handleSeparatorMouseMove)
+    window.removeEventListener('mouseup', this.handleSeparatorMouseUp)
   }
   // separator click
   public handleSeparatorMouseDown = (e: React.MouseEvent<any>) => {
-    document.body.addEventListener('mousemove', this.handleMouseMove)
-    window.addEventListener('mouseup', this.handleMouseUp)
+    document.body.addEventListener('mousemove', this.handleSeparatorMouseMove)
+    window.addEventListener('mouseup', this.handleSeparatorMouseUp)
   }
 
   public render() {
@@ -180,7 +180,7 @@ class PostAdd extends React.Component<Props> {
     const CurrentCategoryChange = (data: CategoryStateInside[]) => {
       return data.map((object, i) => {
         return (
-          <button key={i} onClick={this.handleSelect} className="editor-category-child-button">
+          <button key={i} onClick={this.handleCategorySelectChange} className="editor-category-child-button">
             {object.category}
           </button>
         )
@@ -190,7 +190,7 @@ class PostAdd extends React.Component<Props> {
     return (
       <div className="editor-template">
         <div className="layout-container">
-          <Button block={true} outline={true} color="primary" onClick={this.handleShowNone}>
+          <Button block={true} outline={true} color="primary" onClick={this.handlePostAddShowNone}>
             {this.state.postAddMessage}
           </Button>
         </div>
@@ -199,12 +199,12 @@ class PostAdd extends React.Component<Props> {
             <div className="editor-and-viewer">
               <div className="editor" style={leftStyle}>
                 <div className="editor-category">
-                  <button onClick={this.handleToogle}>{this.props.add.category}</button>
+                  <button onClick={this.handleCategorySelectShowNone}>{this.props.add.category}</button>
                   {this.state.dropdown && (
                     <div className="editor-category-child-container">
                       <div className="editor-category-child">
                         {this.props.add.category !== '카테고리 선택' && (
-                          <button onClick={this.handleSelect} className="editor-category-child-button">
+                          <button onClick={this.handleCategorySelectChange} className="editor-category-child-button">
                             카테고리 선택
                           </button>
                         )}
