@@ -5,9 +5,9 @@ import axios from 'axios'
 // Bring Category & SubTitle of Posts & type
 // Type is the mark that can Recognize the api caller
 export interface GetPostBringAPIInterface {
-  category: string
-  title: string
-  type: number
+  category?: string
+  title?: string
+  type?: number
 }
 function getPostAPI(value: GetPostBringAPIInterface) {
   return axios.get(`/api/${value.category}/${value.title}?type=${value.type}`)
@@ -268,7 +268,7 @@ const reducer = handleActions<PostState, any>(
         draft.show.date = Date.now()
       }),
     [GET_BRING_POST_INFO_SUCCESS]: (state, action: Action<APIPayload>) => {
-      if (action.payload.data.value.type === 0) {
+      if (action.payload.data.value.type * 1 === 0) {
         // call info for show Post
         return produce(state, draft => {
           draft.load.pending = false
@@ -280,7 +280,7 @@ const reducer = handleActions<PostState, any>(
           draft.show.mainText = action.payload.data.value.posts[0].mainText
           draft.show.date = action.payload.data.value.posts[0].date
         })
-      } else if (action.payload.data.value.type === 1) {
+      } else if (action.payload.data.value.type * 1 === 1) {
         // call info for change Post
         return produce(state, draft => {
           draft.load.pending = false
@@ -292,7 +292,7 @@ const reducer = handleActions<PostState, any>(
           draft.change.mainText = action.payload.data.value.posts[0].mainText
           draft.change.date = action.payload.data.value.posts[0].date
         })
-      } else if (action.payload.data.value.type === 2) {
+      } else if (action.payload.data.value.type * 1 === 2) {
         // call info for delete post
         return produce(state, draft => {
           draft.load.pending = false
