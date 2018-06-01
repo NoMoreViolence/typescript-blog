@@ -13,7 +13,7 @@ router.post('/:category/:title', controller.postCreate)
 
 // change post
 router.use('/:category/:title', authMiddleware) // 미들웨어
-router.patch('/:category/:title', controller.postChange)
+router.put('/:category/:title', controller.postChange)
 
 // delete post
 router.use('/:category/:title', authMiddleware) // 미들웨어

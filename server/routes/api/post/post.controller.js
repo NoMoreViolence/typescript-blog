@@ -41,6 +41,7 @@ exports.allPostsTitleAndSubTitle = (req, res) => {
 // Bring the data of :title
 exports.showPost = (req, res) => {
   const { category, title } = req.params
+  const { type } = req.query
 
   const dummyData = {
     posts: [],
@@ -56,7 +57,7 @@ exports.showPost = (req, res) => {
         res.json({
           success: true,
           message: '포스트 불러오기 성공',
-          value: result
+          value: { type, posts: result.posts, category: result.category }
         })
       } else {
         // title is not real
@@ -67,7 +68,7 @@ exports.showPost = (req, res) => {
       res.json({
         success: false,
         message: `'${category}' 카테고리가 존재하지 않습니다`,
-        value: dummyData
+        value: { dummyData, type }
       })
     }
   }
@@ -77,7 +78,7 @@ exports.showPost = (req, res) => {
     res.status(409).json({
       success: false,
       message: error.message,
-      value: dummyData
+      value: { dummyData, type }
     })
   }
 
@@ -121,7 +122,7 @@ exports.postCreate = (req, res) => {
   // create part
   const create = exists => {
     if (exists) {
-      throw new Error(`${title}' 포스트가 이미 존재합니다, 다른 title명을 선택해 주세요 !`)
+      throw new Error(`'${title}' 포스트가 이미 존재합니다, 다른 타이틀명을 선택해 주세요 !`)
     }
     return Post.createPost(categoryID, title, subTitle, mainText)
   }
@@ -176,9 +177,9 @@ exports.postCreate = (req, res) => {
 exports.postChange = async (req, res) => {
   // :category, :title
   const { category, title } = req.params
-  // body. body. body. body.
+  // body data
   const {
-    changeCategory, changeTitle, changeSubTitle, changeMainText
+    changeCategory, changeTitle, subTitle, mainText
   } = req.body
 
   let postID = null
@@ -222,9 +223,14 @@ exports.postChange = async (req, res) => {
     if (exists) {
       // Duplicate changeTitle
       throw new Error(`'${changeTitle}' 타이틀은 이미 존재하는 타이틀이라 변경이 불가능 합니다 !`)
+    } else if (subTitle === '') {
+      throw new Error('SubTitle 란이 비어 있습니다 !')
+    } else if (mainText === '') {
+      throw new Error('MainText 란이 비어 있습니다 !')
     }
+
     // return changePost()
-    return Post.changePost(changeCategoryID, title, changeTitle, changeSubTitle, changeMainText)
+    return Post.changePost(changeCategoryID, title, changeTitle, subTitle, mainText)
   }
 
   // category & changeCategory Ref Update
