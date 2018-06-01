@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import 'components/commonCSS/layout.css'
 import 'components/commonCSS/cardView.css'
 import 'components/commonCSS/button.css'
+import 'components/commonCSS/color.css'
 
 // Pages
 import Basic from 'components/Pages/Basic'
