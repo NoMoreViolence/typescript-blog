@@ -27,6 +27,21 @@
   flex-direction: column;
   border-color: #aeb87a;
 }
+.editor-change-select-part {
+  display: flex;
+}
+.editor-change-select-category {
+  flex: 1;
+}
+.editor-change-select-category button {
+  width: 100%;
+}
+.editor-change-select-post {
+  flex: 1;
+}
+.editor-change-select-post button {
+  width: 100%;
+}
 .editor-category button {
   height: 4rem;
   color: #aeb87a;
