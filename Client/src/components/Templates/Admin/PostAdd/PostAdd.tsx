@@ -34,7 +34,7 @@ class PostAdd extends React.Component<Props> {
   }
 
   // handle Category add part show none
-  public handlePostAddShowNone = () => {
+  public handlePostAddShowNoneToogle = () => {
     if (this.state.showNone === false) {
       this.setState({
         showNone: !this.state.showNone,
@@ -50,7 +50,7 @@ class PostAdd extends React.Component<Props> {
   }
 
   // handle Category Select show none
-  public handleCategorySelectShowNone = () => {
+  public handleCategorySelectShowNoneToogle = () => {
     this.setState({
       dropdown: !this.state.dropdown
     })
@@ -190,7 +190,7 @@ class PostAdd extends React.Component<Props> {
     return (
       <div className="editor-template">
         <div className="layout-container">
-          <Button block={true} outline={true} color="primary" onClick={this.handlePostAddShowNone}>
+          <Button block={true} outline={true} color="primary" onClick={this.handlePostAddShowNoneToogle}>
             {this.state.postAddMessage}
           </Button>
         </div>
@@ -199,7 +199,7 @@ class PostAdd extends React.Component<Props> {
             <div className="editor-and-viewer">
               <div className="editor" style={leftStyle}>
                 <div className="editor-category">
-                  <button onClick={this.handleCategorySelectShowNone}>{this.props.add.category}</button>
+                  <button onClick={this.handleCategorySelectShowNoneToogle}>{this.props.add.category}</button>
                   {this.state.dropdown && (
                     <div className="editor-category-child-container">
                       <div className="editor-category-child">
@@ -226,13 +226,17 @@ class PostAdd extends React.Component<Props> {
                 </div>
                 {/* only can see mobile view */}
                 <div className="editor-submit-mobile">
-                  <button onClick={this.handleSubmit}>포스트 생성 하기 !</button>
+                  <button className="primary-color" onClick={this.handleSubmit}>
+                    포스트 생성 하기 !
+                  </button>
                 </div>
                 {/* only can see mobile view */}
               </div>
               <div className="preview" style={rightStyle}>
                 <div className="preview-submit">
-                  <button onClick={this.handleSubmit}>포스트 생성 하기 !</button>
+                  <button className="primary-color" onClick={this.handleSubmit}>
+                    포스트 생성 하기 !
+                  </button>
                 </div>
 
                 <div className="preview-inside">
