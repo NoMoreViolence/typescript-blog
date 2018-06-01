@@ -25,11 +25,20 @@ interface Props {
   categoryDone: () => void
 }
 
-interface CTarget {
-  currentTarget: { innerText: string }
+interface State {
+  leftPercentage: number
+  postAddMessage: string
+  showNone: boolean
+  categorySelectDropdown: boolean
+  categoryDropdown: boolean
+  postSelectDropdown: boolean
 }
 
-class PostChange extends React.Component<Props> {
+interface CTarget {
+  currentTarget: HTMLButtonElement
+}
+
+class PostChange extends React.Component<Props, State> {
   public state = {
     leftPercentage: 0.5,
     postAddMessage: '포스트 수정 하기 !',

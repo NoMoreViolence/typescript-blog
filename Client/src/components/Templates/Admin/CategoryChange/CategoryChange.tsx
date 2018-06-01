@@ -20,16 +20,19 @@ interface Props {
   logout: () => void
   categoryDone: () => void
 }
+interface State {
+  changeCategoryDropdown: boolean
+}
 
 interface Target {
   target: HTMLInputElement
 }
 interface Current {
-  currentTarget: { textContent: string }
+  currentTarget: HTMLButtonElement
 }
 
 const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
-  class CategoryChange extends React.Component<Props & RouteComponentProps<any>> {
+  class CategoryChange extends React.Component<Props & RouteComponentProps<any>, State> {
     public changeCategoryInput: any
 
     // 드롭다운 State
@@ -51,7 +54,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
 
     // 변경할 카테고리 선택
     public handleSelect = (e: Current) => {
-      this.props.changeCategoryCategoryChange(e.currentTarget.textContent)
+      this.props.changeCategoryCategoryChange(e.currentTarget.innerText)
     }
 
     // 제출

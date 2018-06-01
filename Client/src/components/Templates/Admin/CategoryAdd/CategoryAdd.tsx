@@ -62,9 +62,9 @@ const CategoryAdd = withRouter<Props & RouteComponentProps<any>>(
               if (err.response.data.type === 'undefinded token' || err.response.data.type === 'invalid token') {
                 toast('인증된 사용자가 아닙니다 !')
                 // 로그아웃 메소드로 loginLogined false & 세션 스토리지 초기화 & 홈페이지로 이동
-                // logout()
-                // sessionStorage.clear()
-                // history.push('/')
+                logout()
+                sessionStorage.clear()
+                history.push('/')
               }
               // 사용자의 시도 실패
               else if (err.response.data.type === 'server error') {

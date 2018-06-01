@@ -20,16 +20,19 @@ interface Props {
   categoryDone: () => void
 }
 
+interface State {
+  deleteCategoryDropdown: boolean
+}
+
 interface Target {
   target: HTMLInputElement
 }
-
 interface Current {
-  currentTarget: { textContent: string }
+  currentTarget: HTMLButtonElement
 }
 
 const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
-  class CategoryDelete extends React.Component<Props & RouteComponentProps<any>> {
+  class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, State> {
     public deleteCategoryInput: any
 
     // 드롭다운 State
@@ -51,7 +54,7 @@ const CategoryDelete = withRouter<Props & RouteComponentProps<any>>(
 
     // 삭제할 카테고리 선택
     public handleSelect = (e: Current) => {
-      this.props.deleteCategoryCategoryChange(e.currentTarget.textContent)
+      this.props.deleteCategoryCategoryChange(e.currentTarget.innerText)
     }
 
     // 카테고리 삭제 요청
