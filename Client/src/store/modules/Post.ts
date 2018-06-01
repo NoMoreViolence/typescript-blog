@@ -71,8 +71,8 @@ export interface DeleteDeleteAPIInterface {
   title?: string
 }
 // API of Deleting Post
-function deletePostDeleteAPI(category: string, title: string) {
-  return axios.delete(`/api/${category}/${title}`, {
+function deletePostDeleteAPI(value: DeleteDeleteAPIInterface) {
+  return axios.delete(`/api/${value.category}/${value.title}`, {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': sessionStorage.getItem('token')
@@ -144,8 +144,8 @@ export const PostActions = {
 
   // Method of Deleting Post
   deleteDeleteCategorySelectChange: createAction<string, string>(DELETE_DELETE_CATEGORY_SELECT_CHANGE, value => value),
-  deleteDeletePostSelectChange: createAction<string, string>(DELETE_DELETE_POST_SELECT_CHANGE, value => value),
-  deleteDeletePost: createAction<any, string, string>(DELETE_DELETE_POST, deletePostDeleteAPI),
+  deleteDeletePostTitleSelectChange: createAction<string, string>(DELETE_DELETE_POST_SELECT_CHANGE, value => value),
+  deleteDeletePost: createAction<any, DeleteDeleteAPIInterface>(DELETE_DELETE_POST, deletePostDeleteAPI),
 
   // Everything is Gone
   postDone: createAction(POST_DONE)
@@ -249,7 +249,7 @@ type ChangePutPostSubTilePayload = ReturnType<typeof PostActions.changePutPostSu
 type ChangePutPostMainTextPayload = ReturnType<typeof PostActions.changePutPostMainTextChange>
 
 type DeleteDeleteCategorySelectPayload = ReturnType<typeof PostActions.deleteDeleteCategorySelectChange>
-type DeleteDeletePostSelectPayload = ReturnType<typeof PostActions.deleteDeletePostSelectChange>
+type DeleteDeletePostSelectPayload = ReturnType<typeof PostActions.deleteDeletePostTitleSelectChange>
 
 // reducer
 const reducer = handleActions<PostState, any>(
