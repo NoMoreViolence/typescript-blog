@@ -19,7 +19,7 @@ class HeaderCategory extends React.Component<Props> {
 
   public render() {
     // 데이터 받아서 정렬
-    const loadCategory = (data: any[]) => {
+    const loadCategory = (data: CategoryStateInside[]) => {
       return data.map((object, i) => {
         const url = `/${object.category}`
         return (

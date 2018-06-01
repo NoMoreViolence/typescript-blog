@@ -58,7 +58,7 @@ class CategorySelect extends React.Component<Props> {
         return (
           <div className="category-all-container">
             {/* show value */}
-            {SelectedPosts[0].posts.map((object, i: number) => {
+            {SelectedPosts[0].posts.map((object, i) => {
               if (i < this.state.load) {
                 return (
                   <div className="category-all-child" key={i}>
