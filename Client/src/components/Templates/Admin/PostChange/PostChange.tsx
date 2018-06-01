@@ -12,6 +12,7 @@ import MarkdownRenderer from 'lib/MarkDownRenderer'
 interface Props {
   category: CategoryStateInside[]
   change: ChangePostState
+  loadCategory: () => any
   loadPost: (value: GetPostBringAPIInterface) => any
   changeCategorySelect: (value: string) => any
   changeTitleSelect: (value: string) => any
@@ -167,7 +168,19 @@ class PostChange extends React.Component<Props> {
       })
     }
     const requestToServer = (post: PutChangeAPIInterface) => {
-      this.props.changePost(post)
+      this.props
+        .changePost(post)
+        // request call success
+        .then(async (res: { value: any; action: any }) => {
+          await this.props.postDone()
+          await this.props.categoryDone()
+          await this.props.loadCategory()
+          toast(res.action.payload.data.message)
+        })
+        // request call failure
+        .catch((err: any) => {
+          toast(err.response.data.message)
+        })
     }
     // take all insert error
     const onError = (err: Error) => {

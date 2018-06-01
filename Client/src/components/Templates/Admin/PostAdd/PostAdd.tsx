@@ -12,6 +12,7 @@ import MarkdownRenderer from 'lib/MarkDownRenderer'
 interface Props {
   category: CategoryStateInside[]
   add: AddPostState
+  loadCategory: () => any
   changeCategory: (value: string) => any
   changeTitle: (value: string) => any
   changeSubTitle: (value: string) => any
@@ -122,6 +123,7 @@ class PostAdd extends React.Component<Props> {
         .then(async (res: { value: any; action: any }) => {
           await this.props.postDone()
           await this.props.categoryDone()
+          await this.props.loadCategory()
           toast(res.action.payload.data.message)
         })
         // request call failure

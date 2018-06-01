@@ -20,6 +20,7 @@ class PostAddContainer extends React.Component<Props> {
     return (
       <PostChange
         category={this.props.category}
+        loadCategory={this.props.CategoryActions.getCategory}
         loadPost={this.props.PostActions.getPost}
         change={this.props.change}
         changeCategorySelect={this.props.PostActions.changePutPostCategorySelectChange}
