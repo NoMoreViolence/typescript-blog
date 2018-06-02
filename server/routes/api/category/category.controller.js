@@ -9,31 +9,34 @@ const Post = require('./../../../models/Post')
 exports.showTitleAndSubTitle = (req, res) => {
   const { category } = req.params
 
+  // category Check, if data is 'admin' throw error, because 'admin' is can't be a category Name
+  const categoryNameCheck = data => {
+    // right value
+    if (data !== 'admin') {
+      return new Promise(resolve => {
+        resolve(data)
+      })
+    }
+    // 'admin' throw error
+    return new Promise((resolve, reject) => {
+      reject(new Error(`there is no ${data} category`))
+    })
+  }
+
+  // find Category
+  const bringCategoryData = data => {
+    if (data === 'categories') return Category.findAllCategoriesTitleAndSubTitle()
+    return Category.findSomeCategorysTitleAndSubTitle(data)
+  }
+
   // All category Search data === data
-  const response = data => {
+  const responseToServer = data => {
     // respond to client with all category and all category data ( title, subTitle )
-    if (category === 'categories') {
-      res.json({
-        success: true,
-        message: '모든 카테고리 정보 불러오는 작업 성공 !',
-        value: data
-      })
-      return
-    }
-
-    // if the category is fake or none
-    if (data.length === 0) {
-      throw new Error(`'${category}' 카테고리가 존재하지 않습니다 !`)
-    }
-
-    if (category !== 'categories') {
-      // respond to client with category and category data ( title, subTitle )
-      res.json({
-        success: true,
-        message: `'${category}' 카테고리 정보 불러오는 작업 성공 !`,
-        value: data
-      })
-    }
+    res.json({
+      success: true,
+      message: `call '${category}' success`,
+      value: data
+    })
   }
 
   // if Error
@@ -45,9 +48,10 @@ exports.showTitleAndSubTitle = (req, res) => {
     })
   }
 
-  // find Category
-  Category.findCategoryOrCategories(category)
-    .then(response)
+  // Promise
+  categoryNameCheck(category)
+    .then(bringCategoryData)
+    .then(responseToServer)
     .catch(onError)
 }
 

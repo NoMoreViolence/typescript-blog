@@ -8,23 +8,28 @@ const Category = new Schema({
   posts: [{ type: Schema.Types.ObjectId, ref: 'post' }] // post, this is Ref array, contain _id
 })
 
-// whole category print
-Category.statics.findCategoryOrCategories = function (category) {
+// whole categories data
+Category.statics.findAllCategoriesTitleAndSubTitle = function () {
   // all category
-  if (category === 'categories') {
-    return this.find({}, { category: 1 })
-      .populate({
-        path: 'posts',
-        select: 'title subTitle date',
-        options: { sort: { date: -1 } },
-        populate: { path: 'category', select: 'category' }
-      })
-      .sort({ category: 1 })
-      .exec()
-  }
-  // seleted category
-  return this.find({ category }, { category: 1 })
-    .populate({ path: 'posts', select: 'title subTitle date', options: { sort: { date: -1 } } })
+  return this.find({}, { category: 1 })
+    .populate({
+      path: 'posts',
+      select: 'title subTitle date',
+      options: { sort: { date: -1 } },
+      populate: { path: 'category', select: 'category' }
+    })
+    .sort({ category: 1 })
+    .exec()
+}
+// some categorys data
+Category.statics.findSomeCategorysTitleAndSubTitle = function (category) {
+  return this.find({ category })
+    .populate({
+      path: 'posts',
+      select: 'title subTitle, date',
+      options: { sort: { date: -1 } },
+      populate: { path: 'category', select: 'category' }
+    })
     .sort({ category: 1 })
     .exec()
 }
