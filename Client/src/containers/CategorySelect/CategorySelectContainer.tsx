@@ -12,6 +12,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 interface Props {
   Category: CategoryStateInside[]
+  categoryLoaded: boolean
 }
 
 class CategorySelectContainer extends React.Component<Props & RouteComponentProps<any>> {
@@ -19,7 +20,11 @@ class CategorySelectContainer extends React.Component<Props & RouteComponentProp
     return (
       <React.Fragment>
         {this.props.match.url !== '/admin' && (
-          <CategorySelect posts={this.props.Category} url={this.props.match.url.slice(1)} />
+          <CategorySelect
+            posts={this.props.Category}
+            url={this.props.match.url.slice(1)}
+            categoryLoaded={this.props.categoryLoaded}
+          />
         )}
       </React.Fragment>
     )
@@ -29,7 +34,8 @@ class CategorySelectContainer extends React.Component<Props & RouteComponentProp
 export default withRouter(
   connect(
     ({ Category }: StoreState) => ({
-      Category: Category.categoryCategory
+      Category: Category.categoryCategory,
+      categoryLoaded: Category.categoryLoaded
     }),
     dispatch => ({})
   )(CategorySelectContainer)

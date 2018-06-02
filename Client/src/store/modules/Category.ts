@@ -118,6 +118,7 @@ export interface CategoryStateInside {
 }
 // Category State
 export interface CategoryState {
+  categoryLoaded: boolean
   categoryPending: boolean
   categoryError: boolean
   categoryCategory: CategoryStateInside[]
@@ -135,6 +136,7 @@ export interface CategoryState {
 }
 // origin state
 const initialState: CategoryState = {
+  categoryLoaded: false,
   categoryPending: false,
   categoryError: false,
   categoryCategory: [],
@@ -170,12 +172,14 @@ const reducer = handleActions<CategoryState, any>(
     // 카테고리 가져오기 대기 중...
     [GET_BRING_CATEGORYS_PENDING]: state =>
       produce(state, draft => {
+        draft.categoryLoaded = false
         draft.categoryPending = true
         draft.categoryError = false
       }),
     // 카테고리 가져오기 성공
     [GET_BRING_CATEGORYS_SUCCESS]: (state, action: Action<CategoryPayload>) =>
       produce(state, draft => {
+        draft.categoryLoaded = true
         draft.categoryPending = false
         draft.categoryError = false
         draft.categoryCategory = action.payload.data.value
@@ -183,6 +187,7 @@ const reducer = handleActions<CategoryState, any>(
     // 카테고리 가져오기 실패
     [GET_BRING_CATEGORYS_FAILURE]: state =>
       produce(state, draft => {
+        draft.categoryLoaded = false
         draft.categoryPending = false
         draft.categoryError = true
         draft.categoryCategory = [{ posts: [], _id: '', category: '', __v: 0 }]

@@ -9,6 +9,7 @@ import NotFound from '../../Pages/NotFound'
 interface Props {
   posts: CategoryStateInside[]
   url: string
+  categoryLoaded: boolean
 }
 
 class CategorySelect extends React.Component<Props> {
@@ -49,7 +50,10 @@ class CategorySelect extends React.Component<Props> {
       // Before loaded first API, there is no data, so, I made the data is zero
       // Or Wrong category
       if (SelectedPosts.length === 0) {
-        return <NotFound />
+        if (this.props.categoryLoaded === true) {
+          return <NotFound />
+        }
+        return null
       } else {
         // if the posts number is bigger than this.state.load, activate load more button
         if (SelectedPosts[0].posts.length > this.state.load) {
