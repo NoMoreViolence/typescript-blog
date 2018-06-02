@@ -10,7 +10,7 @@ exports.showTitleAndSubTitle = (req, res) => {
   const { category } = req.params
 
   // category Check, if data is 'admin' throw error, because 'admin' is can't be a category Name
-  const categoryNameCheck = data => {
+  const categoryNameAdminCheck = data => {
     // right value
     if (data !== 'admin') {
       return new Promise(resolve => {
@@ -49,7 +49,7 @@ exports.showTitleAndSubTitle = (req, res) => {
   }
 
   // Promise
-  categoryNameCheck(category)
+  categoryNameAdminCheck(category)
     .then(bringCategoryData)
     .then(responseToServer)
     .catch(onError)
@@ -69,26 +69,49 @@ exports.showTitleAndSubTitle = (req, res) => {
 exports.categoryCreate = (req, res) => {
   const { category } = req.params
 
-  console.log(category)
-
-  // if there is same category, throws error.
-  const create = value => {
-    if (value) {
-      throw new Error(`이미 '${category}' 가 존재합니다 !`)
-    } else {
-      return Category.createCategory(category)
+  // category name admin check
+  const categoryNameAdminCheck = data => {
+    // right value
+    if (data !== 'admin') {
+      return new Promise(resolve => {
+        resolve(data)
+      })
     }
-  }
-
-  // respond to client with message & value
-  const respond = value => {
-    res.json({
-      success: true,
-      message: `'${category}' 카테고리가 생성 되었습니다 !`,
-      value
+    // 'admin' throw error
+    return new Promise((resolve, reject) => {
+      reject(new Error(`'${data}' 이름의 카테고리는 생성이 불가능 합니다 !`))
     })
   }
 
+  // category same name check
+  const categoryNameSameCheck = async data => {
+    // if same category name exists, throw error
+    if (await Category.findSameCategory(data)) {
+      return new Promise((resolve, reject) => {
+        reject(new Error(`'${data}' 이름의 카테고리가 이미 존재합니다 !`))
+      })
+    }
+    return new Promise(resolve => {
+      resolve(data)
+    })
+  }
+
+  // create category
+  const addNewCategory = async data => {
+    await Category.createCategory(data)
+    return new Promise(resolve => {
+      resolve(data)
+    })
+  }
+
+  // respondToServer
+  const respondToServer = data => {
+    res.json({
+      success: true,
+      message: `'${data}' 카테고리 생성 완료 !`,
+      value: data
+    })
+  }
   // respond error with err.message & none value
   const onError = err => {
     res.status(409).json({
@@ -99,9 +122,10 @@ exports.categoryCreate = (req, res) => {
   }
 
   // Promise
-  Category.findSameCategory(category)
-    .then(create)
-    .then(respond)
+  categoryNameAdminCheck(category)
+    .then(categoryNameSameCheck)
+    .then(addNewCategory)
+    .then(respondToServer)
     .catch(onError)
 }
 
