@@ -45,7 +45,8 @@ Category.statics.findPostNamesAndSubTitleOfCategory = function (category) {
 
 // if there is category, return category, else, return null
 Category.statics.findSameCategory = function (category) {
-  return this.findOne({ category }).exec()
+  // use regular expression
+  return this.findOne({ category: { $regex: category, $options: 'i' } }).exec()
 }
 
 // add New Category
