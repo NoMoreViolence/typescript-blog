@@ -72,7 +72,7 @@ exports.categoryCreate = (req, res) => {
   // category name admin check
   const categoryNameAdminCheck = data => {
     // right value
-    if (data !== 'admin') {
+    if (data.toLowerCase() !== 'admin') {
       return new Promise(resolve => {
         resolve(data)
       })
