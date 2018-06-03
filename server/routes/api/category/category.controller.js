@@ -12,15 +12,11 @@ exports.showTitleAndSubTitle = (req, res) => {
   // category Check, if data is 'admin' throw error, because 'admin' is can't be a category Name
   const categoryNameAdminCheck = data => {
     // right value
-    if (data !== 'admin') {
-      return new Promise(resolve => {
-        resolve(data)
-      })
+    if (data.toLowerCase() !== 'admin') {
+      return Promise.resolve(data)
     }
     // 'admin' throw error
-    return new Promise((resolve, reject) => {
-      reject(new Error(`there is no ${data} category`))
-    })
+    return Promise.reject(new Error(`'${data}' 는 관리자 이름의 카테고리라 존재할 수 없습니다 !`))
   }
 
   // find Category
@@ -29,12 +25,21 @@ exports.showTitleAndSubTitle = (req, res) => {
     return Category.findSomeCategorysTitleAndSubTitle(data)
   }
 
+  // check the category data is null or not
+  const checkBringedCategoryData = data => {
+    // if the data is null throw error
+    if (data.length !== 0) {
+      return Promise.resolve(data)
+    }
+    return Promise.reject(new Error('검색하신 카테고리가 존재하지 않습니다 !'))
+  }
+
   // All category Search data === data
   const responseToServer = data => {
     // respond to client with all category and all category data ( title, subTitle )
     res.json({
       success: true,
-      message: `call '${category}' success`,
+      message: `'${category}' 카테고리 정보 가져오기 성공 !`,
       value: data
     })
   }
@@ -49,8 +54,9 @@ exports.showTitleAndSubTitle = (req, res) => {
   }
 
   // Promise
-  categoryNameAdminCheck(category)
+  categoryNameAdminCheck(category.trim())
     .then(bringCategoryData)
+    .then(checkBringedCategoryData)
     .then(responseToServer)
     .catch(onError)
 }
@@ -72,48 +78,34 @@ exports.categoryCreate = (req, res) => {
   // category text null check
   const categoryNullCheck = data => {
     if (data !== '') {
-      return new Promise(resolve => {
-        resolve(data)
-      })
+      return Promise.resolve(data)
     }
-    return new Promise((resolve, reject) => {
-      reject(new Error('추가할 카테고리 값이 없습니다 !'))
-    })
+    return Promise.reject(new Error('추가할 카테고리 값이 없습니다 !'))
   }
 
   // category name admin check
   const categoryNameAdminCheck = data => {
     // right value
     if (data.toLowerCase() !== 'admin') {
-      return new Promise(resolve => {
-        resolve(data)
-      })
+      return Promise.resolve(data)
     }
     // 'admin' throw error
-    return new Promise((resolve, reject) => {
-      reject(new Error(`'${data}' 이름의 카테고리는 생성이 불가능 합니다 !`))
-    })
+    return Promise.reject(new Error(`'${data}' 이름의 카테고리는 생성이 불가능 합니다 !`))
   }
 
   // category same name check
   const categoryNameSameCheck = async data => {
     // if same category name exists, throw error
-    if ((await Category.findSameCategory(data)) === null) {
-      return new Promise(resolve => {
-        resolve(data)
-      })
+    if ((await Category.findSameCategoryRegex(data)) === null) {
+      return Promise.resolve(data)
     }
-    return new Promise((resolve, reject) => {
-      reject(new Error(`'${data}' 이름의 카테고리가 이미 존재합니다 !`))
-    })
+    return Promise.reject(new Error(`'${data}' 이름의 카테고리가 이미 존재합니다 !`))
   }
 
   // create category
   const addNewCategory = async data => {
     await Category.createCategory(data)
-    return new Promise(resolve => {
-      resolve(data)
-    })
+    return Promise.resolve(data)
   }
 
   // respondToServer
@@ -158,59 +150,50 @@ exports.categoryChange = (req, res) => {
   const { category } = req.params
   const { changeCategory } = req.body
 
+  /*
+    data[0] ==> oldCategory
+    data[1] ==> newCategory
+  */
+
   // check categoryOld is eixst
-  const oldCategoryCheck = async (categoryOld, categoryNew) => {
+  const oldCategoryCheck = async data => {
     // if the categoryOld doesn't exist, throw error
-    if ((await Category.findSameCategory(categoryOld)) !== null) {
-      return new Promise(resolve => {
-        resolve(categoryOld, categoryNew)
-      })
+    if ((await Category.findSameCategory(data[0])) !== null) {
+      return Promise.resolve(data)
     }
-    return new Promise((resolve, reject) => {
-      reject(new Error('변경하려는 카테고리가 존재하지 않습니다 !'))
-    })
+    return Promise.reject(new Error('변경하려는 카테고리가 존재하지 않습니다 !'))
   }
 
   // check categoryNew not exist
-  const newCategoryCheck = async (categoryOld, categoryNew) => {
-    // if the categoryNew exist, throw error
-    if ((await Category.findSameCategory(categoryNew)) === null) {
-      return new Promise(resolve => {
-        resolve(categoryOld, categoryNew)
-      })
+  const newCategoryCheck = async data => {
+    // if categoryNew already exist, throw error
+    if ((await Category.findSameCategory(data[1])) === null) {
+      return Promise.resolve(data)
     }
-    return new Promise((resolve, reject) => {
-      reject(new Error(`'${categoryNew}' 카테고리가 이미 존재하여 변경이 불가능 합니다 !`))
-    })
+    return Promise.reject(new Error(`'${data[1]}' 카테고리가 이미 존재하여 변경이 불가능 합니다 !`))
   }
 
   // if the category & changeCategory is same, doesn't need to change
-  const categorySameCheck = async (categoryOld, categoryNew) => {
+  const categorySameCheck = async data => {
     // if category & changeCategory is same, throw error
-    if (categoryOld !== categoryNew) {
-      return new Promise(resolve => {
-        resolve(categoryOld, categoryNew)
-      })
+    if (data[0] !== data[1]) {
+      return Promise.resolve(data)
     }
-    return new Promise((resolve, reject) => {
-      reject(new Error('현재 카테고리와 변경하려는 카테고리의 값이 같습니다 !'))
-    })
+    return Promise.reject(new Error('현재 카테고리와 변경하려는 카테고리의 값이 같습니다 !'))
   }
 
   // change category
-  const categoryChange = async (categoryOld, categoryNew) => {
-    await Category.changeCategory(categoryOld, categoryNew)
-    return new Promise(resolve => {
-      resolve(categoryOld, categoryNew)
-    })
+  const categoryChange = async data => {
+    await Category.changeCategory(data[0], data[1])
+    return Promise.resolve(data)
   }
 
   // respond to server
-  const respondToServer = (categoryOld, categoryNew) => {
+  const respondToServer = data => {
     res.json({
       success: true,
-      message: `'${categoryOld}' 카테고리가 '${categoryNew}' 카테고리로 변경 되었습니다 !`,
-      value: [categoryOld, categoryNew]
+      message: `'${data[0]}' 카테고리가 '${data[1]}' 카테고리로 변경 되었습니다 !`,
+      value: [data[0], data[1]]
     })
   }
 
@@ -223,7 +206,7 @@ exports.categoryChange = (req, res) => {
     })
   }
 
-  oldCategoryCheck(category.trim(), changeCategory.trim())
+  oldCategoryCheck([category, changeCategory])
     .then(newCategoryCheck)
     .then(categorySameCheck)
     .then(categoryChange)
