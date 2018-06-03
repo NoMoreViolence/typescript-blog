@@ -69,6 +69,18 @@ exports.showTitleAndSubTitle = (req, res) => {
 exports.categoryCreate = (req, res) => {
   const { category } = req.params
 
+  // category text null check
+  const categoryNullCheck = data => {
+    if (data !== '') {
+      return new Promise(resolve => {
+        resolve(data)
+      })
+    }
+    return new Promise((resolve, reject) => {
+      reject(new Error('추가할 카테고리 값이 없습니다 !'))
+    })
+  }
+
   // category name admin check
   const categoryNameAdminCheck = data => {
     // right value
@@ -86,13 +98,13 @@ exports.categoryCreate = (req, res) => {
   // category same name check
   const categoryNameSameCheck = async data => {
     // if same category name exists, throw error
-    if (await Category.findSameCategory(data)) {
-      return new Promise((resolve, reject) => {
-        reject(new Error(`'${data}' 이름의 카테고리가 이미 존재합니다 !`))
+    if ((await Category.findSameCategory(data)) === null) {
+      return new Promise(resolve => {
+        resolve(data)
       })
     }
-    return new Promise(resolve => {
-      resolve(data)
+    return new Promise((resolve, reject) => {
+      reject(new Error(`'${data}' 이름의 카테고리가 이미 존재합니다 !`))
     })
   }
 
@@ -112,6 +124,7 @@ exports.categoryCreate = (req, res) => {
       value: data
     })
   }
+
   // respond error with err.message & none value
   const onError = err => {
     res.status(409).json({
@@ -122,7 +135,8 @@ exports.categoryCreate = (req, res) => {
   }
 
   // Promise
-  categoryNameAdminCheck(category)
+  categoryNullCheck(category.trim())
+    .then(categoryNameAdminCheck)
     .then(categoryNameSameCheck)
     .then(addNewCategory)
     .then(respondToServer)
@@ -141,52 +155,79 @@ exports.categoryCreate = (req, res) => {
 */
 // change Category
 exports.categoryChange = (req, res) => {
-  // params.category, body.changeCategory
   const { category } = req.params
   const { changeCategory } = req.body
 
-  // if changeCategory value is none, throw Error
-  const changeCategoryCheck = exists => {
-    if (exists) {
-      return Category.findSameCategory(changeCategory)
+  // check categoryOld is eixst
+  const oldCategoryCheck = async (categoryOld, categoryNew) => {
+    // if the categoryOld doesn't exist, throw error
+    if ((await Category.findSameCategory(categoryOld)) !== null) {
+      return new Promise(resolve => {
+        resolve(categoryOld, categoryNew)
+      })
     }
-    throw new Error(`'${category}' 카테고리가 존재하지 않습니다 !`)
-  }
-
-  // category change Part
-  const change = exists => {
-    // if there is category to change
-    if (exists) {
-      // there is no category to change
-      throw new Error(`'${changeCategory}' 카테고리가 이미 존재해서 변경이 불가능 합니다 !`)
-    }
-    // change Category
-    return Category.changeCategory(category, changeCategory)
-  }
-
-  // response to client
-  const respond = result => {
-    res.json({
-      success: true,
-      message: `'${category}' 카테고리가 '${changeCategory}' 로 변경 되었습니다 !`,
-      value: result
+    return new Promise((resolve, reject) => {
+      reject(new Error('변경하려는 카테고리가 존재하지 않습니다 !'))
     })
   }
 
-  // reponse error to client
-  const onError = error => {
+  // check categoryNew not exist
+  const newCategoryCheck = async (categoryOld, categoryNew) => {
+    // if the categoryNew exist, throw error
+    if ((await Category.findSameCategory(categoryNew)) === null) {
+      return new Promise(resolve => {
+        resolve(categoryOld, categoryNew)
+      })
+    }
+    return new Promise((resolve, reject) => {
+      reject(new Error(`'${categoryNew}' 카테고리가 이미 존재하여 변경이 불가능 합니다 !`))
+    })
+  }
+
+  // if the category & changeCategory is same, doesn't need to change
+  const categorySameCheck = async (categoryOld, categoryNew) => {
+    // if category & changeCategory is same, throw error
+    if (categoryOld !== categoryNew) {
+      return new Promise(resolve => {
+        resolve(categoryOld, categoryNew)
+      })
+    }
+    return new Promise((resolve, reject) => {
+      reject(new Error('현재 카테고리와 변경하려는 카테고리의 값이 같습니다 !'))
+    })
+  }
+
+  // change category
+  const categoryChange = async (categoryOld, categoryNew) => {
+    await Category.changeCategory(categoryOld, categoryNew)
+    return new Promise(resolve => {
+      resolve(categoryOld, categoryNew)
+    })
+  }
+
+  // respond to server
+  const respondToServer = (categoryOld, categoryNew) => {
+    res.json({
+      success: true,
+      message: `'${categoryOld}' 카테고리가 '${categoryNew}' 카테고리로 변경 되었습니다 !`,
+      value: [categoryOld, categoryNew]
+    })
+  }
+
+  // respond error with err.message & none value
+  const onError = err => {
     res.status(409).json({
       success: false,
-      message: error.message,
+      message: err.message,
       value: []
     })
   }
 
-  // Promise
-  Category.findSameCategory(category)
-    .then(changeCategoryCheck)
-    .then(change)
-    .then(respond)
+  oldCategoryCheck(category.trim(), changeCategory.trim())
+    .then(newCategoryCheck)
+    .then(categorySameCheck)
+    .then(categoryChange)
+    .then(respondToServer)
     .catch(onError)
 }
 
