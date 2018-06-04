@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import './Admin.css'
-
+ 
 // category
 import CurrentCategoryContainer from 'containers/Admin/CurrentCategoryContainer'
 import CategoryAddContainer from 'containers/Admin/CategoryAddContainer'
@@ -16,6 +16,9 @@ const Admin: React.SFC = () => {
   return (
     <React.Fragment>
       <div className="layout-container">
+        <div className="admin-warning">
+          # 주의사항: 하나의 작업을 완료하게 되면 진행중인 다른 작업들은 모두 사라집니다 #
+        </div>
         <h1 className="admin-logo">Category</h1>
         <CurrentCategoryContainer />
         <CategoryAddContainer />
