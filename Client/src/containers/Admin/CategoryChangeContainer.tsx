@@ -2,8 +2,9 @@ import * as React from 'react'
 
 import CategoryChange from 'components/Templates/Admin/CategoryChange'
 
-import { LoginActions } from 'store/modules/Login'
 import { CategoryActions, CategoryStateInside } from 'store/modules/Category'
+import { PostActions } from 'store/modules/Post'
+import { LoginActions } from 'store/modules/Login'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -20,6 +21,7 @@ interface Props {
   changeCategoryCategoryValue: string
   // 각종 카테고리 변경 액션
   CategoryActions: typeof CategoryActions
+  PostActions: typeof PostActions
   LoginActions: typeof LoginActions
 }
 
@@ -31,11 +33,12 @@ const CategoryChangeContainer = (Props: Props) => {
       categoryLoad={Props.CategoryActions.getCategory}
       changeCategoryInputValue={Props.changeCategoryInputValue}
       changeCategoryInputChange={Props.CategoryActions.changeCategoryInputChange}
-      changeCategoryCategoryValue={Props.changeCategoryCategoryValue}
-      changeCategoryCategoryChange={Props.CategoryActions.changeCategoryCategoryChange}
+      changeCategorySelectValue={Props.changeCategoryCategoryValue}
+      changeCategorySelectChange={Props.CategoryActions.changeCategoryCategoryChange}
       changeCategory={Props.CategoryActions.changeCategory}
       logout={Props.LoginActions.logout}
       categoryDone={Props.CategoryActions.categoryDone}
+      postDone={Props.PostActions.postDone}
     />
   )
 }
@@ -49,6 +52,7 @@ export default connect(
   }),
   dispatch => ({
     CategoryActions: bindActionCreators(CategoryActions, dispatch),
+    PostActions: bindActionCreators(PostActions, dispatch),
     LoginActions: bindActionCreators(LoginActions, dispatch)
   })
 )(CategoryChangeContainer)

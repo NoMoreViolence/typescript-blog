@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { CategoryStateInside } from 'store/modules/Category'
-import { Form, InputGroup, Dropdown, DropdownToggle, DropdownItem, DropdownMenu, Input, Button } from 'reactstrap'
-import { toast } from 'react-toastify'
 
 import './CategoryChange.css'
+
+import { Form, InputGroup, Dropdown, DropdownToggle, DropdownItem, DropdownMenu, Input, Button } from 'reactstrap'
+import { toast } from 'react-toastify'
 
 interface Props {
   loginLogined: boolean
@@ -12,125 +13,186 @@ interface Props {
 
   changeCategoryInputValue: string
   changeCategoryInputChange: (value: string) => void
-  changeCategoryCategoryValue: string
-  changeCategoryCategoryChange: (value: string) => void
+  changeCategorySelectValue: string
+  changeCategorySelectChange: (value: string) => void
 
   categoryLoad: () => void
   changeCategory: (oldCategory: string, newCategory: string) => any
   logout: () => void
   categoryDone: () => void
+  postDone: () => void
 }
 interface State {
   changeCategoryDropdown: boolean
 }
 
+interface CategoryChangeMethodInterface {
+  loginLogined: boolean
+  changeCategorySelect: string
+  changeCategoryInput: string
+}
+
 interface Target {
   target: HTMLInputElement
-}
-interface Current {
-  currentTarget: HTMLButtonElement
 }
 
 const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
   class CategoryChange extends React.Component<Props & RouteComponentProps<any>, State> {
+    // to use focus()
     public changeCategoryInput: any
 
-    // 드롭다운 State
+    // dropdown State
     public state = {
       changeCategoryDropdown: false
     }
 
-    // 글자 변경 메소드
-    public handleChange = (e: Target) => {
-      this.props.changeCategoryInputChange(e.target.value)
-    }
-
-    // 드롭다운 토글
+    // dropdown toogle
     public handleToogle = () => {
       this.setState({
         changeCategoryDropdown: !this.state.changeCategoryDropdown
       })
     }
 
-    // 변경할 카테고리 선택
-    public handleSelect = (e: Current) => {
-      this.props.changeCategoryCategoryChange(e.currentTarget.innerText)
+    // change changeCategorys input value
+    public handleChange = (e: Target) => {
+      this.props.changeCategoryInputChange(e.target.value)
     }
 
-    // 제출
+    // change changeCategorySelects value
+    public handleSelect = (e: React.MouseEvent<any>) => {
+      this.props.changeCategorySelectChange(e.currentTarget.innerText)
+    }
+
+    // category change method
     public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+      // stop basic stuff
       e.preventDefault()
 
+      // Props
       const {
         loginLogined,
         changeCategoryInputChange,
-        changeCategoryCategoryChange,
-        changeCategoryCategoryValue,
         changeCategoryInputValue,
-
+        changeCategorySelectChange,
+        changeCategorySelectValue,
         categoryLoad,
         changeCategory,
         logout,
         categoryDone,
+        postDone,
 
         history
       } = this.props
 
-      if (
-        changeCategoryInputValue !== '' &&
-        changeCategoryCategoryValue !== '변경할 카테고리 선택' &&
-        loginLogined !== false
-      ) {
-        if (changeCategoryInputValue.toLowerCase() !== 'admin') {
-          // 카테고리 변경 메소드
-          changeCategory(changeCategoryCategoryValue, changeCategoryInputValue)
-            // 카테고리 변경 성공
-            .then((res: any) => {
-              toast(res.value.data.message)
-              categoryLoad()
-              categoryDone()
-            })
-            // 카테고리 변경 실패
-            .catch((err: any) => {
-              // 사용자의 해킹 시도
-              if (err.response.data.type === 'undefinded token' || err.response.data.type === 'invalid token') {
-                toast('인증된 사용자가 아닙니다 !')
-                // 로그아웃 메소드로 loginLogined false & 세션 스토리지 초기화 & 홈페이지로 이동
-                logout()
-                sessionStorage.clear()
-                history.push('/')
-              }
-              // 사용자의 시도 실패
-              else if (err.response.data.type === 'server error') {
-                toast(err.response.data.message)
-                this.changeCategoryInput.focus()
-                changeCategoryInputChange('')
-                changeCategoryCategoryChange('변경할 카테고리 선택')
-              } else {
-                toast(err.response.data.message)
-                this.changeCategoryInput.focus()
-              }
-            })
-        } else {
-          toast('관리자 url로 카테고리 변경이 불가능 합니다 !')
+      // check user is logined or not
+      const userAdminCheck = (data: CategoryChangeMethodInterface) => {
+        if (data.loginLogined) {
+          return Promise.resolve(data)
         }
-      } else {
-        if (loginLogined === false) {
-          toast('관리자만 접근 / 엑세스 가능합니다 !')
+        return Promise.reject(new Error('Not_Admin_User'))
+      }
+
+      // check the category select button is selected or not
+      const checkCategorySelect = (data: CategoryChangeMethodInterface) => {
+        if (data.changeCategorySelect !== '변경할 카테고리 선택') {
+          return Promise.resolve(data)
+        }
+        return Promise.reject(new Error('No_Data_Category_Select'))
+      }
+
+      // check the category input value is '' or not
+      const nullCheckCategoryInput = (data: CategoryChangeMethodInterface) => {
+        if (data.changeCategoryInput !== '') {
+          return Promise.resolve(data)
+        }
+        return Promise.reject(new Error('No_Data_Category_Input'))
+      }
+
+      // check the category input value.toLowerCase() is 'admin' or not
+      const checkCategoryInputIsNotAdmin = (data: CategoryChangeMethodInterface) => {
+        if (data.changeCategoryInput.toLowerCase() !== 'admin') {
+          return Promise.resolve(data)
+        }
+        return Promise.reject(new Error('Can_Not_Be_A_Admin'))
+      }
+
+      // check same between the category select value and category input value
+      const checkValueSame = (data: CategoryChangeMethodInterface) => {
+        if (data.changeCategorySelect !== data.changeCategoryInput) {
+          return Promise.resolve(data)
+        }
+        return Promise.reject(new Error('Can_Not_Match_Select_And_Input'))
+      }
+
+      // change category
+      const requestToServer = async (data: CategoryChangeMethodInterface) => {
+        await changeCategory(data.changeCategorySelect, data.changeCategoryInput)
+          // succeed change category
+          .then((res: any) => {
+            toast(res.action.payload.data.message)
+          })
+          // failure change category
+          .catch((err: any) => {
+            this.changeCategoryInput.focus()
+            toast(err.response.data.message)
+
+            // if the requester has no admin token
+            if (err.response.data.type) {
+              toast('서비스를 이용하시려면 로그인 해 주세요 !')
+              logout()
+              history.push('/')
+            }
+          })
+        // this clean method will execute when all task processed
+        categoryDone()
+        postDone()
+        categoryLoad()
+      }
+
+      // error handle only input error
+      const onError = (err: Error) => {
+        if (err.message === 'Not_Admin_User') {
+          // none admin user
+          toast('관리자만 이용 가능합니다 !')
+          changeCategorySelectChange('변경할 카테고리 선택')
           logout()
           history.push('/')
-        } else if (changeCategoryInputValue === '') {
-          toast('변경할 카테고리의 값을 넣어 주세요 !')
-          this.changeCategoryInput.focus()
-        } else if (changeCategoryCategoryValue === '변경할 카테고리 선택') {
+        } else if (err.message === 'No_Data_Category_Select') {
+          // none selected category select
           toast('변경할 카테고리를 선택해 주세요 !')
+        } else if (err.message === 'No_Data_Category_Input') {
+          // none category input data
+          toast('변경하고 싶은 카테고리 이름을 입력해 주세요 !')
+          this.changeCategoryInput.focus()
+        } else if (err.message === 'Can_Not_Be_A_Admin') {
+          // category input can't be a 'admin'
+          toast("변경될 카테고리 이름은 'admin'이 될 수 없습니다")
+          this.changeCategoryInput.focus()
+        } else if (err.message === 'Can_Not_Match_Select_And_Input') {
+          // category select === category input => don't need to change
+          toast('같은 값으로의 변경은 불필요 합니다 !')
         }
+        // this clean method will excute when all task processed
+        changeCategoryInputChange('')
       }
+
+      // Promise
+      userAdminCheck({
+        loginLogined,
+        changeCategorySelect: changeCategorySelectValue.trim(),
+        changeCategoryInput: changeCategoryInputValue.trim()
+      })
+        .then(checkCategorySelect)
+        .then(nullCheckCategoryInput)
+        .then(checkCategoryInputIsNotAdmin)
+        .then(checkValueSame)
+        .then(requestToServer)
+        .catch(onError)
     }
 
     public render() {
       const { changeCategoryDropdown } = this.state
-      const { changeCategoryInputValue, changeCategoryCategoryValue } = this.props
+      const { changeCategoryInputValue, changeCategorySelectValue } = this.props
 
       // 데이터 받아서 정렬
       const CurrentCategoryChangeBar = (data: CategoryStateInside[]) => {
@@ -150,7 +212,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
             <InputGroup>
               <Dropdown isOpen={changeCategoryDropdown} toggle={this.handleToogle}>
                 <DropdownToggle outline={true} color="info" caret={true}>
-                  {changeCategoryCategoryValue}
+                  {changeCategorySelectValue}
                 </DropdownToggle>
                 <DropdownMenu>
                   <DropdownItem onClick={this.handleSelect}>변경할 카테고리 선택</DropdownItem>
