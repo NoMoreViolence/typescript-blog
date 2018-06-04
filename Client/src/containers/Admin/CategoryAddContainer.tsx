@@ -5,6 +5,7 @@ import CategoryAdd from 'components/Templates/Admin/CategoryAdd'
 // 카테고리 액션 & 로그인 액션
 import { CategoryActions } from 'store/modules/Category'
 import { LoginActions } from 'store/modules/Login'
+import { PostActions } from 'store/modules/Post'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -14,6 +15,7 @@ interface Props {
   loginLogined: boolean
   addCategoryInputValue: string
   CategoryActions: typeof CategoryActions
+  PostActions: typeof PostActions
   LoginActions: typeof LoginActions
 }
 
@@ -27,6 +29,7 @@ const CategoryAddContainer = (Props: Props) => {
       addCategory={Props.CategoryActions.addCategory}
       logout={Props.LoginActions.logout}
       categoryDone={Props.CategoryActions.categoryDone}
+      postDone={Props.PostActions.postDone}
     />
   )
 }
@@ -39,6 +42,7 @@ export default connect(
   dispatch => ({
     // 디스패치
     CategoryActions: bindActionCreators(CategoryActions, dispatch),
-    LoginActions: bindActionCreators(LoginActions, dispatch)
+    LoginActions: bindActionCreators(LoginActions, dispatch),
+    PostActions: bindActionCreators(PostActions, dispatch)
   })
 )(CategoryAddContainer)
