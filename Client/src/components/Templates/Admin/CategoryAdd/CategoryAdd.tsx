@@ -3,8 +3,6 @@ import { Form, InputGroup, Input, Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-import './CategoryAdd.css'
-
 interface Props {
   loginLogined: boolean
   categoryLoad: () => any
@@ -13,6 +11,7 @@ interface Props {
   addCategory: (value: string) => any
   logout: () => void
   categoryDone: () => void
+  postDone: () => void
 }
 
 interface PostAddMethodInterface {
@@ -24,7 +23,7 @@ interface Target {
   target: HTMLInputElement
 }
 
-class CategoryAdd extends React.Component<Props & RouteComponentProps<any>> {
+class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> {
   // to use focus()
   public addCategoryInput: any
 
@@ -37,9 +36,8 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<any>> {
   public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     // stop basic stuff
     e.preventDefault()
-    // the value that can find out where error started
-    let count = 0
 
+    // Props
     const {
       loginLogined,
       addCategoryInputValue,
@@ -48,49 +46,35 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<any>> {
       categoryLoad,
       logout,
       categoryDone,
+      postDone,
       history
     } = this.props
 
     // check user is logined or not
     const userAdminCheck = (data: PostAddMethodInterface) => {
-      count++
       // compare logined or not
       if (data.loginLogined) {
-        return new Promise(function(resolve, reject) {
-          resolve(data)
-        })
+        return Promise.resolve(data)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('인증된 사용자가 아닙니다 !'))
-      })
+      return Promise.reject(new Error('Not_Admin_User'))
     }
 
     // check the input value is '' or not
     const inputValueCheck = (data: PostAddMethodInterface) => {
-      count++
       // compare the value exist or not
-      if (data.addCategoryInputValue.trim() !== '') {
-        return new Promise(function(resolve, reject) {
-          resolve(data)
-        })
+      if (data.addCategoryInputValue !== '') {
+        return Promise.resolve(data)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('추가할 카테고리를 입력해 주세요 !'))
-      })
+      return Promise.reject(new Error('No_Input'))
     }
 
     // check the input value.toUpperCase() is 'admin' or not
     const inputValueAdminCheck = (data: PostAddMethodInterface) => {
-      count++
       // compare the value is 'admin' or not
-      if (data.addCategoryInputValue.toLowerCase().trim() !== 'admin') {
-        return new Promise(function(resolve, reject) {
-          resolve(data)
-        })
+      if (data.addCategoryInputValue.toLowerCase() !== 'admin') {
+        return Promise.resolve(data)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error(`'${data}' 이름의 카테고리는 생성 불가능 합니다 !`))
-      })
+      return Promise.reject(new Error('Cannot_Category_Name_To_Be_Admin'))
     }
 
     // create category
@@ -100,8 +84,6 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<any>> {
         // succeed create category
         .then((res: { value: any; action: any }) => {
           toast(res.action.payload.data.message)
-          categoryDone()
-          categoryLoad()
         })
         // failure create category
         .catch((err: { response: any }) => {
@@ -109,46 +91,42 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<any>> {
           this.addCategoryInput.focus()
           toast(err.response.data.message)
 
+          // if user who has wrong login key or doesn't have login key request, throw error
           if (err.response.data.type) {
             toast('서비스를 이용하시려면 다시 로그인 해 주세요 !')
             logout()
             history.push('/')
           }
         })
+      // this clean method will execute when all task processed
+      categoryDone()
+      postDone()
+      categoryLoad()
     }
 
     // error handler
     const onError = (err: Error) => {
-      switch (count) {
-        // not admin
-        case 1:
-          toast('관리자만 이용 가능합니다 !')
-          addCategoryInputChange('')
-          logout()
-          history.push('/')
-          count = 0
-          break
-        // no input value
-        case 2:
-          toast('추가할 카테고리를 입력해 주세요 !')
-          addCategoryInputChange('')
-          this.addCategoryInput.focus()
-          count = 0
-          break
-        // input value.upUpperCase is 'admin'
-        case 3:
-          toast(`관리자 url의 카테고리는 생성될 수 없습니다 !`)
-          addCategoryInputChange('')
-          this.addCategoryInput.focus()
-          count = 0
-          break
-        default:
-          break
+      if (err.message === 'Not_Admin_User') {
+        // none admin user
+        toast('관리자만 이용 가능합니다 !')
+        addCategoryInputChange('')
+        logout()
+        history.push('/')
+      } else if (err.message === 'No_Input') {
+        // no input
+        toast('추가할 카테고리를 입력해 주세요 !')
+        addCategoryInputChange('')
+        this.addCategoryInput.focus()
+      } else if (err.message === 'Cannot_Category_Name_To_Be_Admin') {
+        // category name should not be equal to 'admin'.toLowerCase()
+        toast('관리자 페이지 URL 카테고리는 생성 불가능 합니다 !')
+        addCategoryInputChange('')
+        this.addCategoryInput.focus()
       }
     }
 
     // Promise
-    userAdminCheck({ loginLogined, addCategoryInputValue })
+    userAdminCheck({ loginLogined, addCategoryInputValue: addCategoryInputValue.trim() })
       .then(inputValueCheck)
       .then(inputValueAdminCheck)
       .then(requestToServer)
