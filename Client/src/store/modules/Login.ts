@@ -132,12 +132,14 @@ export default handleActions(
       }),
 
     // 로그아웃
-    [LOGOUT]: state =>
-      produce(state, (draft: LoginState) => {
+    [LOGOUT]: state => {
+      sessionStorage.clear()
+      return produce(state, (draft: LoginState) => {
         draft.loginLogined = false
         draft.loginType = 'LOGOUT'
         draft.loginStatusCode = 200
-      }),
+      })
+    },
 
     // Username 인풋 값 변경
     [HANDLE_CHANGE_USERNAME]: (state, action: Action<Payload>) =>
