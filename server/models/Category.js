@@ -53,7 +53,7 @@ Category.statics.findSameCategory = function (category) {
 // don't care LowerCase or UpperCase
 Category.statics.findSameCategoryRegex = function (category) {
   // ues regular expression
-  return this.findOne({ catgory: { $regex: category, $options: 'i' } }).exec()
+  return this.findOne({ category: { $regex: category, $options: 'i' } }).exec()
 }
 
 // add New Category

@@ -44,7 +44,7 @@ exports.showTitleAndSubTitle = (req, res) => {
     })
   }
 
-  // if Error
+  // error handler
   const onError = err => {
     res.status(403).json({
       success: false,
@@ -103,7 +103,7 @@ exports.categoryCreate = (req, res) => {
   }
 
   // create category
-  const addNewCategory = async data => {
+  const categoryCreate = async data => {
     await Category.createCategory(data)
     return Promise.resolve(data)
   }
@@ -130,7 +130,7 @@ exports.categoryCreate = (req, res) => {
   categoryNullCheck(category.trim())
     .then(categoryNameAdminCheck)
     .then(categoryNameSameCheck)
-    .then(addNewCategory)
+    .then(categoryCreate)
     .then(respondToServer)
     .catch(onError)
 }
@@ -151,53 +151,73 @@ exports.categoryChange = (req, res) => {
   const { changeCategory } = req.body
 
   /*
-    data[0] ==> oldCategory
-    data[1] ==> newCategory
+    data.category => category
+    data.changeCategory => changeCategory
   */
 
-  // check categoryOld is eixst
-  const oldCategoryCheck = async data => {
-    // if the categoryOld doesn't exist, throw error
-    if ((await Category.findSameCategory(data[0])) !== null) {
+  // check data.category is real exist using mongo db
+  const oldCategoryExistCheck = async data => {
+    if ((await Category.findSameCategory(data.category)) !== null) {
       return Promise.resolve(data)
     }
-    return Promise.reject(new Error('변경하려는 카테고리가 존재하지 않습니다 !'))
+    return Promise.reject(new Error('변경할 카테고리가 존재하지 않습니다 !'))
   }
 
-  // check categoryNew not exist
-  const newCategoryCheck = async data => {
-    // if categoryNew already exist, throw error
-    if ((await Category.findSameCategory(data[1])) === null) {
+  // check data.chnageCategory is not null
+  const newCategoryNullCheck = data => {
+    if (data.changeCategory !== '') {
       return Promise.resolve(data)
     }
-    return Promise.reject(new Error(`'${data[1]}' 카테고리가 이미 존재하여 변경이 불가능 합니다 !`))
+    return Promise.reject(new Error('새로운 카테고리 값이 존재하지 않습니다 !'))
   }
 
-  // if the category & changeCategory is same, doesn't need to change
-  const categorySameCheck = async data => {
-    // if category & changeCategory is same, throw error
-    if (data[0] !== data[1]) {
+  // check data.changeCategory.toLowerCase() is not 'admin'
+  const newCategoryAdminCheck = data => {
+    if (data.changeCategory.toLowerCase() !== 'admin') {
       return Promise.resolve(data)
     }
-    return Promise.reject(new Error('현재 카테고리와 변경하려는 카테고리의 값이 같습니다 !'))
+    return Promise.reject(new Error('관리자 이름으로의 카테고리 변경은 불가능 합니다 !'))
   }
 
-  // change category
+  // check between oldCategory and changeCategory
+  const bothCategorySameCheck = data => {
+    if (data.category !== data.changeCategory) {
+      return Promise.resolve(data)
+    }
+    return Promise.reject(new Error('같은 이름으로의 카테고리 변경은 필요 없습니다 !'))
+  }
+
+  // check new category is real new Category
+  const newCategoryExistCheck = async data => {
+    // TODO: ReadME
+    // the reason why I write this code, : data.category.toLowerCase() === data.changeCategory.toLowerCase()
+    // because data.changeCategory is already Verified in past function =>
+    // => data.category is not same with data.changeCategory
+    if (
+      (await Category.findSameCategoryRegex(data.changeCategory)) === null ||
+      data.category.toLowerCase() === data.changeCategory.toLowerCase()
+    ) {
+      return Promise.resolve(data)
+    }
+    return Promise.reject(new Error('새로운 카테고리의 이름이 기존 다른 카테고리와 중복됩니다 !'))
+  }
+
+  // category chagne using mongo db
   const categoryChange = async data => {
-    await Category.changeCategory(data[0], data[1])
+    await Category.changeCategory(data.category, data.changeCategory)
     return Promise.resolve(data)
   }
 
-  // respond to server
+  // response
   const respondToServer = data => {
     res.json({
       success: true,
-      message: `'${data[0]}' 카테고리가 '${data[1]}' 카테고리로 변경 되었습니다 !`,
-      value: [data[0], data[1]]
+      message: `'${data.category}' 가 '${data.changeCategory}' 로 변경이 완료됨 !`,
+      value: [data.category, data.changeCategory]
     })
   }
 
-  // respond error with err.message & none value
+  // error handler
   const onError = err => {
     res.status(409).json({
       success: false,
@@ -206,9 +226,12 @@ exports.categoryChange = (req, res) => {
     })
   }
 
-  oldCategoryCheck([category, changeCategory])
-    .then(newCategoryCheck)
-    .then(categorySameCheck)
+  // Promise
+  oldCategoryExistCheck({ category, changeCategory })
+    .then(newCategoryNullCheck)
+    .then(newCategoryAdminCheck)
+    .then(bothCategorySameCheck)
+    .then(newCategoryExistCheck)
     .then(categoryChange)
     .then(respondToServer)
     .catch(onError)
@@ -229,49 +252,52 @@ exports.categoryDelete = (req, res) => {
   const { category } = req.params
   const { doubleCheck } = req.query
 
-  // delete category
-  const removeCategory = exists => {
-    console.log(exists.category)
-    if (exists) {
-      // category Double Check Success
-      if (exists.category === doubleCheck) {
-        // category delete
-        console.log(`'${exists.category}' 카테고리가 삭제 되었습니다 !`)
-        return Category.deleteCategory(exists.category) // delete Category
-      }
-      // category Double Check Failed
-      throw new Error('카테고리 중복 체크 실패 !')
+  // check data.category is exist using mongo DB
+  const categoryExistCheck = async data => {
+    if ((await Category.findSameCategory(data.category)) !== null) {
+      return Promise.resolve(data)
     }
-    // if there is no category to delete
-    throw new Error('삭제할 카테고리가 존재하지 않습니다 !')
+    return Promise.reject(new Error('삭제할 카테고리가 존재하지 않습니다 !'))
   }
 
-  // delete posts
-  const removePosts = categoryID =>
-    // delte posts that has deleted category's _id
-    Post.deletePostsOfDeletedCategory(categoryID)
+  // compare between data.category and data.doubleCheck
+  const categoryDoubleCheck = data => {
+    if (data.category === data.doubleCheck) {
+      return Promise.resolve(data)
+    }
+    return Promise.reject(new Error('카테고리 중복 확인 실패 !'))
+  }
 
-  // respond to client
-  const respond = data =>
+  // category delete using mongo db
+  const categoryDelete = async data => {
+    // TODO: ReadME
+    // First, delete Category, and delete Posts that has deleted categorys ID
+    await Post.deletePostsOfDeletedCategory(await Category.deleteCategory(data.category))
+    return Promise.resolve(data)
+  }
+
+  // response
+  const respondToServer = data => {
     res.json({
       success: true,
-      message: `'${category}' 카테고리가 삭제 되었습니다 !`,
-      value: data
+      message: `'${data}' 카테고리가 삭제 되었습니다 !`,
+      value: [data.category]
     })
+  }
 
-  // respond error to client
-  const onError = error => {
+  // error handler
+  const onError = err => {
     res.status(409).json({
       success: false,
-      message: error.message,
+      message: err.message,
       value: []
     })
   }
 
   // Promise
-  Category.findSameCategory(category)
-    .then(removeCategory)
-    .then(removePosts)
-    .then(respond)
+  categoryExistCheck({ category: category.trim(), doubleCheck: doubleCheck.trim() })
+    .then(categoryDoubleCheck)
+    .then(categoryDelete)
+    .then(respondToServer)
     .catch(onError)
 }
