@@ -5,7 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 interface Props {
   loginLogined: boolean
-  categoryLoad: () => any
+  categoryLoad: () => void
   addCategoryInputValue: string
   addCategoryInputChange: (value: string) => void
   addCategory: (value: string) => any
@@ -14,7 +14,7 @@ interface Props {
   postDone: () => void
 }
 
-interface PostAddMethodInterface {
+interface CategoryAddMethodInterface {
   loginLogined: boolean
   addCategoryInputValue: string
 }
@@ -51,7 +51,7 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     } = this.props
 
     // check user is logined or not
-    const userAdminCheck = (data: PostAddMethodInterface) => {
+    const userAdminCheck = (data: CategoryAddMethodInterface) => {
       // compare logined or not
       if (data.loginLogined) {
         return Promise.resolve(data)
@@ -60,7 +60,7 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     }
 
     // check the input value is '' or not
-    const inputValueCheck = (data: PostAddMethodInterface) => {
+    const inputValueCheck = (data: CategoryAddMethodInterface) => {
       // compare the value exist or not
       if (data.addCategoryInputValue !== '') {
         return Promise.resolve(data)
@@ -69,7 +69,7 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     }
 
     // check the input value.toUpperCase() is 'admin' or not
-    const inputValueAdminCheck = (data: PostAddMethodInterface) => {
+    const inputValueAdminCheck = (data: CategoryAddMethodInterface) => {
       // compare the value is 'admin' or not
       if (data.addCategoryInputValue.toLowerCase() !== 'admin') {
         return Promise.resolve(data)
@@ -78,16 +78,15 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     }
 
     // create category
-    const requestToServer = (data: PostAddMethodInterface) => {
+    const requestToServer = async (data: CategoryAddMethodInterface) => {
       // request to server for create category
-      addCategory(data.addCategoryInputValue)
+      await addCategory(data.addCategoryInputValue)
         // succeed create category
-        .then((res: { value: any; action: any }) => {
+        .then((res: any) => {
           toast(res.action.payload.data.message)
         })
         // failure create category
-        .catch((err: { response: any }) => {
-          addCategoryInputChange('')
+        .catch((err: any) => {
           this.addCategoryInput.focus()
           toast(err.response.data.message)
 
