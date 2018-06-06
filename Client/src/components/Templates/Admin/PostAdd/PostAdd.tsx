@@ -1,25 +1,27 @@
 import * as React from 'react'
 
+import { RouteComponentProps, withRouter } from 'react-router-dom'
+
 import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
 import { AddPostState, PostAddAPIInterface } from 'store/modules/Post'
 import { CategoryStateInside } from 'store/modules/Category'
 
-import MarkdownEditor from 'lib/MarkDownEditor'
-import MarkdownRenderer from 'lib/MarkDownRenderer'
+import MarkdownEditorContainer from 'containers/MarkDownEditor/MarkDownEditorContainer'
+import MarkdownRendererContainer from 'containers/MarkDownRenderer/MarkDownRendererContainer'
 
 interface Props {
+  loginLogined: boolean
+  logout: () => void
   category: CategoryStateInside[]
   add: AddPostState
   loadCategory: () => any
   changeCategory: (value: string) => any
-  changeTitle: (value: string) => any
-  changeSubTitle: (value: string) => any
-  changeMainText: (value: string) => any
   addPost: (AddPost: PostAddAPIInterface) => any
   postDone: () => void
   categoryDone: () => void
+  postError: (value: string) => void
 }
 
 interface State {
@@ -29,12 +31,24 @@ interface State {
   dropdown: boolean
 }
 
+interface PostAddMethodInterface {
+  loginLogined: boolean
+  category?: string
+  title?: string
+  subTitle?: string
+  mainText?: string
+}
+
 interface CTarget {
   currentTarget: HTMLButtonElement
 }
 
-class PostAdd extends React.Component<Props, State> {
+class PostAdd extends React.Component<Props & RouteComponentProps<History>, State> {
+  // state
   public state = {
+    // for mde container's type
+    editorType: 'add',
+    resource: 'Post',
     leftPercentage: 0.5,
     postAddMessage: '포스트 추가 하기 !',
     showNone: false,
@@ -73,83 +87,105 @@ class PostAdd extends React.Component<Props, State> {
 
   // Submit => Post Add
   public handleSubmit = () => {
-    // category value check
-    const categoryCheck = (post: PostAddAPIInterface) => {
-      if (post.category !== '카테고리 선택') {
-        return new Promise(function(resolve, reject) {
-          resolve(post)
-        })
+    // Props
+    const { loginLogined, logout, history, add, addPost, categoryDone, postDone, loadCategory, postError } = this.props
+
+    // check user is logined or not
+    const userAdminCheck = (data: PostAddMethodInterface) => {
+      if (data.loginLogined !== false) {
+        return Promise.resolve(data)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('카테고리를 선택해 주세요 !'))
-      })
+      return Promise.reject(new Error('Not_Admin_User'))
+    }
+
+    // category value check
+    const categoryCheck = (data: PostAddMethodInterface) => {
+      if (data.category !== '카테고리 선택') {
+        return Promise.resolve(data)
+      }
+      return Promise.reject(new Error('No_Data_Category_Select'))
     }
 
     // title value check
-    const titleCheck = (post: PostAddAPIInterface) => {
-      if (post.title !== '') {
-        return new Promise(function(resolve, reject) {
-          resolve(post)
-        })
+    const titleCheck = (data: PostAddMethodInterface) => {
+      if (data.title !== '') {
+        return Promise.resolve(data)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('포스트 제목을 입력해 주세요 !'))
-      })
+      return Promise.reject(new Error('No_Data_Post_Title'))
     }
 
     // subTitle value check
-    const subTitleCheck = (post: PostAddAPIInterface) => {
-      if (post.subTitle !== '') {
-        return new Promise(function(resolve, reject) {
-          resolve(post)
-        })
+    const subTitleCheck = (data: PostAddMethodInterface) => {
+      if (data.subTitle !== '') {
+        return Promise.resolve(data)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('포스트 부제목을 입력해 주세요 !'))
-      })
+      return Promise.reject(new Error('No_Data_Post_Sub_Title'))
     }
 
     // mainText value check
-    const mainTextCheck = (post: PostAddAPIInterface) => {
-      if (post.mainText !== '') {
-        return new Promise(function(resolve, reject) {
-          resolve(post)
-        })
+    const mainTextCheck = (data: PostAddMethodInterface) => {
+      if (data.mainText !== '') {
+        return Promise.resolve(data)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('포스트 내용을 입력해 주세요 !'))
-      })
+      return Promise.reject(new Error('No_Data_Post_Main_Text'))
     }
 
     // request to server => post add function
-    const requestToServer = (post: PostAddAPIInterface) => {
-      // 수정 수정 수정
-      this.props
-        .addPost(post)
+    const requestToServer = async (data: PostAddMethodInterface) => {
+      // request to server to adding post
+      await addPost(data)
         // request call success
-        .then(async (res: { value: any; action: any }) => {
-          await this.props.postDone()
-          await this.props.categoryDone()
-          await this.props.loadCategory()
+        .then((res: any) => {
           toast(res.action.payload.data.message)
         })
         // request call failure
         .catch((err: any) => {
           toast(err.response.data.message)
+
+          // if user who has wrong login key or doesn't have login key request, throw error
+          if (err.response.data.type) {
+            toast('서비스를 이용하시려면 다시 로그인 해 주세요 !')
+            logout()
+            history.push('/')
+          }
         })
+      // this clean method will execute when all task processed
+      categoryDone()
+      postDone()
+      loadCategory()
     }
 
-    // take all insert error
+    // error handler
     const onError = (err: Error) => {
-      toast(err.message)
+      if (err.message === 'Not_Admin_User') {
+        // logout method
+        sessionStorage.clear()
+        logout()
+        history.push('/')
+        toast('관리자만 이용 가능합니다 !')
+      } else if (err.message === 'No_Data_Category_Select') {
+        toast('추가할 포스트의 카테고리를 선택해 주세요 !')
+      } else if (err.message === 'No_Data_Post_Title') {
+        toast('추가할 포스트의 제목을 입력해 주세요 !')
+        postError('title')
+      } else if (err.message === 'No_Data_Post_Sub_Title') {
+        toast('추가할 포스트의부제목을 입력해 주세요 !')
+        postError('subTitle')
+      } else if (err.message === 'No_Data_Post_Main_Text') {
+        toast('추가할 포스트의 본문을 입력해 주세요 !')
+        postError('mainText')
+      }
     }
 
-    categoryCheck({
-      category: this.props.add.category,
-      title: this.props.add.title,
-      subTitle: this.props.add.subTitle,
-      mainText: this.props.add.mainText
+    // Promise
+    userAdminCheck({
+      loginLogined,
+      category: add.category,
+      title: add.title,
+      subTitle: add.subTitle,
+      mainText: add.mainText
     })
+      .then(categoryCheck)
       .then(titleCheck)
       .then(subTitleCheck)
       .then(mainTextCheck)
@@ -157,6 +193,7 @@ class PostAdd extends React.Component<Props, State> {
       .catch(onError)
   }
 
+  // handle size between EditorView, PreVeiw
   // separator click, and mouse move
   public handleSeparatorMouseMove = (e: MouseEvent) => {
     this.setState({
@@ -173,8 +210,10 @@ class PostAdd extends React.Component<Props, State> {
     document.body.addEventListener('mousemove', this.handleSeparatorMouseMove)
     window.addEventListener('mouseup', this.handleSeparatorMouseUp)
   }
+  // handle size between EditorView, PreView
 
   public render() {
+    // handle size bar
     const { leftPercentage } = this.state
     const leftStyle = {
       flex: leftPercentage
@@ -186,6 +225,7 @@ class PostAdd extends React.Component<Props, State> {
       left: `${leftPercentage * 100}%`
     }
 
+    // show current category
     const CurrentCategoryChange = (data: CategoryStateInside[]) => {
       return data.map((object, i) => {
         return (
@@ -223,15 +263,7 @@ class PostAdd extends React.Component<Props, State> {
                   )}
                 </div>
                 <div className="editor-inside">
-                  <MarkdownEditor
-                    title={this.props.add.title}
-                    changeTitle={this.props.changeTitle}
-                    changeSubTitle={this.props.changeSubTitle}
-                    subTitle={this.props.add.subTitle}
-                    MainText={this.props.add.mainText}
-                    changeMainText={this.props.changeMainText}
-                    state={this.state.showNone}
-                  />
+                  <MarkdownEditorContainer type={this.state.editorType} resource={this.state.resource} />
                 </div>
                 {/* only can see mobile view */}
                 <div className="editor-submit-mobile">
@@ -252,7 +284,7 @@ class PostAdd extends React.Component<Props, State> {
                   <h1 className="preview-title">{this.props.add.title}</h1>
                   <h3 className="preview-sub-title">{this.props.add.subTitle}</h3>
                   <div>
-                    <MarkdownRenderer markdown={this.props.add.mainText} />
+                    <MarkdownRendererContainer type={this.state.editorType} />
                   </div>
                 </div>
               </div>
@@ -265,4 +297,4 @@ class PostAdd extends React.Component<Props, State> {
   }
 }
 
-export default PostAdd
+export default withRouter(PostAdd)
