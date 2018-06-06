@@ -90,6 +90,7 @@ const POST_ADD_POST_CATEGORY_CHANGE = 'POST_ADD_POST_CATEGORY_CHANGE'
 const POST_ADD_POST_TITLE_CHANGE = 'POST_ADD_POST_TITLE_CHANGE'
 const POST_ADD_POST_SUBTITLE_CHANGE = 'POST_ADD_POST_SUB_TITLE_CHANGE'
 const POST_ADD_POST_MAINTEXT_CHANGE = 'POST_ADD_POST_MAINTEXT_CHANGE'
+const POST_ADD_POST_ERROR_DATA_NONE = 'POST_ADD_POST_ERROR_TITLE_NONE'
 // api
 const POST_ADD_POST = 'POST_ADD_POST'
 const POST_ADD_POST_PENDING = 'POST_ADD_POST_PENDING'
@@ -104,6 +105,7 @@ const PUT_CHANGE_POST_CATEGORY_CHANGE = 'PUT_CHANGE_POST_CATEGORY_CHANGE'
 const PUT_CHANGE_POST_TITLE_CHANGE = 'PUT_CHANGE_POST_TITLE_CHANGE'
 const PUT_CHANGE_POST_SUBTITLE_CHANGE = 'PUT_CHANGE_POST_SUBTITLE_CHANGE'
 const PUT_CHANGE_POST_MAINTEXT_CHANGE = 'PUT_CHANGE_POST_MAINTEXT_CHANGE'
+const PUT_CHANGE_POST_ERROR_DATA_NONE = 'PUT_CHANGE_POST_ERROR_TITLE_NONE'
 // api
 const PUT_CHANGE_POST = 'PUT_CHANGE_POST'
 const PUT_CHANGE_POST_PENDING = 'PUT_CHANGE_POST_PENDING'
@@ -131,6 +133,7 @@ export const PostActions = {
   addPostPostTitleChange: createAction<string, string>(POST_ADD_POST_TITLE_CHANGE, value => value),
   addPostPostSubTitleChange: createAction<string, string>(POST_ADD_POST_SUBTITLE_CHANGE, value => value),
   addPostPostMainTextChange: createAction<string, string>(POST_ADD_POST_MAINTEXT_CHANGE, value => value),
+  addPostPostError: createAction<string, string>(POST_ADD_POST_ERROR_DATA_NONE, value => value),
   addPostPost: createAction<any, PostAddAPIInterface>(POST_ADD_POST, postPostAddAPI),
 
   // Method of Changing Post
@@ -140,6 +143,7 @@ export const PostActions = {
   changePutPostTitleChange: createAction<string, string>(PUT_CHANGE_POST_TITLE_CHANGE, value => value),
   changePutPostSubTitleChange: createAction<string, string>(PUT_CHANGE_POST_SUBTITLE_CHANGE, value => value),
   changePutPostMainTextChange: createAction<string, string>(PUT_CHANGE_POST_MAINTEXT_CHANGE, value => value),
+  changePutPostError: createAction<string, string>(PUT_CHANGE_POST_ERROR_DATA_NONE, value => value),
   changePutPost: createAction<any, PutChangeAPIInterface>(PUT_CHANGE_POST, putPostChangeAPI),
 
   // Method of Deleting Post
@@ -173,6 +177,9 @@ export interface AddPostState {
   subTitle?: string
   mainText?: string
   date?: number
+  failedWithNoDataTitle: boolean
+  failedWithNoDataSubTitle: boolean
+  failedWithNoDataMainText: boolean
 }
 // state of change Post
 export interface ChangePostState {
@@ -185,6 +192,9 @@ export interface ChangePostState {
   subTitle?: string
   mainText?: string
   date?: number
+  failedWithNoDataTitle: boolean
+  failedWithNoDataSubTitle: boolean
+  failedWithNoDataMainText: boolean
 }
 // state of delete Post
 export interface DeletePostState {
@@ -209,7 +219,17 @@ export interface PostState {
 const initialState: PostState = {
   load: { pending: false, error: false },
   show: { category: '', title: '', subTitle: '', mainText: '' },
-  add: { pending: false, error: false, category: '카테고리 선택', title: '', subTitle: '', mainText: '' },
+  add: {
+    pending: false,
+    error: false,
+    category: '카테고리 선택',
+    title: '',
+    subTitle: '',
+    mainText: '',
+    failedWithNoDataTitle: false,
+    failedWithNoDataSubTitle: false,
+    failedWithNoDataMainText: false
+  },
   change: {
     pending: false,
     error: false,
@@ -218,7 +238,10 @@ const initialState: PostState = {
     category: '카테고리 선택',
     title: '',
     subTitle: '',
-    mainText: ''
+    mainText: '',
+    failedWithNoDataTitle: false,
+    failedWithNoDataSubTitle: false,
+    failedWithNoDataMainText: false
   },
   delete: {
     pending: false,
@@ -238,6 +261,7 @@ type AddPostCategoryPayload = ReturnType<typeof PostActions.addPostCategoryChang
 type AddPostPostTitlePayload = ReturnType<typeof PostActions.addPostPostTitleChange>
 type AddPostPostSubTitlePayload = ReturnType<typeof PostActions.addPostPostSubTitleChange>
 type AddPostPostMainTextPayload = ReturnType<typeof PostActions.addPostPostMainTextChange>
+type AddPostPostError = ReturnType<typeof PostActions.addPostPostError>
 // change
 // select category, post
 type ChangePutCategorySelectPayload = ReturnType<typeof PostActions.changePutPostCategorySelectChange>
@@ -247,6 +271,7 @@ type ChangePutPostSelectPayload = ReturnType<typeof PostActions.changePutPostTit
 type ChangePutPostTitlePayload = ReturnType<typeof PostActions.changePutPostTitleChange>
 type ChangePutPostSubTilePayload = ReturnType<typeof PostActions.changePutPostSubTitleChange>
 type ChangePutPostMainTextPayload = ReturnType<typeof PostActions.changePutPostMainTextChange>
+type ChangePutPostError = ReturnType<typeof PostActions.changePutPostError>
 
 type DeleteDeleteCategorySelectPayload = ReturnType<typeof PostActions.deleteDeleteCategorySelectChange>
 type DeleteDeletePostSelectPayload = ReturnType<typeof PostActions.deleteDeletePostTitleSelectChange>
@@ -334,6 +359,30 @@ const reducer = handleActions<PostState, any>(
       produce(state, draft => {
         draft.add.mainText = action.payload
       }),
+    [POST_ADD_POST_ERROR_DATA_NONE]: (state, action: AddPostPostError) => {
+      if (action.payload === 'title') {
+        return produce(state, draft => {
+          draft.add.failedWithNoDataTitle = true
+        })
+      } else if (action.payload === 'subTitle') {
+        return produce(state, draft => {
+          draft.add.failedWithNoDataSubTitle = true
+        })
+      } else if (action.payload === 'mainText') {
+        return produce(state, draft => {
+          draft.add.failedWithNoDataMainText = true
+        })
+      } else if (action.payload === 'clear') {
+        return produce(state, draft => {
+          draft.add.failedWithNoDataMainText = false
+          draft.add.failedWithNoDataSubTitle = false
+          draft.add.failedWithNoDataTitle = false
+        })
+      }
+      return produce(state, draft => {
+        // Error, not matched error type
+      })
+    },
     // post add api action
     [POST_ADD_POST_PENDING]: (state, action) =>
       produce(state, draft => {
@@ -356,6 +405,7 @@ const reducer = handleActions<PostState, any>(
       produce(state, draft => {
         draft.change.selectCategory = action.payload
         draft.change.category = '카테고리 선택'
+        draft.change.selectTitle = '변경할 포스트 선택'
         draft.change.title = ''
         draft.change.subTitle = ''
         draft.change.mainText = ''
@@ -381,6 +431,30 @@ const reducer = handleActions<PostState, any>(
       produce(state, draft => {
         draft.change.mainText = action.payload
       }),
+    [PUT_CHANGE_POST_ERROR_DATA_NONE]: (state, action: ChangePutPostError) => {
+      if (action.payload === 'title') {
+        return produce(state, draft => {
+          draft.change.failedWithNoDataTitle = true
+        })
+      } else if (action.payload === 'subTitle') {
+        return produce(state, draft => {
+          draft.change.failedWithNoDataSubTitle = true
+        })
+      } else if (action.payload === 'mainText') {
+        return produce(state, draft => {
+          draft.change.failedWithNoDataMainText = true
+        })
+      } else if (action.payload === 'clear') {
+        return produce(state, draft => {
+          draft.change.failedWithNoDataMainText = false
+          draft.change.failedWithNoDataSubTitle = false
+          draft.change.failedWithNoDataTitle = false
+        })
+      }
+      return produce(state, draft => {
+        // Error, not matched error type
+      })
+    },
     // post change event handler
     [PUT_CHANGE_POST_PENDING]: state =>
       produce(state, draft => {
