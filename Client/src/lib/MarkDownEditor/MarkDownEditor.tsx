@@ -18,12 +18,15 @@ import 'codemirror/theme/monokai.css'
 
 interface Props {
   title?: string
-  changeTitle: (value: string) => any
+  changeTitle: (value: string) => void
   subTitle?: string
-  changeSubTitle: (value: string) => any
+  changeSubTitle: (value: string) => void
   MainText?: string
-  changeMainText: (value: string) => any
-  state: boolean
+  changeMainText: (value: string) => void
+  titleError: boolean
+  subTitleError: boolean
+  mainTextError: boolean
+  errorHandler: (value: string) => void
 }
 
 interface Target {
@@ -31,6 +34,10 @@ interface Target {
 }
 
 class MarkDownEditor extends React.Component<Props> {
+  // html input
+  public title: any = null
+  public subTitle: any = null
+  // editor
   public editor: any = null // editor ref
   public codeMirror: any = null // CodeMirror instance
   public cursor: any = null // text cursor
@@ -69,6 +76,21 @@ class MarkDownEditor extends React.Component<Props> {
     await this.codeMirror
     await this.codeMirror.setValue(this.props.MainText)
   }
+
+  public shouldComponentUpdate(nextProps: Props) {
+    if (
+      nextProps.title !== this.props.title ||
+      nextProps.subTitle !== this.props.subTitle ||
+      nextProps.MainText !== this.props.MainText ||
+      nextProps.titleError !== this.props.titleError ||
+      nextProps.subTitleError !== this.props.subTitleError ||
+      nextProps.mainTextError !== this.props.mainTextError
+    ) {
+      return true
+    }
+    return false
+  }
+
   // text cursor
   public componentDidUpdate(prevProps: Props) {
     // change cursor
@@ -82,6 +104,19 @@ class MarkDownEditor extends React.Component<Props> {
         return
       } // there is no cursor
       codeMirror.setCursor(cursor)
+    }
+    // 에러가 생겼을 때의 부분
+    if (this.props.titleError === true) {
+      this.title.focus()
+      this.props.errorHandler('clear')
+    }
+    if (this.props.subTitleError === true) {
+      this.subTitle.focus()
+      this.props.errorHandler('clear')
+    }
+    if (this.props.mainTextError === true) {
+      this.codeMirror.focus()
+      this.props.errorHandler('clear')
     }
   }
 
@@ -101,6 +136,7 @@ class MarkDownEditor extends React.Component<Props> {
           name="title"
           value={this.props.title}
           onChange={this.handleChange}
+          ref={ref => (this.title = ref)}
         />
         <input
           className="editor-sub-title"
@@ -108,6 +144,7 @@ class MarkDownEditor extends React.Component<Props> {
           name="sub-title"
           value={this.props.subTitle}
           onChange={this.handleChange}
+          ref={ref => (this.subTitle = ref)}
         />
         <div className="code-editor" ref={ref => (this.editor = ref)} />
       </React.Fragment>
