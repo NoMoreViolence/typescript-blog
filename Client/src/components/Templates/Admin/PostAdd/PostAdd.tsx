@@ -180,10 +180,10 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     // Promise
     userAdminCheck({
       loginLogined,
-      category: add.category,
-      title: add.title,
-      subTitle: add.subTitle,
-      mainText: add.mainText
+      category: add.category.trim(),
+      title: add.title.trim(),
+      subTitle: add.subTitle.trim(),
+      mainText: add.mainText.trim()
     })
       .then(categoryCheck)
       .then(titleCheck)
