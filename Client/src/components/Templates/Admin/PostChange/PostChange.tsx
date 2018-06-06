@@ -1,15 +1,19 @@
 import * as React from 'react'
 
+import { RouteComponentProps, withRouter } from 'react-router-dom'
+
 import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
 import { CategoryStateInside } from 'store/modules/Category'
 import { ChangePostState, PutChangeAPIInterface, GetPostBringAPIInterface } from 'store/modules/Post'
 
-import MarkdownEditor from 'lib/MarkDownEditor'
-import MarkdownRenderer from 'lib/MarkDownRenderer'
+import MarkdownEditorContainer from 'containers/MarkDownEditor/MarkDownEditorContainer'
+import MarkdownRendererContainer from 'containers/MarkDownRenderer/MarkDownRendererContainer'
 
 interface Props {
+  loginLogined: boolean
+  logout: () => void
   category: CategoryStateInside[]
   change: ChangePostState
   loadCategory: () => any
@@ -17,12 +21,10 @@ interface Props {
   changeCategorySelect: (value: string) => any
   changeTitleSelect: (value: string) => any
   changeCategory: (value: string) => any
-  changeTitle: (value: string) => any
-  changeSubTitle: (value: string) => any
-  changeMainText: (value: string) => any
   changePost: (changePost: PutChangeAPIInterface) => any
   postDone: () => void
   categoryDone: () => void
+  postError: (value: string) => void
 }
 
 interface State {
@@ -34,12 +36,25 @@ interface State {
   postSelectDropdown: boolean
 }
 
+interface PutChangeMethodInterface {
+  loginLogined: boolean
+  oldCategory?: string
+  oldTitle?: string
+  newCategory?: string
+  newTitle?: string
+  subTitle?: string
+  mainText?: string
+}
+
 interface CTarget {
   currentTarget: HTMLButtonElement
 }
 
-class PostChange extends React.Component<Props, State> {
+class PostChange extends React.Component<Props & RouteComponentProps<History>, State> {
   public state = {
+    // for mde container's type
+    editorType: 'change',
+    resource: 'Put',
     leftPercentage: 0.5,
     postAddMessage: '포스트 수정 하기 !',
     showNone: false,
@@ -107,103 +122,131 @@ class PostChange extends React.Component<Props, State> {
     this.props.changeTitleSelect(e.currentTarget.innerText)
 
     if (e.currentTarget.innerText !== '변경할 포스트 선택') {
-      // tslint:disable-next-line:no-console
-      console.log(e.currentTarget.innerText)
       this.props.loadPost({ category: this.props.change.selectCategory, title: e.currentTarget.innerText, type: 1 })
     }
   }
 
+  // submit => post change
   public handleSubmit = () => {
     const { selectCategory, category, selectTitle, title, subTitle, mainText } = this.props.change
+    const { loginLogined, categoryDone, postDone, loadCategory, logout, history, changePost, postError } = this.props
 
-    const oldCategoryCheck = (post: PutChangeAPIInterface) => {
+    // check user is logined or not
+    const userAdminCheck = (data: PutChangeMethodInterface) => {
+      if (data.loginLogined !== false) {
+        return Promise.resolve(data)
+      }
+      return Promise.reject(new Error('Not_Admin_User'))
+    }
+
+    // check selectCategory selected or not
+    const oldCategoryCheck = (post: PutChangeMethodInterface) => {
       if (post.oldCategory !== '카테고리 선택') {
-        return new Promise(function(resolve, reject) {
-          resolve(post)
-        })
+        return Promise.resolve(post)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('변경할 포스트의 카테고리를 선택해 주세요 !'))
-      })
+      return Promise.reject(new Error('No_Data_Category_Select_Select'))
     }
-    const oldTitleCheck = (post: PutChangeAPIInterface) => {
+
+    // check selectTitle selected or not
+    const oldTitleCheck = (post: PutChangeMethodInterface) => {
       if (post.oldTitle !== '변경할 포스트 선택') {
-        return new Promise(function(resolve, reject) {
-          resolve(post)
-        })
+        return Promise.resolve(post)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('변경할 포스트를 선택해 주세요 !'))
-      })
+      return Promise.reject(new Error('No_Data_Post_Select_Title'))
     }
-    const categoryCheck = (post: PutChangeAPIInterface) => {
+
+    // check category selected or not
+    const categoryCheck = (post: PutChangeMethodInterface) => {
       if (post.newCategory !== '카테고리 선택') {
-        return new Promise(function(resolve, reject) {
-          resolve(post)
-        })
+        return Promise.resolve(post)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('변경할 포스트의 카테고리를 선택해 주세요 !'))
-      })
+      return Promise.reject(new Error('No_Data_Category_Select'))
     }
-    const titleCheck = (post: PutChangeAPIInterface) => {
+
+    // check title is '' or not
+    const titleCheck = (post: PutChangeMethodInterface) => {
       if (post.newTitle !== '') {
-        return new Promise(function(resolve, reject) {
-          resolve(post)
-        })
+        return Promise.resolve(post)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('변경할 포스트의 제목을 입력해 주세요 !'))
-      })
+      return Promise.reject(new Error('No_Data_Post_Title'))
     }
-    const subTitleCheck = (post: PutChangeAPIInterface) => {
+
+    // check subTitle is  '' or not
+    const subTitleCheck = (post: PutChangeMethodInterface) => {
       if (post.subTitle !== '') {
-        return new Promise(function(resolve, reject) {
-          resolve(post)
-        })
+        return Promise.resolve(post)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('변경할 포스트의 부제목을 입력해 주세요 !'))
-      })
+      return Promise.reject(new Error('No_Data_Post_Sub_Title'))
     }
-    const mainTextCheck = (post: PutChangeAPIInterface) => {
+
+    // check mainText is '' or not
+    const mainTextCheck = (post: PutChangeMethodInterface) => {
       if (post.mainText !== '') {
-        return new Promise(function(resolve, reject) {
-          resolve(post)
-        })
+        return Promise.resolve(post)
       }
-      return new Promise(function(resolve, reject) {
-        reject(new Error('변경할 포스트의 내용을 입력해 주세요 !'))
-      })
+      return Promise.reject(new Error('No_Data_Post_Main_Text'))
     }
-    const requestToServer = (post: PutChangeAPIInterface) => {
-      this.props
-        .changePost(post)
+
+    const requestToServer = async (post: PutChangeMethodInterface) => {
+      await changePost(post)
         // request call success
         .then(async (res: { value: any; action: any }) => {
-          await this.props.postDone()
-          await this.props.categoryDone()
-          await this.props.loadCategory()
           toast(res.action.payload.data.message)
         })
         // request call failure
         .catch((err: any) => {
           toast(err.response.data.message)
+
+          // if user who has wrong login key or doesn't have login key request, throw error
+          if (err.response.data.type) {
+            toast('서비스를 이용하시려면 다시 로그인 해 주세요 !')
+            logout()
+            history.push('/')
+          }
         })
-    }
-    // take all insert error
-    const onError = (err: Error) => {
-      toast(err.message)
+      // this clean method will execute when all task processed
+      categoryDone()
+      postDone()
+      loadCategory()
     }
 
-    oldCategoryCheck({
-      oldCategory: selectCategory,
-      newCategory: category,
-      oldTitle: selectTitle,
-      newTitle: title,
-      subTitle,
-      mainText
+    // take all insert error
+    const onError = (err: Error) => {
+      if (err.message === 'Not_Admin_User') {
+        // logout method
+        sessionStorage.clear()
+        logout()
+        history.push('/')
+        toast('관리자만 이용 가능합니다 !')
+      } else if (err.message === 'No_Data_Category_Select_Select') {
+        toast('변경할 포스트의 카테고리를 선택해 주세요 !')
+      } else if (err.message === 'No_Data_Post_Select_Title') {
+        toast('변경할 포스트를 선택해 주세요 !')
+      } else if (err.message === 'No_Data_Category_Select') {
+        toast('변경할 포스트의 카테고리를 선택해 주세요 !')
+      } else if (err.message === 'No_Data_Post_Title') {
+        toast('변경할 포스트의 제목을 입력해 주세요 !')
+        postError('title')
+      } else if (err.message === 'No_Data_Post_Sub_Title') {
+        toast('변경할 포스트의 부제목을 입력해 주세요 !')
+        postError('subTitle')
+      } else if (err.message === 'No_Data_Post_Main_Text') {
+        toast('변경할 포스트의 내용을 입력해 주세요 !')
+        postError('mainText')
+      }
+    }
+
+    // Promise
+    userAdminCheck({
+      loginLogined,
+      oldCategory: selectCategory.trim(),
+      newCategory: category.trim(),
+      oldTitle: selectTitle.trim(),
+      newTitle: title.trim(),
+      subTitle: subTitle.trim(),
+      mainText: mainText.trim()
     })
+      .then(oldCategoryCheck)
       .then(oldTitleCheck)
       .then(categoryCheck)
       .then(titleCheck)
@@ -342,15 +385,7 @@ class PostChange extends React.Component<Props, State> {
                   )}
                 </div>
                 <div className="editor-inside">
-                  <MarkdownEditor
-                    changeTitle={this.props.changeTitle}
-                    changeSubTitle={this.props.changeSubTitle}
-                    title={this.props.change.title}
-                    subTitle={this.props.change.subTitle}
-                    MainText={this.props.change.mainText}
-                    changeMainText={this.props.changeMainText}
-                    state={this.state.showNone}
-                  />
+                  <MarkdownEditorContainer type={this.state.editorType} resource={this.state.resource} />
                 </div>
                 {/* only can see mobile view */}
                 <div className="editor-submit-mobile">
@@ -371,7 +406,7 @@ class PostChange extends React.Component<Props, State> {
                   <h1 className="preview-title">{this.props.change.title}</h1>
                   <h3 className="preview-sub-title">{this.props.change.subTitle}</h3>
                   <div>
-                    <MarkdownRenderer markdown={this.props.change.mainText} />
+                    <MarkdownRendererContainer type={this.state.editorType} />
                   </div>
                 </div>
               </div>
@@ -384,4 +419,4 @@ class PostChange extends React.Component<Props, State> {
   }
 }
 
-export default PostChange
+export default withRouter(PostChange)
