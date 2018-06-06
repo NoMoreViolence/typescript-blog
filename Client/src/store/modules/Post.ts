@@ -157,26 +157,26 @@ export const PostActions = {
 
 // state of handle loading
 export interface LoadPostState {
-  pending?: boolean
-  error?: boolean
+  pending: boolean
+  error: boolean
 }
 // state of show Post
 export interface ShowPostState {
-  category?: string
-  title?: string
-  subTitle?: string
-  mainText?: string
-  date?: number
+  category: string
+  title: string
+  subTitle: string
+  mainText: string
+  date: number
 }
 // state of add Post
 export interface AddPostState {
   pending: boolean
   error: boolean
-  category?: string
-  title?: string
-  subTitle?: string
-  mainText?: string
-  date?: number
+  category: string
+  title: string
+  subTitle: string
+  mainText: string
+  date: number
   failedWithNoDataTitle: boolean
   failedWithNoDataSubTitle: boolean
   failedWithNoDataMainText: boolean
@@ -185,13 +185,13 @@ export interface AddPostState {
 export interface ChangePostState {
   pending: boolean
   error: boolean
-  selectCategory?: string
-  selectTitle?: string
-  category?: string
-  title?: string
-  subTitle?: string
-  mainText?: string
-  date?: number
+  selectCategory: string
+  selectTitle: string
+  category: string
+  title: string
+  subTitle: string
+  mainText: string
+  date: number
   failedWithNoDataTitle: boolean
   failedWithNoDataSubTitle: boolean
   failedWithNoDataMainText: boolean
@@ -200,13 +200,13 @@ export interface ChangePostState {
 export interface DeletePostState {
   pending: boolean
   error: boolean
-  selectCategory?: string
-  selectTitle?: string
-  category?: string
-  title?: string
-  subTitle?: string
-  mainText?: string
-  date?: number
+  selectCategory: string
+  selectTitle: string
+  category: string
+  title: string
+  subTitle: string
+  mainText: string
+  date: number
 }
 // Post basic state
 export interface PostState {
@@ -218,7 +218,7 @@ export interface PostState {
 }
 const initialState: PostState = {
   load: { pending: false, error: false },
-  show: { category: '', title: '', subTitle: '', mainText: '' },
+  show: { category: '', title: '', subTitle: '', mainText: '', date: 0 },
   add: {
     pending: false,
     error: false,
@@ -226,6 +226,7 @@ const initialState: PostState = {
     title: '',
     subTitle: '',
     mainText: '',
+    date: 0,
     failedWithNoDataTitle: false,
     failedWithNoDataSubTitle: false,
     failedWithNoDataMainText: false
@@ -239,6 +240,7 @@ const initialState: PostState = {
     title: '',
     subTitle: '',
     mainText: '',
+    date: 0,
     failedWithNoDataTitle: false,
     failedWithNoDataSubTitle: false,
     failedWithNoDataMainText: false
@@ -251,7 +253,8 @@ const initialState: PostState = {
     category: '',
     title: '',
     subTitle: '',
-    mainText: ''
+    mainText: '',
+    date: 0
   }
 }
 
@@ -345,19 +348,19 @@ const reducer = handleActions<PostState, any>(
     // Post Add Action
     [POST_ADD_POST_CATEGORY_CHANGE]: (state, action: AddPostCategoryPayload) =>
       produce(state, draft => {
-        draft.add.category = action.payload
+        draft.add.category = action.payload || ''
       }),
     [POST_ADD_POST_TITLE_CHANGE]: (state, action: AddPostPostTitlePayload) =>
       produce(state, draft => {
-        draft.add.title = action.payload
+        draft.add.title = action.payload || ''
       }),
     [POST_ADD_POST_SUBTITLE_CHANGE]: (state, action: AddPostPostSubTitlePayload) =>
       produce(state, draft => {
-        draft.add.subTitle = action.payload
+        draft.add.subTitle = action.payload || ''
       }),
     [POST_ADD_POST_MAINTEXT_CHANGE]: (state, action: AddPostPostMainTextPayload) =>
       produce(state, draft => {
-        draft.add.mainText = action.payload
+        draft.add.mainText = action.payload || ''
       }),
     [POST_ADD_POST_ERROR_DATA_NONE]: (state, action: AddPostPostError) => {
       if (action.payload === 'title') {
@@ -403,7 +406,7 @@ const reducer = handleActions<PostState, any>(
     // CHANGE
     [PUT_CHANGE_CATEGORY_SELECT_CHANGE]: (state, action: ChangePutCategorySelectPayload) =>
       produce(state, draft => {
-        draft.change.selectCategory = action.payload
+        draft.change.selectCategory = action.payload || ''
         draft.change.category = '카테고리 선택'
         draft.change.selectTitle = '변경할 포스트 선택'
         draft.change.title = ''
@@ -413,23 +416,23 @@ const reducer = handleActions<PostState, any>(
       }),
     [PUT_CHANGE_POST_CATEGORY_CHANGE]: (state, action: ChangePutCategoryPayload) =>
       produce(state, draft => {
-        draft.change.category = action.payload
+        draft.change.category = action.payload || ''
       }),
     [PUT_CHANGE_POST_SELECT_CHANGE]: (state, action: ChangePutPostSelectPayload) =>
       produce(state, draft => {
-        draft.change.selectTitle = action.payload
+        draft.change.selectTitle = action.payload || ''
       }),
     [PUT_CHANGE_POST_TITLE_CHANGE]: (state, action: ChangePutPostTitlePayload) =>
       produce(state, draft => {
-        draft.change.title = action.payload
+        draft.change.title = action.payload || ''
       }),
     [PUT_CHANGE_POST_SUBTITLE_CHANGE]: (state, action: ChangePutPostSubTilePayload) =>
       produce(state, draft => {
-        draft.change.subTitle = action.payload
+        draft.change.subTitle = action.payload || ''
       }),
     [PUT_CHANGE_POST_MAINTEXT_CHANGE]: (state, action: ChangePutPostMainTextPayload) =>
       produce(state, draft => {
-        draft.change.mainText = action.payload
+        draft.change.mainText = action.payload || ''
       }),
     [PUT_CHANGE_POST_ERROR_DATA_NONE]: (state, action: ChangePutPostError) => {
       if (action.payload === 'title') {
@@ -475,11 +478,11 @@ const reducer = handleActions<PostState, any>(
     // DELETE
     [DELETE_DELETE_CATEGORY_SELECT_CHANGE]: (state, action: DeleteDeleteCategorySelectPayload) =>
       produce(state, draft => {
-        draft.delete.category = action.payload
+        draft.delete.category = action.payload || ''
       }),
     [DELETE_DELETE_POST_SELECT_CHANGE]: (state, action: DeleteDeletePostSelectPayload) =>
       produce(state, draft => {
-        draft.delete.title = action.payload
+        draft.delete.title = action.payload || ''
       }),
     [DELETE_DELETE_POST_PENDING]: (state, action) =>
       produce(state, draft => {
@@ -500,6 +503,9 @@ const reducer = handleActions<PostState, any>(
     // when the task is done, this is will be excute
     [POST_DONE]: state =>
       produce(state, draft => {
+        draft.load.pending = false
+        draft.load.error = false
+
         draft.show.category = ''
         draft.show.title = ''
         draft.show.subTitle = ''
@@ -512,6 +518,9 @@ const reducer = handleActions<PostState, any>(
         draft.add.subTitle = ''
         draft.add.mainText = ''
         draft.add.date = Date.now()
+        draft.add.failedWithNoDataMainText = false
+        draft.add.failedWithNoDataSubTitle = false
+        draft.add.failedWithNoDataMainText = false
 
         // change state
         draft.change.selectCategory = '카테고리 선택'
@@ -521,6 +530,9 @@ const reducer = handleActions<PostState, any>(
         draft.change.subTitle = ''
         draft.change.mainText = ''
         draft.change.date = Date.now()
+        draft.change.failedWithNoDataMainText = false
+        draft.change.failedWithNoDataSubTitle = false
+        draft.change.failedWithNoDataMainText = false
 
         // delete state
         draft.delete.selectCategory = '카테고리 선택'
