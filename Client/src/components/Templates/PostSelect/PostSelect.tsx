@@ -8,14 +8,14 @@ import NotFound from 'components/Pages/NotFound'
 import LoadingCircle from 'lib/LoadingCircle'
 
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import MarkdownRender from 'lib/MarkDownRenderer'
+
+import MarkDownRendererContainer from 'containers/MarkDownRenderer/MarkDownRendererContainer'
 
 interface Props {
   loading?: boolean
   category?: string
   title?: string
   subTitle?: string
-  mainText?: string
   date?: number
   showPost: (value: GetPostBringAPIInterface) => any
 }
@@ -55,7 +55,7 @@ class PostSelect extends React.Component<Props & HomeProps> {
                   <h2 className="post-view-category">{this.props.category}</h2>
                 </div>
                 <p className="post-view-sub-title">{this.props.subTitle}</p>
-                <MarkdownRender markdown={this.props.mainText} />
+                <MarkDownRendererContainer type="show" />
               </div>
             ) : (
               <NotFound />

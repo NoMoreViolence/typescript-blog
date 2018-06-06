@@ -19,7 +19,6 @@ const PostSelectContainer: React.SFC<Props> = Props => (
     category={Props.show.category}
     title={Props.show.title}
     subTitle={Props.show.subTitle}
-    mainText={Props.show.mainText}
     date={Props.show.date}
     showPost={Props.PostActions.getPost}
   />
