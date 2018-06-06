@@ -4,18 +4,6 @@ import * as CodeMirror from 'codemirror'
 import './MarkDownEditor.css'
 import 'components/commonCSS/editor.css'
 
-// color of markdown syntax
-import 'codemirror/mode/markdown/markdown'
-// markdown colorSet for PL
-import 'codemirror/mode/javascript/javascript'
-import 'codemirror/mode/htmlmixed/htmlmixed'
-import 'codemirror/mode/jsx/jsx'
-import 'codemirror/mode/css/css'
-import 'codemirror/mode/shell/shell'
-// CodeMirror Css Style
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/monokai.css'
-
 interface Props {
   title?: string
   changeTitle: (value: string) => void

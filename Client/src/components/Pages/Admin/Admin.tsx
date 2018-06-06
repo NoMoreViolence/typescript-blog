@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import './Admin.css'
- 
+
 // category
 import CurrentCategoryContainer from 'containers/Admin/CurrentCategoryContainer'
 import CategoryAddContainer from 'containers/Admin/CategoryAddContainer'
@@ -11,6 +11,31 @@ import CategoryDeleteContainer from 'containers/Admin/CategoryDeleteContainer'
 import PostAddContainer from 'containers/Admin/PostAddContainer'
 import PostChangeContainer from 'containers/Admin/PostChangeContainer'
 import PostDeleteContainer from 'containers/Admin/PostDeleteContainer'
+
+// markdown editor & renderer css file
+import 'prismjs/themes/prism-okaidia.css'
+// call the support PL's code highlighting
+// http://prismjs.com/#languages-list
+import 'prismjs/components/prism-bash.min.js'
+import 'prismjs/components/prism-javascript.min.js'
+import 'prismjs/components/prism-typescript.min.js'
+import 'prismjs/components/prism-jsx.min.js'
+import 'prismjs/components/prism-css.min.js'
+import 'prismjs/components/prism-tsx.min.js'
+import 'prismjs/components/prism-c.min.js'
+import 'prismjs/components/prism-flow.min.js'
+
+// color of markdown syntax
+import 'codemirror/mode/markdown/markdown'
+// markdown colorSet for PL
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/mode/htmlmixed/htmlmixed'
+import 'codemirror/mode/jsx/jsx'
+import 'codemirror/mode/css/css'
+import 'codemirror/mode/shell/shell'
+// CodeMirror Css Style
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/monokai.css'
 
 const Admin: React.SFC = () => {
   return (
