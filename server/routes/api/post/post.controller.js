@@ -103,48 +103,68 @@ exports.postCreate = (req, res) => {
   // category, post's title, subTitle, and mainText of the post
   const { category, title } = req.params
   const { subTitle, mainText } = req.body
-  // this is the category's _id
-  let categoryID = null
 
-  // category double check
-  const titleDoubleCheck = exists => {
+  // check category is exist or not
+  const categoryExistCheck = async data => {
+    // find category
+    const categoryData = await Category.findSameCategory(data.category)
+
     // if the category is real
-    if (exists) {
-      // confirm the category's _id
-      categoryID = exists.id
-      // return the title for check title double check
-      return Post.checkTitle(title)
+    if (categoryData !== null) {
+      // return promise adding category's _id
+      return Promise.resolve({ ...data, CategoryID: categoryData.id })
     }
-    // if there is no ${category}
-    throw new Error(`'${category}' 카테고리가 존재하지 않습니다 !`)
+    return Promise.reject(new Error('추가할 포스트의 카테고리가 존재하지 않습니다 !'))
   }
 
-  // create part
-  const create = exists => {
-    if (exists) {
-      throw new Error(`'${title}' 포스트가 이미 존재합니다, 다른 타이틀명을 선택해 주세요 !`)
+  // double check title
+  const titleDoubleCheck = async data => {
+    // if the title is unique
+    if ((await Post.findPostRegex(data.title)) === null) {
+      return Promise.resolve(data)
     }
-    return Post.createPost(categoryID, title, subTitle, mainText)
+    console.log('여기서 오류가 났네요')
+    return Promise.reject(new Error('추가할 포스트의 제목이 중복되어 삭제가 불가능 합니다 !'))
   }
 
-  // category Ref Update
-  const categoryRefPush = data => {
-    // if the post data is exist
-    if (data) {
-      // update category posts _id
-      return Category.PostsRefPush(category, data.id)
+  // check subTitle data exist or not
+  const subTitleExistCheck = data => {
+    if (data.subTitle !== '') {
+      return Promise.resolve(data)
     }
-    throw new Error('포스트 생성 과정 중 에러 발생 !')
+    return Promise.reject(new Error('추가할 포스트의 부제목이 존재하지 않습니다 !'))
   }
 
-  const respond = data => {
+  // check mainText data exsit or not
+  const mainTextExistCheck = data => {
+    if (data.mainText !== '') {
+      return Promise.resolve(data)
+    }
+    return Promise.reject(new Error('추가할 포스트의 본문이 존재하지 않습니다 !'))
+  }
+
+  // create post method
+  const postCreate = async data => {
+    const newPostData = await Post.createPost(data.CategoryID, data.title, data.subTitle, data.mainText)
+    return Promise.resolve({ ...data, PostID: newPostData.id })
+  }
+
+  // ref push to category's post's_id container / new posts _id
+  const categoryRefPush = async data => {
+    await Category.PostsRefPush(data.category, data.PostID)
+    return Promise.resolve(data)
+  }
+
+  // respond
+  const respondToServer = data => {
     res.json({
       success: true,
-      message: `'${title}' 포스트가 생성 되었습니다 !`,
+      message: `'${data.title}' 포스트 추가 성공 ! `,
       value: data
     })
   }
 
+  // error handler
   const onError = err => {
     res.status(409).json({
       success: false,
@@ -153,11 +173,21 @@ exports.postCreate = (req, res) => {
     })
   }
 
-  Category.findSameCategory(category)
+  // Promise
+  categoryExistCheck({
+    category: category.trim(),
+    title: title.trim(),
+    subTitle: subTitle.trim(),
+    mainText: mainText.trim(),
+    CategoryID: null,
+    PostID: null
+  })
     .then(titleDoubleCheck)
-    .then(create)
+    .then(subTitleExistCheck)
+    .then(mainTextExistCheck)
+    .then(postCreate)
     .then(categoryRefPush)
-    .then(respond)
+    .then(respondToServer)
     .catch(onError)
 }
 
