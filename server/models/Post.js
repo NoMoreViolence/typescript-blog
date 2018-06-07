@@ -31,7 +31,15 @@ Post.statics.findAllPostsTitleAndSubTitle = function () {
 
 // show the one Post
 Post.statics.findPost = function (title) {
-  return this.findOne({ title }, { __v: 0 }).populate({ path: 'category', select: '__v' })
+  return this.findOne({ title }, { __v: 0 })
+    .populate({ path: 'category', select: '__v' })
+    .exec()
+}
+
+Post.statics.findPostRegex = function (title) {
+  return this.findOne({ title: { $regex: title, $options: 'i' } }, { __v: 0 })
+    .populate({ path: 'category', select: '__v' })
+    .exec()
 }
 
 // post name double Check
@@ -40,7 +48,7 @@ Post.statics.checkTitle = function (title) {
 }
 
 // post Create
-Post.statics.createPost = async function (category, title, subTitle, mainText) {
+Post.statics.createPost = function (category, title, subTitle, mainText) {
   const post = new this({
     title,
     subTitle,
