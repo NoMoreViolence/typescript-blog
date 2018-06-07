@@ -4,22 +4,18 @@
   margin-top: 5%;
 }
 
-
-
 .editor-and-viewer {
-  height: calc(100vh - 4rem); 
+  height: calc(100vh - 4rem);
   display: flex;
-  position: relative; 
+  position: relative;
   padding-top: 5%;
 }
-
-
 
 .editor {
   display: flex;
   flex-direction: column;
-  min-width: 0; 
-  overflow: auto; 
+  min-width: 0;
+  overflow: auto;
 }
 
 .editor-category {
@@ -27,129 +23,66 @@
   flex-direction: column;
   border-color: #aeb87a;
 }
+
 .editor-change-select-part {
   display: flex;
 }
+
 .editor-change-select-category {
   flex: 1;
 }
+
 .editor-change-select-category button {
   width: 100%;
 }
+
 .editor-change-select-post {
   flex: 1;
 }
+
 .editor-change-select-post button {
   width: 100%;
 }
-.editor-category button {
-  height: 4rem;
-  color: #aeb87a;
-  background-color: white;
-  border-color: #aeb87a;
-}
-.editor-category button:hover {
-  cursor: pointer;
-  color: white;
-  background-color: #aeb87a;
-}
-.editor-category button:focus {
-  outline: none;
-}
-.editor-category button:active {
-  border-style: outset;
-  border: none;
-  outline: none;
-}
-.editor-category button::after {
-  box-sizing: border-box;
-}
+
 .editor-category-child-container {
   height: 150px;
   overflow-y: auto;
 }
+
 .editor-category-child {
   display: flex;
   flex-direction: column;
 }
-.editor-category-child button {
-  color: #aeb87a;
-  background-color: white;
-  border-color: #aeb87a;
+
+.editor-category-child-button {
+  width: 100%;
 }
-.editor-category-child button:hover {
-  cursor: pointer;
-  color: white;
-  background-color: #aeb87a
-}
-.editor-category-child button:focus {
-  outline: none;
-}
-.editor-category-child button:active {
-  border-style: outset;
-  border: none;
-  outline: none;
-}
-.editor-category-child button::after {
-  box-sizing: border-box;
-}
+
+
 /* cover the markdown editor */
 .editor-inside {
-  flex: 1; 
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
-
-
 
 .preview {
   display: flex;
   flex-direction: column;
-  min-width: 0; 
-  overflow: auto; 
+  min-width: 0;
+  overflow: auto;
 }
 
 .preview-submit {
   display: flex;
   flex-direction: column;
 }
-.preview-submit button {
-  height: 4rem;
-}
-.preview-submit button:hover {
-  cursor: pointer;
-}
-.preview-submit button:focus {
-  outline: none;
-}
-.preview-submit button:active {
-  border-style: outset;
-  border: none;
-}
-.preview-submit button::after {
-  box-sizing: border-box;
-}
 
 .editor-submit-mobile {
   display: flex;
   flex-direction: column;
 }
-.editor-submit-mobile button {
-  height: 4rem;
-}
-.editor-submit-mobile button:hover {
-  cursor: pointer;
-}
-.editor-submit-mobile button:focus {
-  outline: none;
-}
-.editor-submit-mobile button:active {
-  border-style: outset;
-  border: none;
-}
-.editor-submit-mobile button::after {
-  box-sizing: border-box;
-}
+
 /* cover the markdown renderer */
 .preview-inside {
   flex: 1;
@@ -164,6 +97,7 @@
   padding-bottom: 2rem;
   border-bottom: 1px solid gray;
 }
+
 .preview-sub-title {
   font-size: 1.3rem;
   font-weight: 200;
@@ -175,11 +109,11 @@
 
 /* the separator to handle size that between editor and renderer */
 .separator {
-  width: 1rem; 
+  width: 1rem;
   height: 100%;
   position: absolute;
-  transform: translate(-50%); 
-  cursor: col-resize; 
+  transform: translate(-50%);
+  cursor: col-resize;
 }
 
 
@@ -189,9 +123,11 @@
   .editor {
     flex: 1 !important;
   }
+
   .separator {
     display: none;
   }
+
   .preview {
     display: none;
   }
@@ -201,6 +137,7 @@
   .preview-submit-mobile {
     display: none;
   }
+
   .editor-submit-mobile {
     display: none;
   }

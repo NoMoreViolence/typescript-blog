@@ -1,12 +1,14 @@
 .primary {
+  height: 4rem;
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
   color: #007bff;
   border-color: #007bff;
   background: white;
-  border-radius: .3rem;
+  outline: none;
 }
+
 .primary:hover {
   cursor: pointer;
   color: white;
@@ -14,15 +16,28 @@
   background: #007bff;
 }
 
+.primary:active {
+  border: none;
+  color: white;
+  border-color: #007bff;
+  background: #007bff;
+}
+
+.primary:focus {
+  outline: none;
+}
+
 .outline-primary {
+  height: 4rem;
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
   color: white;
   border-color: #007bff;
   background: #007bff;
-  border-radius: .3rem;
+  outline: none;
 }
+
 .outline-primary:hover {
   cursor: pointer;
   color: #007bff;
@@ -30,15 +45,28 @@
   background: white;
 }
 
+.outline-primary:active {
+  border: none;
+  color: #007bff;
+  border-color: #007bff;
+  background: white;
+}
+
+.outline-primary:focus {
+  outline: none;
+}
+
 .info {
+  height: 4rem;
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
   color: #17a2b8;
   border-color: #17a2b8;
   background: white;
-  border-radius: .3rem;
+  outline: none;
 }
+
 .info:hover {
   cursor: pointer;
   color: white;
@@ -46,15 +74,28 @@
   background: #17a2b8;
 }
 
+.info:active {
+  border: none;
+  color: white;
+  border-color: #17a2b8;
+  background: #17a2b8;
+}
+
+.info:focus {
+  outline: none;
+}
+
 .outline-info {
+  height: 4rem;
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
   color: white;
   border-color: #17a2b8;
   background: #17a2b8;
-  border-radius: .3rem;
+  outline: none;
 }
+
 .outline-info:hover {
   cursor: pointer;
   color: #17a2b8;
@@ -62,15 +103,28 @@
   background: white;
 }
 
+.outline-info:active {
+  border: none;
+  color: #17a2b8;
+  border-color: #17a2b8;
+  background: white;
+}
+
+.outline-info:focus {
+  outline: none;
+}
+
 .danger {
+  height: 4rem;
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
   color: #dc3545;
   border-color: #dc3545;
   background: white;
-  border-radius: .3rem;
+  outline: none;
 }
+
 .danger:hover {
   cursor: pointer;
   color: white;
@@ -78,15 +132,28 @@
   background: #dc3545;
 }
 
+.danger:active {
+  border: none;
+  color: white;
+  border-color: #dc3545;
+  background: #dc3545;
+}
+
+.danger:focus {
+  outline: none;
+}
+
 .outline-danger {
+  height: 4rem;
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
   color: white;
   border-color: #dc3545;
   background: #dc3545;
-  border-radius: .3rem;
+  outline: none;
 }
+
 .outline-danger:hover {
   cursor: pointer;
   color: #dc3545;
@@ -94,15 +161,28 @@
   background: white;
 }
 
+.outline-danger:active {
+  border: none;
+  color: #dc3545;
+  border-color: #dc3545;
+  background: white;
+}
+
+.outline-danger:focus {
+  outline: none;
+}
+
 .select {
+  height: 4rem;
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
   color: #aeb87a;
   border-color: #aeb87a;
   background: white;
-  border-radius: .3rem;
+  outline: none;
 }
+
 .select:hover {
   cursor: pointer;
   color: white;
@@ -110,20 +190,44 @@
   background: #aeb87a;
 }
 
+.select:active {
+  border: none;
+  color: white;
+  border-color: #aeb87a;
+  background: #aeb87a;
+}
+
+.select:focus {
+  outline: none;
+}
+
 .outline-select {
+  height: 4rem;
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
   color: white;
   border-color: #aeb87a;
   background: #aeb87a;
-  border-radius: .3rem;
+  outline: none;
 }
+
 .outline-select:hover {
   cursor: pointer;
   color: #aeb87a;
   border-color: #aeb87a;
   background: white;
+}
+
+.outline-select:active {
+  border: none;
+  color: #aeb87a;
+  border-color: #aeb87a;
+  background: white;
+}
+
+.outline-select:focus {
+  outline: none;
 }
 
 .block {
