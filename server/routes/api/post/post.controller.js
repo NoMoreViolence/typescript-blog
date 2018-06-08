@@ -7,30 +7,47 @@ const Category = require('./../../../models/Category')
 */
 // return all posts data
 exports.allPostsTitleAndSubTitle = (req, res) => {
-  const respond = result => {
-    // return post data to client
-    if (result) {
-      res.json({
-        success: true,
-        value: result
-      })
-    } else {
-      // if post data is not exists
-      throw new Error('포스트가 존재하지 않습니다')
-    }
+  // activate find all post method
+  const findAllPostsTitleAndSubTitle = async data => {
+    // find data
+    const PostsData = await Post.findAllPostsTitleAndSubTitle()
+    // return
+    return Promise.resolve({ ...data, data: PostsData })
   }
 
-  const onError = error => {
+  // check the post value is exist or not
+  const allPostsDataCheck = data => {
+    // if data exist
+    if (data) {
+      return Promise.resolve(data)
+    }
+    return Promise.reject(new Error('모든 포스트가 존재하지 않습니다 !'))
+  }
+
+  // respond
+  const respondToServer = data => {
+    // return post data to client
+    res.json({
+      success: true,
+      message: '모든 포스트의 타이틀과 서브 타이틀 불러오기에 성공 !',
+      value: data
+    })
+  }
+
+  // error handler
+  const onError = err => {
+    // return error
     res.status(409).json({
       success: false,
-      message: error.message,
+      message: err.message,
       value: []
     })
   }
 
   // Promise
-  Post.findAllPostsTitleAndSubTitle()
-    .then(respond)
+  findAllPostsTitleAndSubTitle({ data: null })
+    .then(allPostsDataCheck)
+    .then(respondToServer)
     .catch(onError)
 }
 
@@ -43,48 +60,69 @@ exports.showPost = (req, res) => {
   const { category, title } = req.params
   const { type } = req.query
 
-  const dummyData = {
-    posts: [],
-    category: ''
-  }
-
-  // return to client with post value
-  const respond = result => {
-    // there is post data
-    if (result) {
-      // there is title
-      if (result.posts.length !== 0) {
-        res.json({
-          success: true,
-          message: '포스트 불러오기 성공',
-          value: { type, posts: result.posts, category: result.category }
-        })
-      } else {
-        // title is not real
-        throw new Error(`'${title}' 포스트가 존재하지 않습니다`)
-      }
-    } else {
-      // if there is no data
-      res.json({
-        success: false,
-        message: `'${category}' 카테고리가 존재하지 않습니다`,
-        value: { dummyData, type }
-      })
+  // check req.params.category is '' or not
+  const reqCatagoryValueCheck = data => {
+    if (data.category !== '') {
+      return Promise.resolve(data)
     }
+    return Promise.reject(new Error('카테고리 입력 데이터가 없습니다 !'))
   }
 
-  // error, I dont' know
-  const onError = error => {
+  // check req.params.title is '' or not
+  const reqTitleValueCheck = data => {
+    if (data.title !== '') {
+      return Promise.resolve(data)
+    }
+    return Promise.reject(new Error('포스트 입력 데이터가 없습니다 !'))
+  }
+
+  // excute Category.showPost() & return data
+  const findPost = async data => {
+    const postData = await Category.showPost(data.category, data.title)
+    return Promise.resolve({ ...data, postData })
+  }
+
+  // check categoryData is exist => right category value
+  const checkPostCategoryExist = data => {
+    if (data.postData) {
+      return Promise.resolve(data)
+    }
+    return Promise.reject(new Error('카테고리가 존재하지 않습니다 !'))
+  }
+
+  // if the postData is exist => right title value
+  const checkPostExist = data => {
+    if (data.postData.posts.length !== 0) {
+      return Promise.resolve(data)
+    }
+    return Promise.reject(new Error('포스트가 존재하지 않습니다 !'))
+  }
+
+  // respond
+  const respondToServer = data => {
+    res.json({
+      success: true,
+      message: '포스트 불러오기 성공 !',
+      value: { type, posts: data.postData.posts, category: data.postData.category }
+    })
+  }
+
+  // error handler
+  const onError = err => {
     res.status(409).json({
       success: false,
-      message: error.message,
-      value: { dummyData, type }
+      message: err.message,
+      value: []
     })
   }
 
   // Promise
-  Category.showPost(category, title)
-    .then(respond)
+  reqCatagoryValueCheck({ category: category.trim(), title: title.trim(), postData: null })
+    .then(reqTitleValueCheck)
+    .then(findPost)
+    .then(checkPostCategoryExist)
+    .then(checkPostExist)
+    .then(respondToServer)
     .catch(onError)
 }
 
