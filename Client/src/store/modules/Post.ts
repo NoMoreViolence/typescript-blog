@@ -200,10 +200,9 @@ export interface ChangePostState {
 export interface DeletePostState {
   pending: boolean
   error: boolean
-  selectCategory: string
-  selectTitle: string
   category: string
   title: string
+  showTitle: string
   subTitle: string
   mainText: string
   date: number
@@ -248,10 +247,9 @@ const initialState: PostState = {
   delete: {
     pending: false,
     error: false,
-    selectCategory: '카테고리 선택',
-    selectTitle: '삭제할 포스트 선택',
-    category: '',
-    title: '',
+    category: '카테고리 선택',
+    title: '삭제할 포스트 선택',
+    showTitle: '',
     subTitle: '',
     mainText: '',
     date: 0
@@ -326,8 +324,7 @@ const reducer = handleActions<PostState, any>(
           draft.load.pending = false
           draft.load.error = false
           // post delete data
-          draft.delete.category = action.payload.data.value.category
-          draft.delete.title = action.payload.data.value.posts[0].title
+          draft.delete.showTitle = action.payload.data.value.posts[0].title
           draft.delete.subTitle = action.payload.data.value.posts[0].subTitle
           draft.delete.mainText = action.payload.data.value.posts[0].mainText
           draft.delete.date = action.payload.data.value.posts[0].date
@@ -479,6 +476,10 @@ const reducer = handleActions<PostState, any>(
     [DELETE_DELETE_CATEGORY_SELECT_CHANGE]: (state, action: DeleteDeleteCategorySelectPayload) =>
       produce(state, draft => {
         draft.delete.category = action.payload || ''
+        draft.delete.title = '삭제할 포스트 선택'
+        draft.delete.showTitle = ''
+        draft.delete.subTitle = ''
+        draft.delete.mainText = ''
       }),
     [DELETE_DELETE_POST_SELECT_CHANGE]: (state, action: DeleteDeletePostSelectPayload) =>
       produce(state, draft => {
@@ -535,10 +536,9 @@ const reducer = handleActions<PostState, any>(
         draft.change.failedWithNoDataMainText = false
 
         // delete state
-        draft.delete.selectCategory = '카테고리 선택'
-        draft.delete.selectTitle = '삭제할 포스트 선택'
-        draft.delete.category = '카테고리 선택'
-        draft.delete.title = ''
+        draft.delete.category = '삭제할 카테고리 선택'
+        draft.delete.title = '삭제할 포스트 선택'
+        draft.delete.showTitle = ''
         draft.delete.subTitle = ''
         draft.delete.mainText = ''
         draft.delete.date = Date.now()
