@@ -1,0 +1,34 @@
+.only-viewer {
+  width: 100%;
+  padding-top: 5%;
+}
+
+.flex {
+  width: 100%;
+  display: flex;
+}
+
+
+.viewer-category {
+  flex: 1;
+}
+
+.viewer-category > button {
+  width: 100%;
+}
+
+.viewer-title {
+  flex: 1;
+}
+
+.viewer-title > button {
+  width: 100%;
+}
+
+.viewer-submit {
+  flex: 1;
+}
+
+.viewer-submit > button {
+  width: 100%;
+}
