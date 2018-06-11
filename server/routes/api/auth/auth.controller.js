@@ -6,6 +6,22 @@ const User = require('./../../../models/User')
 const crypto = require('crypto')
 
 /*
+  common function
+*/
+const MakeNewJwtToken = (username, admin, secret) => {
+  if (username && admin && secret) {
+    return jwt.sign(
+      {
+        username,
+        admin
+      },
+      secret
+    )
+  }
+  return null
+}
+
+/*
     POST /api/auth/register
     {
         username,
@@ -87,85 +103,90 @@ exports.register = (req, res) => {
     }
 */
 exports.login = (req, res) => {
-  // if compare to DB password, password have to cryptoed, DB has only hash data
-  req.body.password = crypto
-    .createHash('sha512')
-    .update(req.body.password)
-    .digest('base64')
+  // bring inpus
   const { username, password } = req.body
 
-  // require jwt secret Value
-  const secret = req.app.get('jwt-secret')
+  // check req.body.username is real exist username
+  const checkUsername = async data => {
+    const usernameData = await User.findOneByUsername(data.username)
 
-  // if user is not admin, can't login
-  const adminCheck = user => {
-    console.log(user)
-    if (user) {
-      if (user.admin === true) return user
-      throw new Error('관리자가 아닙니다 !')
+    if (usernameData) {
+      return Promise.resolve({ ...data, user: usernameData })
     }
-    throw new Error('유저가 존재하지 않습니다 !')
+    return Promise.reject(new Error('유저가 존재하지 않습니다 !'))
   }
 
-  // 유저를 체크하고 JWT 토큰을 발급합니다
-  const check = user => {
-    if (!user) {
-      // user does not exist
-      console.log("login failed, user doesn't exists ")
-      throw new Error('유저가 존재하지 않습니다 !')
-    } else {
-      // user exists, check the password
-      if (user.verify(password)) {
-        // create a promise that generates jwt asynchronously
-        const p = new Promise((resolve, reject) => {
-          jwt.sign(
-            {
-              _id: user._id,
-              username: user.username,
-              admin: user.admin
-            },
-            secret,
-            {
-              expiresIn: '1d',
-              issuer: 'Leejihoon',
-              subject: "Lee's Blog"
-            },
-            (err, token) => {
-              if (err) reject(err)
-              resolve(token)
-            }
-          )
-        })
-        return p
-      }
-      throw new Error('아이디 비밀번호 오류입니다 !')
+  // check founded user's account is admin or not
+  // if the account is not admin, can't sign in23
+  const checkUserIsAdminOrNot = data => {
+    // if userData is admin account
+    if (data.user.admin === true) {
+      return Promise.resolve(data)
     }
+    return Promise.reject(new Error('관리자가 아닙니다 !'))
   }
 
-  // respond the token
-  const respond = token => {
-    console.log('로그인 성공 !')
+  // encrypt password because of check the input password is same as db.password
+  const encryptionPassword = async data => {
+    // Encrypt password
+    const encryptedPassword = crypto
+      .createHash('sha512')
+      .update(data.password)
+      .digest('base64')
+
+    return Promise.resolve({ ...data, password: encryptedPassword })
+  }
+
+  // check data.password === database.foundedUser.password
+  const requestPasswordVerify = async data => {
+    const verifyData = await data.user.verify(data.password)
+
+    if (verifyData) {
+      return Promise.resolve(data)
+    }
+    return Promise.reject(new Error('비밀번호 오류입니다 !'))
+  }
+
+  // create JWT token
+  const makeJwtToken = async data => {
+    const secret = req.app.get('jwt-secret')
+    const tokenValue = await MakeNewJwtToken(data.user.username, data.user.admin, secret)
+
+    if (tokenValue !== null) {
+      return Promise.resolve({ ...data, token: tokenValue })
+    }
+    return Promise.reject(new Error('토큰 생성 에러 발생 !'))
+  }
+
+  // respond to server
+  const respondToServer = data => {
     res.json({
       success: true,
-      message: 'login success',
-      token
+      message: '로그인 성공 !',
+      token: data.token
     })
   }
 
-  // error occured
-  const onError = error => {
-    console.log(error.message)
+  // error handler
+  const onError = err => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: err.message
     })
   }
 
-  // find the user
-  User.findOneByUsername(username)
-    .then(adminCheck)
-    .then(check)
-    .then(respond)
+  // Promise
+  checkUsername({
+    username: username.trim(),
+    password: password.trim(),
+    user: null,
+    token: null
+  })
+    .then(checkUserIsAdminOrNot)
+    .then(encryptionPassword)
+    .then(requestPasswordVerify)
+    .then(makeJwtToken)
+    .then(respondToServer)
     .catch(onError)
 }
 
