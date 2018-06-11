@@ -1,3 +1,13 @@
+.category-all {
+  margin-top: 2.5%;
+}
+
+.category-all-loading-circle {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .welcome-message {
   font-size: 3rem;
   font-weight: 350;
