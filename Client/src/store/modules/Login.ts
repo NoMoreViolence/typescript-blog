@@ -2,8 +2,8 @@ import { handleActions, Action, createAction } from 'redux-actions'
 import axios from 'axios'
 import produce from 'immer'
 
-// 로그인
-function postLogin(username: string, password: string) {
+// login method
+function login(username: string, password: string) {
   return axios.post(
     '/api/auth/login',
     {
@@ -18,53 +18,57 @@ function postLogin(username: string, password: string) {
   )
 }
 
-// 자동로그인
-function getLogin() {
-  return axios.get('/api/auth/check', {
-    headers: {
-      'Content-Type': 'application/json',
-      'x-access-token': sessionStorage.getItem('token')
+// auto login
+function autoLogin(token: string | null) {
+  return axios.post(
+    '/api/auth/check',
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': token
+      }
     }
-  })
+  )
 }
 
-// 로그인
-const POST_LOGIN = 'POST_LOGIN'
-const POST_LOGIN_PENDING = 'POST_LOGIN_PENDING'
-const POST_LOGIN_SUCCESS = 'POST_LOGIN_SUCCESS'
-const POST_LOGIN_FAILURE = 'POST_LOGIN_FAILURE'
+// login action
+const LOGIN = 'LOGIN'
+const LOGIN_PENDING = 'LOGIN_PENDING'
+const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
+const LOGIN_FAILURE = 'LOGIN_FAILURE'
 
-// 세션 jwt 토큰으로 로그인 체크
-const GET_LOGIN_CHECK = 'GET_LOGIN_CHECK'
-const GET_LOGIN_CHECK_PENDING = 'GET_LOGIN_CHECK_PENDING'
-const GET_LOGIN_CHECK_SUCCESS = 'GET_LOGIN_CHECK_SUCCESS'
-const GET_LOGIN_CHECK_FAILURE = 'GET_LOGIN_CHECK_FAILURE'
+// auto login action
+const AUTO_LOGIN_CHECK = 'AUTO_LOGIN_CHECK'
+const AUTO_LOGIN_CHECK_PENDING = 'AUTO_LOGIN_CHECK_PENDING'
+const AUTO_LOGIN_CHECK_SUCCESS = 'AUTO_LOGIN_CHECK_SUCCESS'
+const AUTO_LOGIN_CHECK_FAILURE = 'AUTO_LOGIN_CHECK_FAILURE'
 
-// 로그아웃
+// logout action
 const LOGOUT = 'LOGOUT'
 
-// 인풋 변경, ID와 패스워드
+// change input => username & password
 const HANDLE_CHANGE_USERNAME = 'HANDLE_CHANGE_USERNAME'
 const HANDLE_CHANGE_PASSWORD = 'HANDLE_CHANGE_PASSWORD'
 
-// Payload 액션 타입 any로 했다, 타입 괜히 지정해주는게 더 귀찮은 부분
+// api payload action, I can't handle api return value
 type Payload = any
 
-// 로그인 액션 함수 추출
+// login action method export
 export const LoginActions = {
-  // 로그인 성공
-  postLogin: createAction(POST_LOGIN, postLogin),
-  // 토큰만을 이용해서 로그인 체크할 때
-  getLogin: createAction(GET_LOGIN_CHECK, getLogin),
-  // Username, Password도 제대로 안켜져
-  handleChangeUsername: createAction<Payload>(HANDLE_CHANGE_USERNAME),
-
-  handleChangePassword: createAction<Payload>(HANDLE_CHANGE_PASSWORD),
-
+  // login method
+  login: createAction(LOGIN, login),
+  // auto login method
+  autoLogin: createAction(AUTO_LOGIN_CHECK, autoLogin),
+  // change username
+  handleChangeUsername: createAction<string, string>(HANDLE_CHANGE_USERNAME, value => value),
+  // change password
+  handleChangePassword: createAction<string, string>(HANDLE_CHANGE_PASSWORD, value => value),
+  // logout method
   logout: createAction(LOGOUT)
 }
 
-//  기본 State 타입 정의
+//  basic login state
 export interface LoginState {
   loginType: string
   loginStatusCode: number
@@ -72,7 +76,7 @@ export interface LoginState {
   loginUsername: string | undefined
   loginPassword: string | undefined
 }
-// 초기 상태
+// initial state
 const initialState: LoginState = {
   loginType: '',
   loginStatusCode: 0,
@@ -81,28 +85,32 @@ const initialState: LoginState = {
   loginPassword: ''
 }
 
-// 액션 상태
-export default handleActions(
+// adding return type
+type changeUsernameInputPayloadAction = ReturnType<typeof LoginActions.handleChangeUsername>
+type changePasswordInputPayloadAction = ReturnType<typeof LoginActions.handleChangePassword>
+
+// export reducer
+const reducer = handleActions<LoginState, any>(
   {
-    // 로그인 시작
-    [POST_LOGIN_PENDING]: state =>
-      produce(state, (draft: LoginState) => {
+    // login pending
+    [LOGIN_PENDING]: state =>
+      produce(state, draft => {
         draft.loginLogined = false
         draft.loginType = 'PENDING'
         draft.loginStatusCode = 200
       }),
-    // 로그인 성공
-    [POST_LOGIN_SUCCESS]: (state, action: Action<Payload>) =>
-      produce(state, (draft: LoginState) => {
+    // login success
+    [LOGIN_SUCCESS]: (state, action: Action<Payload>) =>
+      produce(state, draft => {
         draft.loginUsername = ''
         draft.loginPassword = ''
         draft.loginLogined = true
         draft.loginType = 'SUCCESS'
         draft.loginStatusCode = action.payload.status
       }),
-    // 로그인 실패
-    [POST_LOGIN_FAILURE]: (state, action: Action<Payload>) =>
-      produce(state, (draft: LoginState) => {
+    // login failure
+    [LOGIN_FAILURE]: (state, action: Action<Payload>) =>
+      produce(state, draft => {
         draft.loginUsername = ''
         draft.loginPassword = ''
         draft.loginLogined = false
@@ -110,47 +118,49 @@ export default handleActions(
         draft.loginStatusCode = action.payload.response.status
       }),
 
-    // 자동로그인 시작
-    [GET_LOGIN_CHECK_PENDING]: state =>
-      produce(state, (draft: LoginState) => {
+    // auto login pending
+    [AUTO_LOGIN_CHECK_PENDING]: state =>
+      produce(state, draft => {
         draft.loginLogined = false
         draft.loginType = 'PENDING'
       }),
-    // 자동로그인 완료
-    [GET_LOGIN_CHECK_SUCCESS]: (state, action: Action<Payload>) =>
-      produce(state, (draft: LoginState) => {
+    // auto login success
+    [AUTO_LOGIN_CHECK_SUCCESS]: (state, action: Action<Payload>) =>
+      produce(state, draft => {
         draft.loginLogined = true
         draft.loginType = 'SUCCESS'
         draft.loginStatusCode = action.payload.status
       }),
-    // 자동로그인 실패
-    [GET_LOGIN_CHECK_FAILURE]: (state, action: Action<Payload>) =>
-      produce(state, (draft: LoginState) => {
+    // auto login failure
+    [AUTO_LOGIN_CHECK_FAILURE]: (state, action: Action<Payload>) =>
+      produce(state, draft => {
         draft.loginLogined = false
         draft.loginType = 'FAILURE'
         draft.loginStatusCode = action.payload.response.status
       }),
 
-    // 로그아웃
+    // logout
     [LOGOUT]: state => {
       sessionStorage.clear()
-      return produce(state, (draft: LoginState) => {
+      return produce(state, draft => {
         draft.loginLogined = false
         draft.loginType = 'LOGOUT'
         draft.loginStatusCode = 200
       })
     },
 
-    // Username 인풋 값 변경
-    [HANDLE_CHANGE_USERNAME]: (state, action: Action<Payload>) =>
+    // change username
+    [HANDLE_CHANGE_USERNAME]: (state, action: changeUsernameInputPayloadAction) =>
       produce(state, (draft: LoginState) => {
         draft.loginUsername = action.payload
       }),
-    // Password 인풋 값 변경
-    [HANDLE_CHANGE_PASSWORD]: (state, action: Action<Payload>) =>
+    // change password
+    [HANDLE_CHANGE_PASSWORD]: (state, action: changePasswordInputPayloadAction) =>
       produce(state, (draft: LoginState) => {
         draft.loginPassword = action.payload
       })
   },
   initialState
 )
+
+export default reducer
