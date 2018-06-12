@@ -65,20 +65,6 @@ class MarkDownEditor extends React.Component<Props> {
     await this.codeMirror.setValue(this.props.MainText)
   }
 
-  public shouldComponentUpdate(nextProps: Props) {
-    if (
-      nextProps.title !== this.props.title ||
-      nextProps.subTitle !== this.props.subTitle ||
-      nextProps.MainText !== this.props.MainText ||
-      nextProps.titleError !== this.props.titleError ||
-      nextProps.subTitleError !== this.props.subTitleError ||
-      nextProps.mainTextError !== this.props.mainTextError
-    ) {
-      return true
-    }
-    return false
-  }
-
   // text cursor
   public componentDidUpdate(prevProps: Props) {
     // change cursor
