@@ -12,58 +12,115 @@ import { withRouter, RouteComponentProps } from 'react-router-dom'
 import MarkDownRendererContainer from 'containers/MarkDownRenderer/MarkDownRendererContainer'
 
 interface Props {
-  loading?: boolean
-  category?: string
-  title?: string
-  subTitle?: string
-  date?: number
-  showPost: (value: GetPostBringAPIInterface) => any
+  postPending: boolean
+  category: string
+  title: string
+  subTitle: string
+  date: number
+  showPost: (value: GetPostBringAPIInterface) => void
 }
 
-interface HomeProps extends RouteComponentProps<any> {}
+interface State {
+  wrongUrl: boolean
+}
 
-class PostSelect extends React.Component<Props & HomeProps> {
+interface ReceiveDataParams {
+  category: string
+  title: string
+  showPostData: any
+}
+class PostSelect extends React.Component<Props & RouteComponentProps<History>, State> {
   public state = {
-    thereIsNoAdminCategory: false
+    wrongUrl: false
   }
 
-  public async componentDidMount() {
-    const data = await this.props.history.location.pathname.split('/')
-    if (data[1] === 'admin') {
+  public componentDidMount(): void {
+    const { history, showPost } = this.props
+
+    // compare url, return url data's
+    const receiveUrlData = async (data: ReceiveDataParams): Promise<object> => {
+      // split url parameter data[0] = '', data[1] = category, data[2] = title
+      const urlData = await history.location.pathname.split('/')
+
+      return Promise.resolve({ ...data, category: urlData[1], title: urlData[2] })
+    }
+
+    // check category url is 'admin' or not
+    const categoryUrlAdminCheck = (data: ReceiveDataParams): Promise<object> => {
+      if (data.category.trim() !== 'admin') {
+        return Promise.resolve(data)
+      }
+      return Promise.reject(new Error('관리자 이름의 카테고리는 없습니다 !'))
+    }
+
+    // check title url data s real exist or not
+    const titleUrlDataExistCheck = async (data: ReceiveDataParams): Promise<object> => {
+      const showPostData = await showPost({ category: data.category, title: data.title, type: 0 })
+      return Promise.resolve({ ...data, showPostData })
+    }
+
+    // all process is done
+    const allProcessDone = (data: ReceiveDataParams): void => {
+      // all process is done
+    }
+
+    // error handler
+    const onError = (err: Error): void => {
       this.setState({
-        thereIsNoAdminCategory: true
+        wrongUrl: true
       })
-    } else {
-      this.props.showPost({ category: data[1], title: data[2], type: 0 })
     }
+
+    // Promise
+    receiveUrlData({ category: '', title: '', showPostData: '' })
+      .then(categoryUrlAdminCheck)
+      .then(titleUrlDataExistCheck)
+      .then(allProcessDone)
+      .catch(onError)
   }
 
-  public render() {
-    const marginStyle = {
-      marginTop: '2.5%'
+  public render(): JSX.Element {
+    const { postPending, title, category, subTitle, date } = this.props
+
+    // check url
+    const showPost = (data: State) => {
+      // if url is good
+      // right post name
+      // 'admin' string is not in the url
+      if (data.wrongUrl === false) {
+        return (
+          <div className="post-view-container">
+            <div className="post-view-title-and-category">
+              <h1 className="post-view-title">{title}</h1>
+              <h2 className="post-view-category">{category}</h2>
+            </div>
+            <p className="post-view-sub-title">{subTitle}</p>
+            <MarkDownRendererContainer type="show" />
+            <div className="category-child-date">
+              {date[0] + date[1] + date[2] + date[3]}년 {date[5] + date[6]}월 {date[8] + date[9]}일
+            </div>
+          </div>
+        )
+      }
+      // url is not good
+      // not right post name or
+      // 'admin' string is in the url
+      return <NotFound />
     }
-    return (
-      <div style={marginStyle} className="layout-container">
-        {this.props.loading === true ? (
-          <LoadingCircle />
-        ) : (
-          <React.Fragment>
-            {this.state.thereIsNoAdminCategory !== true ? (
-              <div className="post-view-container">
-                <div className="post-view-title-and-category">
-                  <h1 className="post-view-title">{this.props.title}</h1>
-                  <h2 className="post-view-category">{this.props.category}</h2>
-                </div>
-                <p className="post-view-sub-title">{this.props.subTitle}</p>
-                <MarkDownRendererContainer type="show" />
-              </div>
-            ) : (
-              <NotFound />
-            )}
-          </React.Fragment>
-        )}
-      </div>
-    )
+
+    // check [this.props.postPending]
+    // if value is true, it is still pending data
+    // if value is false, data is comes already
+    const checkLoading = (data: boolean) => {
+      // if data already comes
+      if (!data) {
+        return showPost(this.state)
+      }
+      // data still loading
+      return <LoadingCircle />
+    }
+
+    return <div className="layout-container">{checkLoading(postPending)}</div>
   }
 }
 

@@ -15,7 +15,7 @@ interface Props {
 
 const PostSelectContainer: React.SFC<Props> = Props => (
   <PostSelect
-    loading={Props.load.pending}
+    postPending={Props.load.pending}
     category={Props.show.category}
     title={Props.show.title}
     subTitle={Props.show.subTitle}
