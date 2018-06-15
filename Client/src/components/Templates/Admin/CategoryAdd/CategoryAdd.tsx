@@ -1,6 +1,8 @@
 import * as React from 'react'
+import './CategoryAdd.css'
 import { Form, InputGroup, Input, Button } from 'reactstrap'
 import { toast } from 'react-toastify'
+
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 interface Props {
@@ -28,12 +30,12 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
   public addCategoryInput: any
 
   // change category input value
-  public handleChange = (e: Target) => {
+  public handleChange = (e: Target): void => {
     this.props.addCategoryInputChange(e.target.value)
   }
 
   // category add method
-  public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  public handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     // stop basic stuff
     e.preventDefault()
 
@@ -51,7 +53,7 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     } = this.props
 
     // check user is logined or not
-    const userAdminCheck = (data: CategoryAddMethodInterface) => {
+    const userAdminCheck = (data: CategoryAddMethodInterface): Promise<object> => {
       // compare logined or not
       if (data.loginLogined) {
         return Promise.resolve(data)
@@ -60,7 +62,7 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     }
 
     // check the input value is '' or not
-    const inputValueCheck = (data: CategoryAddMethodInterface) => {
+    const inputValueCheck = (data: CategoryAddMethodInterface): Promise<object> => {
       // compare the value exist or not
       if (data.addCategoryInputValue !== '') {
         return Promise.resolve(data)
@@ -69,7 +71,7 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     }
 
     // check the input value.toUpperCase() is 'admin' or not
-    const inputValueAdminCheck = (data: CategoryAddMethodInterface) => {
+    const inputValueAdminCheck = (data: CategoryAddMethodInterface): Promise<object> => {
       // compare the value is 'admin' or not
       if (data.addCategoryInputValue.toLowerCase() !== 'admin') {
         return Promise.resolve(data)
@@ -78,7 +80,7 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     }
 
     // create category
-    const requestToServer = async (data: CategoryAddMethodInterface) => {
+    const requestToServer = async (data: CategoryAddMethodInterface): Promise<void> => {
       // request to server for create category
       await addCategory(data.addCategoryInputValue)
         // succeed create category
@@ -104,7 +106,7 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     }
 
     // error handler
-    const onError = (err: Error) => {
+    const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
         // none admin user
         toast('관리자만 이용 가능합니다 !')
@@ -132,7 +134,7 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
       .catch(onError)
   }
 
-  public render() {
+  public render(): JSX.Element {
     return (
       <div className="category-add-container">
         <p className="category-add-p">카테고리 추가</p>

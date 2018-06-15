@@ -40,7 +40,7 @@ class CategoryAll extends React.Component<Props, State> {
   }
 
   // the load value, if it increase, the viewer can see many posts before
-  public handleShowMore = () => {
+  public handleShowMore = (): void => {
     if (this.state.shownPost + 10 > this.state.allPostsNum) {
       return this.setState({
         showMoreButton: false,
@@ -64,42 +64,49 @@ class CategoryAll extends React.Component<Props, State> {
     bacause It works when props or state changed,
     therefore it can contain api call data
   */
-  public componentDidMount() {
+  // First Loading
+  public componentDidMount(): void {
     // sort data that received by api
-    const mergeOnlyPostsData = async (data: PostsData) => {
+    const mergeOnlyPostsData = async (data: PostsData): Promise<object> => {
       // the data that will be contain all posts data
       const allPosts: PostsStateInside[] = []
       let allPostsCount: number = 0
 
       // contain part
-      await data.originData.category.map((object, i) => {
+      data.originData.category.map((object, i) => {
         object.posts.map((object, i) => {
-          allPostsCount++
           allPosts.push(object)
         })
       })
+
+      // insert all data's number
+      allPostsCount = allPosts.length
 
       return Promise.resolve({ ...data, allPostsData: allPosts, allPostsCount })
     }
 
     // sort sortedData  by date
-    const sortDataByDate = async (data: PostsData) => {
-      await data.allPostsData.sort(function(a, b) {
+    const sortDataByDate = (data: PostsData): Promise<object> => {
+      data.allPostsData.sort(function(a, b) {
         return a.date > b.date ? -1 : a.date < b.date ? 1 : 0
       })
 
       return Promise.resolve(data)
     }
 
-    const confirmShowNoneButton = (data: PostsData) => {
+    // button show control,
+    const confirmShowNoneButton = (data: PostsData): Promise<object> => {
+      // if allPosts number > least show posts: 10
       if (data.allPostsCount > this.state.shownPost) {
+        // show button
         return Promise.resolve({ ...data, decisionButtonShowNone: true })
       }
+      // doesn't have to show button
       return Promise.resolve({ ...data, decisionBUttonShowNone: false })
     }
 
     // apply new data
-    const submitNewData = (data: PostsData) => {
+    const submitNewData = (data: PostsData): void => {
       this.setState({
         allPostsNum: data.allPostsCount,
         allPosts: data.allPostsData,
@@ -108,6 +115,7 @@ class CategoryAll extends React.Component<Props, State> {
       })
     }
 
+    // Promise
     mergeOnlyPostsData({
       originData: this.props,
       allPostsData: [],
@@ -119,9 +127,10 @@ class CategoryAll extends React.Component<Props, State> {
       .then(submitNewData)
   }
 
-  public componentDidUpdate(prevProps: Props, prevState: State) {
+  // show posts depends on states changing
+  public componentDidUpdate(prevProps: Props) {
     // check the category data is pending or not
-    const checkChangingInCategoryPending = (data: PostsData) => {
+    const checkChangingInCategoryPending = (data: PostsData): Promise<object> => {
       if (prevProps.categoryPending !== data.originData.categoryPending) {
         return Promise.resolve(data)
       }
@@ -129,7 +138,7 @@ class CategoryAll extends React.Component<Props, State> {
     }
 
     // check the api is loaded or not
-    const checkChangingInCategoryLoad = (data: PostsData) => {
+    const checkChangingInCategoryLoad = (data: PostsData): Promise<object> => {
       if (data.originData.categoryLoaded === true) {
         return Promise.resolve(data)
       }
@@ -137,7 +146,7 @@ class CategoryAll extends React.Component<Props, State> {
     }
 
     // check the api is loaded successfully or not
-    const checkCategoryError = (data: PostsData) => {
+    const checkCategoryError = (data: PostsData): Promise<object> => {
       if (data.originData.categoryError !== true) {
         return Promise.resolve(data)
       }
@@ -145,24 +154,26 @@ class CategoryAll extends React.Component<Props, State> {
     }
 
     // sort data that received by api
-    const mergeOnlyPostsData = async (data: PostsData) => {
+    const mergeOnlyPostsData = async (data: PostsData): Promise<object> => {
       // the data that will be contain all posts data
       const allPosts: PostsStateInside[] = []
       let allPostsCount: number = 0
 
       // contain part
-      await data.originData.category.map((object, i) => {
+      data.originData.category.map((object, i) => {
         object.posts.map((object, i) => {
-          allPostsCount++
           allPosts.push(object)
         })
       })
+
+      // insert all data's number
+      allPostsCount = allPosts.length
 
       return Promise.resolve({ ...data, allPostsData: allPosts, allPostsCount })
     }
 
     // sort sortedData  by date
-    const sortDataByDate = async (data: PostsData) => {
+    const sortDataByDate = async (data: PostsData): Promise<object> => {
       await data.allPostsData.sort(function(a, b) {
         return a.date > b.date ? -1 : a.date < b.date ? 1 : 0
       })
@@ -170,15 +181,19 @@ class CategoryAll extends React.Component<Props, State> {
       return Promise.resolve(data)
     }
 
-    const confirmShowNoneButton = (data: PostsData) => {
+    // button show control,
+    const confirmShowNoneButton = (data: PostsData): Promise<object> => {
+      // if allPosts number > least show posts: 10
       if (data.allPostsCount > this.state.shownPost) {
+        // show button
         return Promise.resolve({ ...data, decisionButtonShowNone: true })
       }
+      // doesn't have to show button
       return Promise.resolve({ ...data, decisionBUttonShowNone: false })
     }
 
     // apply new data
-    const submitNewData = (data: PostsData) => {
+    const submitNewData = (data: PostsData): void => {
       this.setState({
         allPostsNum: data.allPostsCount,
         allPosts: data.allPostsData,
@@ -187,7 +202,8 @@ class CategoryAll extends React.Component<Props, State> {
       })
     }
 
-    const onError = (err: Error) => {
+    // error handler
+    const onError = (err: Error): void => {
       if (err.message === 'Not_Call_API') {
         // not request api call, but the user is moved to /:8080
       } else if (err.message === 'Still_Loading') {
@@ -218,9 +234,10 @@ class CategoryAll extends React.Component<Props, State> {
       .catch(onError)
   }
 
-  public render() {
+  public render(): JSX.Element {
+    const { allPosts, showMoreButton } = this.state
     // render sorted data
-    const postViewer = (posts: PostsStateInside[]) => {
+    const showMeTheAllPost = (posts: PostsStateInside[]): Array<JSX.Element | null> => {
       // return value
       return posts.map((object, i) => {
         if (i < this.state.shownPost) {
@@ -245,6 +262,18 @@ class CategoryAll extends React.Component<Props, State> {
         }
       })
     }
+
+    const showMeTheMoreButton = (data: boolean): JSX.Element | null => {
+      if (data) {
+        return (
+          <button className="primary block" onClick={this.handleShowMore}>
+            더보기 ...
+          </button>
+        )
+      }
+      return null
+    }
+
     return (
       <div className="layout-container category-all">
         <div className="welcome-message">환영합니다 !</div>
@@ -255,12 +284,9 @@ class CategoryAll extends React.Component<Props, State> {
           </div>
         ) : (
           <React.Fragment>
-            <div className="category-all-container">{postViewer(this.state.allPosts)}</div>
-            {this.state.showMoreButton && (
-              <button className="primary block" onClick={this.handleShowMore}>
-                더보기 ...
-              </button>
-            )}
+            <div className="category-all-container">{showMeTheAllPost(allPosts)}</div>
+
+            {showMeTheMoreButton(showMoreButton)}
           </React.Fragment>
         )}
       </div>

@@ -60,7 +60,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
   }
 
   // category delete dropdown
-  public handlePostDeleteShowNoneToogle = () => {
+  public handlePostDeleteShowNoneToogle = (): void => {
     if (this.state.showNone === false) {
       this.setState({
         showNone: !this.state.showNone,
@@ -75,18 +75,18 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
   }
 
   // category select & title select dropdown
-  public handleCategoryAndTitleShowNoneToogle = () => {
+  public handleCategoryAndTitleShowNoneToogle = (): void => {
     this.setState({
       selectDropdown: !this.state.selectDropdown
     })
   }
 
   // change category
-  public handleCategorySelectChange = (e: CTarget) => {
+  public handleCategorySelectChange = (e: CTarget): void => {
     this.props.changeCategorySelect(e.currentTarget.innerText)
   }
   // change title
-  public handlePostSelectChange = (e: CTarget) => {
+  public handlePostSelectChange = (e: CTarget): void => {
     const { changeTitleSelect, loadPost, deleteCategory } = this.props
 
     // setState
@@ -95,7 +95,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     })
 
     // this.props.changeTitleSelect(innerText)
-    const titleSelectChange = (data: ChangeTitleValues) => {
+    const titleSelectChange = (data: ChangeTitleValues): Promise<object> => {
       // change
       changeTitleSelect(data.title)
       // return innerText
@@ -103,7 +103,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // post load part
-    const bringPostMightBeDeleted = (data: ChangeTitleValues) => {
+    const bringPostMightBeDeleted = (data: ChangeTitleValues): void => {
       // if the innerText Data is not initial value, excute loadPost
       if (data.title !== '삭제할 포스트 선택') {
         loadPost({ category: this.props.deleteCategory, title: data.title, type: data.type })
@@ -117,7 +117,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
   }
 
   // submit => post delete
-  public handleSubmit = () => {
+  public handleSubmit = (): void => {
     // Props
     const {
       loginLogined,
@@ -132,7 +132,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     } = this.props
 
     // check user is logined or not
-    const userAdminCheck = (data: DeleteDeleteMethodInterface) => {
+    const userAdminCheck = (data: DeleteDeleteMethodInterface): Promise<object> => {
       if (data.loginLogined === true) {
         return Promise.resolve(data)
       }
@@ -140,7 +140,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // check category is empty or not
-    const categoryCheck = (data: DeleteDeleteMethodInterface) => {
+    const categoryCheck = (data: DeleteDeleteMethodInterface): Promise<object> => {
       if (data.category !== '') {
         return Promise.resolve(data)
       }
@@ -148,7 +148,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // check title is empty or not
-    const titleCheck = (data: DeleteDeleteMethodInterface) => {
+    const titleCheck = (data: DeleteDeleteMethodInterface): Promise<object> => {
       if (data.title !== '') {
         return Promise.resolve(data)
       }
@@ -156,7 +156,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // request
-    const requestToServer = async (data: DeleteDeleteMethodInterface) => {
+    const requestToServer = async (data: DeleteDeleteMethodInterface): Promise<void> => {
       await deletePost({ category: data.category, title: data.title })
         .then((res: any) => {
           toast(res.action.payload.data.message)
@@ -178,7 +178,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // error handler
-    const onError = (err: Error) => {
+    const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
         toast('관리자만 이용 가능합니다 !')
         // logout method
@@ -198,9 +198,9 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
       .catch(onError)
   }
 
-  public render() {
+  public render(): JSX.Element {
     // category buttons
-    const CurrentCategorySelectChange = (data: CategoryStateInside[]) => {
+    const CurrentCategorySelectChange = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         return (
           <button key={i} onClick={this.handleCategorySelectChange} className="danger">
@@ -211,7 +211,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // title buttons
-    const CurrentPostSelectChange = (data: CategoryStateInside[]) => {
+    const CurrentPostSelectChange = (data: CategoryStateInside[]): JSX.Element[] | JSX.Element => {
       const SelectedPosts = data.filter(value => value.category === this.props.deleteCategory)
 
       if (SelectedPosts.length !== 0) {

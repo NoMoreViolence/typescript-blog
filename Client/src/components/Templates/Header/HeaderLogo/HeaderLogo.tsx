@@ -8,11 +8,11 @@ interface Props {
 }
 
 class HeaderLogo extends React.Component<Props> {
-  public handleClick = () => {
+  public handleClick = (): void => {
     this.props.getCategory()
   }
 
-  public render() {
+  public render(): JSX.Element {
     return (
       <h1 className="header-logo-h1">
         <NavLink to="/" onClick={this.handleClick}>

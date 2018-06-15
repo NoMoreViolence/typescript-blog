@@ -53,7 +53,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
   }
 
   // the load value, if it increase, the viewer can see many posts before
-  public handleShowMore = () => {
+  public handleShowMore = (): void => {
     if (this.state.shownPost + 10 > this.state.selectedPostNum) {
       return this.setState({
         showMoreButton: false,
@@ -66,7 +66,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
   }
 
   // sort data, show sorted Data
-  public componentDidMount() {
+  public componentDidMount(): void {
     // check categoryLoaded is true or not
     // if false, category is not loaded yet
     const checkPostLoaded = (data: SelectedPostsDataCDM): Promise<object> => {
@@ -121,7 +121,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
     }
 
     // error handler
-    const onError = (err: Error) => {
+    const onError = (err: Error): void => {
       // tslint:disable-next-line:no-console
       console.log('error !')
       if (err.message === 'Not_Loaded') {
@@ -143,7 +143,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
   }
 
   // if the url is changeed, reset the load value
-  public componentDidUpdate(prevProps: Props & RouteComponentProps<any>) {
+  public componentDidUpdate(prevProps: Props & RouteComponentProps<any>): void {
     // commen function, sort, check shownone button, error handler
     // sort data that category is same
     const sortData = (data: SelectedPostsDataCDU): Promise<object> => {
@@ -170,7 +170,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
     }
 
     // handle error
-    const onError = (err: Error) => {
+    const onError = (err: Error): void => {
       if (err.message === 'Already_Loaded') {
         // do Nothing
       } else if (err.message === 'Data_Not_Loaded') {
@@ -268,7 +268,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
     //
   }
 
-  public render() {
+  public render(): JSX.Element {
     const { selectedPosts, showMoreButton } = this.state
 
     // render posts

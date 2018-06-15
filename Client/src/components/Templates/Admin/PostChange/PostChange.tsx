@@ -64,7 +64,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
   }
 
   // handle category change part show none
-  public handlePostChangeShowNoneToogle = () => {
+  public handlePostChangeShowNoneToogle = (): void => {
     if (this.state.showNone === false) {
       this.setState({
         showNone: !this.state.showNone,
@@ -81,19 +81,19 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
 
   // Select
   // Dropdown Select Category ShowNone Toogle
-  public handleCategorySelectShowNoneToogle = () => {
+  public handleCategorySelectShowNoneToogle = (): void => {
     this.setState({
       categorySelectDropdown: !this.state.categorySelectDropdown
     })
   }
   // Dropdown Category ShowNone Toogle
-  public handleCategoryShowNoneToogle = () => {
+  public handleCategoryShowNoneToogle = (): void => {
     this.setState({
       categoryDropdown: !this.state.categoryDropdown
     })
   }
   // Dropdown Select Post ShowNone Toogle
-  public handlePostSelectShowNoneToogle = () => {
+  public handlePostSelectShowNoneToogle = (): void => {
     this.setState({
       postSelectDropdown: !this.state.postSelectDropdown
     })
@@ -101,21 +101,21 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
   // Select
 
   // Category Select Change
-  public handleCategorySelectChange = (e: CTarget) => {
+  public handleCategorySelectChange = (e: CTarget): void => {
     this.setState({
       categorySelectDropdown: false
     })
     this.props.changeCategorySelect(e.currentTarget.innerText)
   }
   // Category Select Change
-  public handleCategoryChange = (e: CTarget) => {
+  public handleCategoryChange = (e: CTarget): void => {
     this.setState({
       categoryDropdown: false
     })
     this.props.changeCategory(e.currentTarget.innerText)
   }
   // post Select change
-  public handlePostSelectChange = (e: CTarget) => {
+  public handlePostSelectChange = (e: CTarget): void => {
     this.setState({
       postSelectDropdown: !this.state.postSelectDropdown
     })
@@ -127,12 +127,12 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
   }
 
   // submit => post change
-  public handleSubmit = () => {
+  public handleSubmit = (): void => {
     const { selectCategory, category, selectTitle, title, subTitle, mainText } = this.props.change
     const { loginLogined, categoryDone, postDone, loadCategory, logout, history, changePost, postError } = this.props
 
     // check user is logined or not
-    const userAdminCheck = (data: PutChangeMethodInterface) => {
+    const userAdminCheck = (data: PutChangeMethodInterface): Promise<object> => {
       if (data.loginLogined !== false) {
         return Promise.resolve(data)
       }
@@ -140,7 +140,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // check selectCategory selected or not
-    const oldCategoryCheck = (post: PutChangeMethodInterface) => {
+    const oldCategoryCheck = (post: PutChangeMethodInterface): Promise<object> => {
       if (post.oldCategory !== '카테고리 선택') {
         return Promise.resolve(post)
       }
@@ -148,7 +148,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // check selectTitle selected or not
-    const oldTitleCheck = (post: PutChangeMethodInterface) => {
+    const oldTitleCheck = (post: PutChangeMethodInterface): Promise<object> => {
       if (post.oldTitle !== '변경할 포스트 선택') {
         return Promise.resolve(post)
       }
@@ -156,7 +156,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // check category selected or not
-    const categoryCheck = (post: PutChangeMethodInterface) => {
+    const categoryCheck = (post: PutChangeMethodInterface): Promise<object> => {
       if (post.newCategory !== '카테고리 선택') {
         return Promise.resolve(post)
       }
@@ -164,7 +164,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // check title is '' or not
-    const titleCheck = (post: PutChangeMethodInterface) => {
+    const titleCheck = (post: PutChangeMethodInterface): Promise<object> => {
       if (post.newTitle !== '') {
         return Promise.resolve(post)
       }
@@ -172,7 +172,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // check subTitle is  '' or not
-    const subTitleCheck = (post: PutChangeMethodInterface) => {
+    const subTitleCheck = (post: PutChangeMethodInterface): Promise<object> => {
       if (post.subTitle !== '') {
         return Promise.resolve(post)
       }
@@ -180,14 +180,15 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // check mainText is '' or not
-    const mainTextCheck = (post: PutChangeMethodInterface) => {
+    const mainTextCheck = (post: PutChangeMethodInterface): Promise<object> => {
       if (post.mainText !== '') {
         return Promise.resolve(post)
       }
       return Promise.reject(new Error('No_Data_Post_Main_Text'))
     }
 
-    const requestToServer = async (post: PutChangeMethodInterface) => {
+    // request
+    const requestToServer = async (post: PutChangeMethodInterface): Promise<void> => {
       await changePost(post)
         // request call success
         .then(async (res: { value: any; action: any }) => {
@@ -211,13 +212,13 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     // take all insert error
-    const onError = (err: Error) => {
+    const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
+        toast('관리자만 이용 가능합니다 !')
         // logout method
         sessionStorage.clear()
         logout()
         history.push('/')
-        toast('관리자만 이용 가능합니다 !')
       } else if (err.message === 'No_Data_Category_Select_Select') {
         toast('변경할 포스트의 카테고리를 선택해 주세요 !')
       } else if (err.message === 'No_Data_Post_Select_Title') {
@@ -257,23 +258,23 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
   }
 
   // separator click, and mouse move
-  public handleSeparatorMouseMove = (e: MouseEvent) => {
+  public handleSeparatorMouseMove = (e: MouseEvent): void => {
     this.setState({
       leftPercentage: e.clientX / window.innerWidth
     })
   }
   // hand off
-  public handleSeparatorMouseUp = (e: MouseEvent) => {
+  public handleSeparatorMouseUp = (e: MouseEvent): void => {
     document.body.removeEventListener('mousemove', this.handleSeparatorMouseMove)
     window.removeEventListener('mouseup', this.handleSeparatorMouseUp)
   }
   // separator click
-  public handleSeparatorMouseDown = (e: React.MouseEvent<any>) => {
+  public handleSeparatorMouseDown = (e: React.MouseEvent<any>): void => {
     document.body.addEventListener('mousemove', this.handleSeparatorMouseMove)
     window.addEventListener('mouseup', this.handleSeparatorMouseUp)
   }
 
-  public render() {
+  public render(): JSX.Element {
     const { leftPercentage } = this.state
     const leftStyle = {
       flex: leftPercentage
@@ -285,39 +286,42 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       left: `${leftPercentage * 100}%`
     }
 
-    const CurrentCategorySelectChange = (data: CategoryStateInside[]) => {
+    // current category select change
+    const CurrentCategorySelectChange = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         return (
-          <button key={i} onClick={this.handleCategorySelectChange} className="editor-category-child-button">
+          <button key={i} onClick={this.handleCategorySelectChange} className="info">
             {object.category}
           </button>
         )
       })
     }
 
-    const CurrentCategoryChange = (data: CategoryStateInside[]) => {
+    // current category change
+    const CurrentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         return (
-          <button key={i} onClick={this.handleCategoryChange} className="editor-category-child-button">
+          <button key={i} onClick={this.handleCategoryChange} className="info">
             {object.category}
           </button>
         )
       })
     }
 
-    const CurrentPostSelectChange = (data: CategoryStateInside[]) => {
+    // current category select's posts
+    const CurrentPostSelectChange = (data: CategoryStateInside[]): JSX.Element[] | JSX.Element => {
       const SelectedPosts = data.filter(value => value.category === this.props.change.selectCategory)
 
       if (SelectedPosts.length !== 0) {
         return SelectedPosts[0].posts.map((object, i) => {
           return (
-            <button key={i} onClick={this.handlePostSelectChange} className="editor-category-child-button">
+            <button key={i} onClick={this.handlePostSelectChange} className="info">
               {object.title}
             </button>
           )
         })
       }
-      return <button className="editor-category-child-button">카테고리를 선택한 후에 포스트 선택을 해주세요</button>
+      return <button className="info">카테고리를 선택한 후에 포스트 선택을 해주세요</button>
     }
 
     return (
@@ -334,17 +338,14 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
                 <div className="editor-category">
                   <div className="editor-change-select-part">
                     <div className="editor-change-select-category">
-                      <button onClick={this.handleCategorySelectShowNoneToogle}>
+                      <button className="info" onClick={this.handleCategorySelectShowNoneToogle}>
                         {this.props.change.selectCategory}
                       </button>
                       {this.state.categorySelectDropdown && (
                         <div className="editor-category-child-container">
                           <div className="editor-category-child">
                             {this.props.change.selectCategory !== '카테고리 선택' && (
-                              <button
-                                onClick={this.handleCategorySelectChange}
-                                className="editor-category-child-button"
-                              >
+                              <button onClick={this.handleCategorySelectChange} className="info">
                                 카테고리 선택
                               </button>
                             )}
@@ -354,12 +355,14 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
                       )}
                     </div>
                     <div className="editor-change-select-post">
-                      <button onClick={this.handlePostSelectShowNoneToogle}>{this.props.change.selectTitle}</button>
+                      <button className="info" onClick={this.handlePostSelectShowNoneToogle}>
+                        {this.props.change.selectTitle}
+                      </button>
                       {this.state.postSelectDropdown && (
                         <div className="editor-category-child-container">
                           <div className="editor-category-child">
                             {this.props.change.selectTitle !== '변경할 포스트 선택' && (
-                              <button onClick={this.handlePostSelectChange} className="editor-category-child-button">
+                              <button onClick={this.handlePostSelectChange} className="info">
                                 변경할 포스트 선택
                               </button>
                             )}
@@ -370,12 +373,14 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
                     </div>
                   </div>
 
-                  <button onClick={this.handleCategoryShowNoneToogle}>{this.props.change.category}</button>
+                  <button className="info" onClick={this.handleCategoryShowNoneToogle}>
+                    {this.props.change.category}
+                  </button>
                   {this.state.categoryDropdown && (
                     <div className="editor-category-child-container">
                       <div className="editor-category-child">
                         {this.props.change.selectCategory !== '카테고리 선택' && (
-                          <button onClick={this.handleCategoryChange} className="editor-category-child-button">
+                          <button onClick={this.handleCategoryChange} className="info">
                             카테고리 선택
                           </button>
                         )}
@@ -387,17 +392,19 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
                 <div className="editor-inside">
                   <MarkdownEditorContainer type={this.state.editorType} resource={this.state.resource} />
                 </div>
+                {/* */}
                 {/* only can see mobile view */}
                 <div className="editor-submit-mobile">
-                  <button className="info-color" onClick={this.handleSubmit}>
+                  <button className="info" onClick={this.handleSubmit}>
                     포스트 수정 하기 !
                   </button>
                 </div>
                 {/* only can see mobile view */}
+                {/* */}
               </div>
               <div className="preview" style={rightStyle}>
                 <div className="preview-submit">
-                  <button className="info-color" onClick={this.handleSubmit}>
+                  <button className="info" onClick={this.handleSubmit}>
                     포스트 수정 하기 !
                   </button>
                 </div>

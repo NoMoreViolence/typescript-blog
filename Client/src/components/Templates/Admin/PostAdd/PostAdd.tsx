@@ -56,7 +56,7 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
   }
 
   // handle Category add part show none
-  public handlePostAddShowNoneToogle = () => {
+  public handlePostAddShowNoneToogle = (): void => {
     if (this.state.showNone === false) {
       this.setState({
         showNone: !this.state.showNone,
@@ -72,13 +72,13 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
   }
 
   // handle Category Select show none
-  public handleCategorySelectShowNoneToogle = () => {
+  public handleCategorySelectShowNoneToogle = (): void => {
     this.setState({
       dropdown: !this.state.dropdown
     })
   }
   // Category Select Change
-  public handleCategorySelectChange = (e: CTarget) => {
+  public handleCategorySelectChange = (e: CTarget): void => {
     this.setState({
       dropdown: false
     })
@@ -86,12 +86,12 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
   }
 
   // Submit => Post Add
-  public handleSubmit = () => {
+  public handleSubmit = (): void => {
     // Props
     const { loginLogined, logout, history, add, addPost, categoryDone, postDone, loadCategory, postError } = this.props
 
     // check user is logined or not
-    const userAdminCheck = (data: PostAddMethodInterface) => {
+    const userAdminCheck = (data: PostAddMethodInterface): Promise<object> => {
       if (data.loginLogined !== false) {
         return Promise.resolve(data)
       }
@@ -99,7 +99,7 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     }
 
     // category value check
-    const categoryCheck = (data: PostAddMethodInterface) => {
+    const categoryCheck = (data: PostAddMethodInterface): Promise<object> => {
       if (data.category !== '카테고리 선택') {
         return Promise.resolve(data)
       }
@@ -107,7 +107,7 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     }
 
     // title value check
-    const titleCheck = (data: PostAddMethodInterface) => {
+    const titleCheck = (data: PostAddMethodInterface): Promise<object> => {
       if (data.title !== '') {
         return Promise.resolve(data)
       }
@@ -115,7 +115,7 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     }
 
     // subTitle value check
-    const subTitleCheck = (data: PostAddMethodInterface) => {
+    const subTitleCheck = (data: PostAddMethodInterface): Promise<object> => {
       if (data.subTitle !== '') {
         return Promise.resolve(data)
       }
@@ -123,7 +123,7 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     }
 
     // mainText value check
-    const mainTextCheck = (data: PostAddMethodInterface) => {
+    const mainTextCheck = (data: PostAddMethodInterface): Promise<object> => {
       if (data.mainText !== '') {
         return Promise.resolve(data)
       }
@@ -131,7 +131,7 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     }
 
     // request to server => post add function
-    const requestToServer = async (data: PostAddMethodInterface) => {
+    const requestToServer = async (data: PostAddMethodInterface): Promise<void> => {
       // request to server to adding post
       await addPost(data)
         // request call success
@@ -156,13 +156,13 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     }
 
     // error handler
-    const onError = (err: Error) => {
+    const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
+        toast('관리자만 이용 가능합니다 !')
         // logout method
         sessionStorage.clear()
         logout()
         history.push('/')
-        toast('관리자만 이용 가능합니다 !')
       } else if (err.message === 'No_Data_Category_Select') {
         toast('추가할 포스트의 카테고리를 선택해 주세요 !')
       } else if (err.message === 'No_Data_Post_Title') {
@@ -195,24 +195,24 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
 
   // handle size between EditorView, PreVeiw
   // separator click, and mouse move
-  public handleSeparatorMouseMove = (e: MouseEvent) => {
+  public handleSeparatorMouseMove = (e: MouseEvent): void => {
     this.setState({
       leftPercentage: e.clientX / window.innerWidth
     })
   }
   // hand off
-  public handleSeparatorMouseUp = (e: MouseEvent) => {
+  public handleSeparatorMouseUp = (e: MouseEvent): void => {
     document.body.removeEventListener('mousemove', this.handleSeparatorMouseMove)
     window.removeEventListener('mouseup', this.handleSeparatorMouseUp)
   }
   // separator click
-  public handleSeparatorMouseDown = (e: React.MouseEvent<any>) => {
+  public handleSeparatorMouseDown = (e: React.MouseEvent<any>): void => {
     document.body.addEventListener('mousemove', this.handleSeparatorMouseMove)
     window.addEventListener('mouseup', this.handleSeparatorMouseUp)
   }
   // handle size between EditorView, PreView
 
-  public render() {
+  public render(): JSX.Element {
     // handle size bar
     const { leftPercentage } = this.state
     const leftStyle = {
@@ -226,10 +226,10 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     }
 
     // show current category
-    const CurrentCategoryChange = (data: CategoryStateInside[]) => {
+    const CurrentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         return (
-          <button key={i} onClick={this.handleCategorySelectChange} className="editor-category-child-button">
+          <button key={i} onClick={this.handleCategorySelectChange} className="primary">
             {object.category}
           </button>
         )
@@ -248,12 +248,14 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
             <div className="editor-and-viewer">
               <div className="editor" style={leftStyle}>
                 <div className="editor-category">
-                  <button onClick={this.handleCategorySelectShowNoneToogle}>{this.props.add.category}</button>
+                  <button className="primary" onClick={this.handleCategorySelectShowNoneToogle}>
+                    {this.props.add.category}
+                  </button>
                   {this.state.dropdown && (
                     <div className="editor-category-child-container">
                       <div className="editor-category-child">
                         {this.props.add.category !== '카테고리 선택' && (
-                          <button onClick={this.handleCategorySelectChange} className="editor-category-child-button">
+                          <button onClick={this.handleCategorySelectChange} className="primary">
                             카테고리 선택
                           </button>
                         )}
@@ -265,17 +267,19 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
                 <div className="editor-inside">
                   <MarkdownEditorContainer type={this.state.editorType} resource={this.state.resource} />
                 </div>
+                {/* */}
                 {/* only can see mobile view */}
                 <div className="editor-submit-mobile">
-                  <button className="primary-color" onClick={this.handleSubmit}>
+                  <button className="primary" onClick={this.handleSubmit}>
                     포스트 생성 하기 !
                   </button>
                 </div>
                 {/* only can see mobile view */}
+                {/* */}
               </div>
               <div className="preview" style={rightStyle}>
                 <div className="preview-submit">
-                  <button className="primary-color" onClick={this.handleSubmit}>
+                  <button className="primary" onClick={this.handleSubmit}>
                     포스트 생성 하기 !
                   </button>
                 </div>

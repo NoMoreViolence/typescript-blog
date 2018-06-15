@@ -3,34 +3,63 @@ import { toast } from 'react-toastify'
 
 interface Props {
   loginLogined: boolean
-  getLogin: () => any
+  getLogin: (value: string | null) => any
   loadCategory: () => void
 }
 
+interface AutoLoginInterface {
+  loginLogined: boolean
+  token: string | null
+}
+
 class Basic extends React.Component<Props> {
-  // 사이트 초기 로딩 시 토큰 자동 로그인 & 카테고리 데이터 불러오기
-  public componentDidMount() {
+  // auto login & bring category data
+  public componentDidMount(): void {
     const { loadCategory, getLogin, loginLogined } = this.props
 
-    if (loginLogined !== true && sessionStorage.getItem('token') !== null) {
-      getLogin()
+    // loading Category => basic data
+    loadCategory()
+
+    // check user is logined or not
+    const checkLoginLogined = (data: AutoLoginInterface): Promise<object> => {
+      if (data.loginLogined !== true) {
+        return Promise.resolve(data)
+      }
+      return Promise.reject(new Error('User_Already_Logined'))
+    }
+
+    // check token is exist or not
+    const checkTokenExist = (data: AutoLoginInterface): Promise<object> => {
+      if (data.token !== null) {
+        return Promise.resolve(data)
+      }
+      return Promise.reject(new Error('None_Token_Data'))
+    }
+
+    // request auto login
+    const autoLogin = async (data: AutoLoginInterface): Promise<void> => {
+      await getLogin(data.token)
         .then((res: any) => {
-          // 자동 로그인 성공
           toast('관리자님 환영합니다 !')
         })
         .catch((err: any) => {
-          // 에러 상황일 경우
-          toast(err.response.data.message)
           sessionStorage.clear()
+          toast('이런.. 토큰값이 손상되었네요.. 재 로그인해 주세요 !')
         })
-    } else {
+    }
+
+    // error handler
+    const onError = (err: Error): void => {
       toast('환영합니다 !')
     }
 
-    // 카테고리 로딩
-    loadCategory()
+    // Promise
+    checkLoginLogined({ loginLogined, token: sessionStorage.getItem('token') })
+      .then(checkTokenExist)
+      .then(autoLogin)
+      .catch(onError)
   }
-  public render() {
+  public render(): JSX.Element {
     return <div />
   }
 }

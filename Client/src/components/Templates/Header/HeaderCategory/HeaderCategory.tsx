@@ -11,15 +11,15 @@ interface Props {
 }
 
 class HeaderCategory extends React.Component<Props> {
-  public handleSignOut = () => {
+  public handleSignOut = (): void => {
     this.props.Logout()
     sessionStorage.clear()
     toast('로그아웃 되셨습니다')
   }
 
-  public render() {
+  public render(): JSX.Element {
     // 데이터 받아서 정렬
-    const loadCategory = (data: CategoryStateInside[]) => {
+    const loadCategory = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         const url = `/${object.category}`
         return (

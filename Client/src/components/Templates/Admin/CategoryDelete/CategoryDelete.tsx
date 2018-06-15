@@ -46,24 +46,24 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
   }
 
   // dropdown toogle
-  public handleToogle = () => {
+  public handleToogle = (): void => {
     this.setState({
       deleteCategoryDropdown: !this.state.deleteCategoryDropdown
     })
   }
 
   // change category select value
-  public handleSelect = (e: React.MouseEvent<any>) => {
+  public handleSelect = (e: React.MouseEvent<any>): void => {
     this.props.deleteCategorySelectChange(e.currentTarget.innerText)
   }
 
   // change category input change
-  public handleChange = (e: Target) => {
+  public handleChange = (e: Target): void => {
     this.props.deleteCategoryInputChange(e.target.value)
   }
 
   // category delete method
-  public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  public handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     // stop basic stuff
     e.preventDefault()
 
@@ -84,7 +84,7 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
     } = this.props
 
     // check user is logined or not
-    const userAdminCheck = (data: CategoryDeleteMethodInterface) => {
+    const userAdminCheck = (data: CategoryDeleteMethodInterface): Promise<object> => {
       if (data.loginLogined) {
         return Promise.resolve(data)
       }
@@ -92,7 +92,7 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
     }
 
     // check the category select button is selected or not
-    const checkCategorySelect = (data: CategoryDeleteMethodInterface) => {
+    const checkCategorySelect = (data: CategoryDeleteMethodInterface): Promise<object> => {
       if (data.deleteCategorySelect !== '삭제할 카테고리 선택') {
         return Promise.resolve(data)
       }
@@ -100,7 +100,7 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
     }
 
     // check the category input value is '' or not
-    const nullCheckCategoryInput = (data: CategoryDeleteMethodInterface) => {
+    const nullCheckCategoryInput = (data: CategoryDeleteMethodInterface): Promise<object> => {
       if (data.deleteCategoryInput !== '') {
         return Promise.resolve(data)
       }
@@ -108,7 +108,7 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
     }
 
     // check same between the category select value and category input value
-    const checkValueSame = (data: CategoryDeleteMethodInterface) => {
+    const checkValueSame = (data: CategoryDeleteMethodInterface): Promise<object> => {
       if (data.deleteCategorySelect === data.deleteCategoryInput) {
         return Promise.resolve(data)
       }
@@ -116,7 +116,7 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
     }
 
     // delete category
-    const respondToServer = async (data: CategoryDeleteMethodInterface) => {
+    const respondToServer = async (data: CategoryDeleteMethodInterface): Promise<void> => {
       await deleteCategory(data.deleteCategorySelect, data.deleteCategoryInput)
         // succeed delete category
         .then((res: any) => {
@@ -141,7 +141,7 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
     }
 
     // error handler
-    const onError = (err: Error) => {
+    const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
         // none admin user
         toast('관리자만 이용 가능합니다 !')
@@ -175,12 +175,12 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
       .catch(onError)
   }
 
-  public render() {
+  public render(): JSX.Element {
     const { deleteCategoryDropdown } = this.state
     const { deleteCategoryInputValue, deleteCategorySelectValue } = this.props
 
     // show current categories
-    const CurrentCategoryChangeBar = (data: CategoryStateInside[]) => {
+    const CurrentCategoryChangeBar = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         return (
           <DropdownItem key={i} onClick={this.handleSelect}>

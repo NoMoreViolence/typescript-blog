@@ -47,24 +47,24 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
     }
 
     // dropdown toogle
-    public handleToogle = () => {
+    public handleToogle = (): void => {
       this.setState({
         changeCategoryDropdown: !this.state.changeCategoryDropdown
       })
     }
 
     // change changeCategorys input value
-    public handleChange = (e: Target) => {
+    public handleChange = (e: Target): void => {
       this.props.changeCategoryInputChange(e.target.value)
     }
 
     // change changeCategorySelects value
-    public handleSelect = (e: React.MouseEvent<any>) => {
+    public handleSelect = (e: React.MouseEvent<any>): void => {
       this.props.changeCategorySelectChange(e.currentTarget.innerText)
     }
 
     // category change method
-    public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    public handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
       // stop basic stuff
       e.preventDefault()
 
@@ -85,7 +85,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       } = this.props
 
       // check user is logined or not
-      const userAdminCheck = (data: CategoryChangeMethodInterface) => {
+      const userAdminCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
         if (data.loginLogined) {
           return Promise.resolve(data)
         }
@@ -93,7 +93,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       }
 
       // check the category select button is selected or not
-      const checkCategorySelect = (data: CategoryChangeMethodInterface) => {
+      const checkCategorySelect = (data: CategoryChangeMethodInterface): Promise<object> => {
         if (data.changeCategorySelect !== '변경할 카테고리 선택') {
           return Promise.resolve(data)
         }
@@ -101,7 +101,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       }
 
       // check the category input value is '' or not
-      const nullCheckCategoryInput = (data: CategoryChangeMethodInterface) => {
+      const nullCheckCategoryInput = (data: CategoryChangeMethodInterface): Promise<object> => {
         if (data.changeCategoryInput !== '') {
           return Promise.resolve(data)
         }
@@ -109,7 +109,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       }
 
       // check the category input value.toLowerCase() is 'admin' or not
-      const checkCategoryInputIsNotAdmin = (data: CategoryChangeMethodInterface) => {
+      const checkCategoryInputIsNotAdmin = (data: CategoryChangeMethodInterface): Promise<object> => {
         if (data.changeCategoryInput.toLowerCase() !== 'admin') {
           return Promise.resolve(data)
         }
@@ -117,7 +117,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       }
 
       // check same between the category select value and category input value
-      const checkValueSame = (data: CategoryChangeMethodInterface) => {
+      const checkValueSame = (data: CategoryChangeMethodInterface): Promise<object> => {
         if (data.changeCategorySelect !== data.changeCategoryInput) {
           return Promise.resolve(data)
         }
@@ -125,7 +125,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       }
 
       // change category
-      const requestToServer = async (data: CategoryChangeMethodInterface) => {
+      const requestToServer = async (data: CategoryChangeMethodInterface): Promise<void> => {
         await changeCategory(data.changeCategorySelect, data.changeCategoryInput)
           // succeed change category
           .then((res: any) => {
@@ -150,7 +150,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       }
 
       // error handle only input error
-      const onError = (err: Error) => {
+      const onError = (err: Error): void => {
         if (err.message === 'Not_Admin_User') {
           // none admin user
           toast('관리자만 이용 가능합니다 !')
@@ -190,12 +190,12 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
         .catch(onError)
     }
 
-    public render() {
+    public render(): JSX.Element {
       const { changeCategoryDropdown } = this.state
       const { changeCategoryInputValue, changeCategorySelectValue } = this.props
 
-      // 데이터 받아서 정렬
-      const CurrentCategoryChangeBar = (data: CategoryStateInside[]) => {
+      // show current categories
+      const CurrentCategoryChangeBar = (data: CategoryStateInside[]): JSX.Element[] => {
         return data.map((object, i) => {
           return (
             <DropdownItem key={i} onClick={this.handleSelect}>

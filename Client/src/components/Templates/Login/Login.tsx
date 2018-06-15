@@ -27,7 +27,7 @@ interface Props {
 const Login = withRouter<Props & RouteComponentProps<any>>(
   class Login extends React.Component<Props & RouteComponentProps<any>> {
     // Login Submit
-    public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    public handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
       // stopping form event
       e.preventDefault()
 
@@ -53,7 +53,7 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
     }
 
     // 글자 변경 메소드
-    public handleChange = (e: InputTarget) => {
+    public handleChange = (e: InputTarget): void => {
       if (e.target.name === 'username') {
         this.props.handleChangeUsername(e.target.value)
       } else if (e.target.name === 'password') {
@@ -61,7 +61,7 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
       }
     }
 
-    public render() {
+    public render(): JSX.Element {
       return (
         <Container className="login-form">
           <Row>
