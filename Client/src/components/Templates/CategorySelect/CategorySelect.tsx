@@ -17,23 +17,32 @@ interface Props {
   categoryError: boolean
 }
 
-interface SelectedPostsDataCDM {
-  originData: Props
-  sortedPost: PostsStateInside[]
-  sortedPostCount: number
-  decisionButtonShowNone: false
+interface State {
+  loadingCircle: boolean
+  showMoreButton: boolean
+  shownPost: number
+  selectedPostNum: number
+  selectedPosts: PostsStateInside[]
 }
-/*
-interface SelectedPostsDataCDU {
-  originData: Props & RouteComponentProps<any>
-  sortedPost: PostsStateInside[]
-  sortedPostCount: number
-  decisionButtonShowNone: false
-  changedUrl: boolean
-}
-*/
 
-class CategorySelect extends React.Component<Props & RouteComponentProps<any>> {
+// componentDidMount interface
+interface SelectedPostsDataCDM {
+  newProps: Props & RouteComponentProps<any>
+  sortedPost: PostsStateInside[]
+  sortedPostCount: number
+  decisionButtonShowNone: false
+}
+
+// componentDidUpdate interface
+interface SelectedPostsDataCDU {
+  newProps: Props & RouteComponentProps<any>
+  prevProps: Props & RouteComponentProps<any>
+  sortedPost: PostsStateInside[]
+  sortedPostCount: number
+  decisionButtonShowNone: false
+}
+
+class CategorySelect extends React.Component<Props & RouteComponentProps<any>, State> {
   // state
   public state = {
     loadingCircle: true,
@@ -44,8 +53,14 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>> {
   }
 
   // the load value, if it increase, the viewer can see many posts before
-  public handleShow = () => {
-    this.setState({
+  public handleShowMore = () => {
+    if (this.state.shownPost + 10 > this.state.selectedPostNum) {
+      return this.setState({
+        showMoreButton: false,
+        shownPost: this.state.shownPost + 10
+      })
+    }
+    return this.setState({
       shownPost: this.state.shownPost + 10
     })
   }
@@ -55,7 +70,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>> {
     // check categoryLoaded is true or not
     // if false, category is not loaded yet
     const checkPostLoaded = (data: SelectedPostsDataCDM): Promise<object> => {
-      if (data.originData.categoryLoaded === true) {
+      if (data.newProps.categoryLoaded === true) {
         return Promise.resolve(data)
       }
       return Promise.reject(new Error('Not_Loaded'))
@@ -64,7 +79,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>> {
     // check categoryError is true or not
     // if true, it's server Error or choose wrong category
     const checkPostLoadedError = (data: SelectedPostsDataCDM): Promise<object> => {
-      if (data.originData.categoryError === false) {
+      if (data.newProps.categoryError === false) {
         return Promise.resolve(data)
       }
       return Promise.reject(new Error('Loading_Error'))
@@ -72,19 +87,19 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>> {
 
     // sort data that category is same
     const sortData = (data: SelectedPostsDataCDM): Promise<object> => {
-      const sortedPost = data.originData.posts.filter(value => value.category === this.props.match.url.slice(1))
+      // sort posts by url value
+      const sortedPost = data.newProps.posts.filter(value => value.category === data.newProps.match.url.slice(1))
+
       // tslint:disable-next-line:no-console
       console.log(sortedPost)
-      const sortedPostCount = sortedPost.length
-
-      return Promise.resolve({ ...data, sortedPost, sortedPostCount })
-    }
-
-    // sort data by date
-    const sortDataByDate = (data: SelectedPostsDataCDM): Promise<object> => {
-      data.sortedPost.sort((a, b) => (a.date > b.date ? -1 : a.date < b.date ? 1 : 0))
-
-      return Promise.resolve(data)
+      if (sortedPost.length !== 0) {
+        return Promise.resolve({
+          ...data,
+          sortedPost: sortedPost[0].posts,
+          sortedPostCount: sortedPost[0].posts.length
+        })
+      }
+      return Promise.reject(new Error('Wrong_Url'))
     }
 
     // check the button has to show or disappear
@@ -107,170 +122,196 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>> {
 
     // error handler
     const onError = (err: Error) => {
+      // tslint:disable-next-line:no-console
+      console.log('error !')
       if (err.message === 'Not_Loaded') {
-        this.setState({
-          loadingCircle: true
-        })
+        // still loading
       } else if (err.message === 'Loading_Error') {
         toast('데이터 불러오기 실패 !')
-        this.setState({
-          loadingCircle: false
-        })
+      } else if (err.message === 'Wrong_Url') {
+        toast('없는 카테고리 입니다 !')
       }
     }
 
     // Promise
-    checkPostLoaded({ originData: this.props, sortedPost: [], sortedPostCount: 0, decisionButtonShowNone: false })
+    checkPostLoaded({ newProps: this.props, sortedPost: [], sortedPostCount: 0, decisionButtonShowNone: false })
       .then(checkPostLoadedError)
       .then(sortData)
-      .then(sortDataByDate)
       .then(checkShowNoneButton)
       .then(submitNewData)
       .catch(onError)
   }
-  /*
+
   // if the url is changeed, reset the load value
   public componentDidUpdate(prevProps: Props & RouteComponentProps<any>) {
-    // check url is changed or not
-    // if not changed and categoryloaded. that is the first loading
-    const checkUrlChanged = (data: SelectedPostsDataCDU): Promise<object> => {
-      if (prevProps.match.url !== data.originData.match.url) {
-        return Promise.resolve({ ...data, changedUrl: true })
-      } else {
-        return Promise.resolve({ ...data, changedUrl: false })
-      }
-    }
-
-    // check categoryLoaded is true or not
-    // if false, category is not loaded yet
-    const checkPostLoaded = (data: SelectedPostsDataCDU): Promise<object> => {
-      // change Url
-      if (data.changedUrl === true) {
-        return Promise.resolve(data)
-      }
-      // check Loaded
-      if (data.originData.categoryLoaded !== this.props.categoryLoaded && this.props.categoryLoaded === true) {
-        return Promise.resolve(data)
-      }
-
-      return Promise.reject(new Error('Not_Loaded'))
-    }
-
-    // check categoryLoadingError is true or not
-    // if true, category loading is failure
-    const checkPostLoadError = (data: SelectedPostsDataCDU): Promise<object> => {
-      if (this.props.categoryError !== true) {
-        return Promise.resolve(data)
-      }
-      return Promise.reject(new Error('Loading_Error'))
-    }
-
+    // commen function, sort, check shownone button, error handler
     // sort data that category is same
     const sortData = (data: SelectedPostsDataCDU): Promise<object> => {
-      const sortedPost = data.originData.posts.filter(value => value.category === this.props.match.url.slice(1))
-      const sortedPostCount = sortedPost.length
+      // sort posts by url value
+      const sortedPost = data.newProps.posts.filter(value => value.category === data.newProps.match.url.slice(1))
 
-      return Promise.resolve({ ...data, sortedPost, sortedPostCount })
-    }
-
-    // sort data by date
-    const sortDataByDate = (data: SelectedPostsDataCDU): Promise<object> => {
-      data.sortedPost.sort((a, b) => (a.date > b.date ? -1 : a.date < b.date ? 1 : 0))
-
-      return Promise.resolve(data)
+      if (sortedPost.length !== 0) {
+        return Promise.resolve({
+          ...data,
+          sortedPost: sortedPost[0].posts,
+          sortedPostCount: sortedPost[0].posts.length
+        })
+      }
+      return Promise.reject(new Error('Wrong_Url'))
     }
 
     // check the button has to show or disappear
     const checkShowNoneButton = (data: SelectedPostsDataCDU): Promise<object> => {
+      // handle button show or none, if posts number is low than 10, no show
       if (data.sortedPostCount > this.state.shownPost) {
         return Promise.resolve({ ...data, decisionButtonShowNone: true })
       }
       return Promise.resolve({ ...data, decisionButtonShowNone: false })
     }
 
+    // handle error
+    const onError = (err: Error) => {
+      if (err.message === 'Already_Loaded') {
+        // do Nothing
+      } else if (err.message === 'Data_Not_Loaded') {
+        // just Wait
+      } else if (err.message === 'URL_Not_Changed') {
+        // do Nothing
+      }
+    }
+
+    //
+    //
+    //
+    //
+    // check posts is changed, that mean is posts is loaded
+    const checkLoaded = (data: SelectedPostsDataCDU): Promise<object> => {
+      // new data comes
+      if (data.prevProps.posts !== data.newProps.posts) {
+        return Promise.resolve(data)
+      }
+
+      // already data is exist
+      if (data.newProps.posts.length !== 0) {
+        return Promise.reject(new Error('Already_Loaded'))
+      }
+
+      // data is not loaded or error
+      return Promise.reject(new Error('Data_Not_Loaded'))
+    }
+
     // setState Data
-    const submitNewData = (data: SelectedPostsDataCDU): void => {
+    const submitNewDataFirstLoading = (data: SelectedPostsDataCDU): void => {
       this.setState({
         selectedPostNum: data.sortedPostCount,
         selectedPosts: data.sortedPost,
-        loadingCircle: false,
         showMoreButton: data.decisionButtonShowNone
       })
     }
 
-    // error handler
-    const onError = (err: Error) => {
-      if (err.message === 'Not_Loaded') {
-        this.setState({
-          loadingCircle: true
-        })
-      } else if (err.message === 'Loading_Error') {
-        toast('데이터 불러오기 실패 !')
-        this.setState({
-          loadingCircle: true
-        })
-      }
-    }
-
-    // Promise
-    checkUrlChanged({
-      originData: this.props,
+    // first loading
+    checkLoaded({
+      newProps: this.props,
+      prevProps,
       sortedPost: [],
       sortedPostCount: 0,
-      decisionButtonShowNone: false,
-      changedUrl: false
+      decisionButtonShowNone: false
     })
-      .then(checkPostLoaded)
-      .then(checkPostLoadError)
       .then(sortData)
-      .then(sortDataByDate)
       .then(checkShowNoneButton)
-      .then(submitNewData)
+      .then(submitNewDataFirstLoading)
       .catch(onError)
+    //
+    //
+    //
+    //
+    //
+
+    //
+    //
+    //
+    //
+    // Url Change
+    const checkUrlChange = (data: SelectedPostsDataCDU): Promise<object> => {
+      // url changing
+      if (data.prevProps.match.url !== data.newProps.match.url) {
+        return Promise.resolve(data)
+      }
+      return Promise.reject(new Error('URL_Not_Changed'))
+    }
+
+    // setState Data
+    const submitNewDataUrlChange = (data: SelectedPostsDataCDU): void => {
+      this.setState({
+        selectedPostNum: data.sortedPostCount,
+        selectedPosts: data.sortedPost,
+        showMoreButton: data.decisionButtonShowNone,
+        shownPost: 10
+      })
+    }
+    // first loading
+    checkUrlChange({
+      newProps: this.props,
+      prevProps,
+      sortedPost: [],
+      sortedPostCount: 0,
+      decisionButtonShowNone: false
+    })
+      .then(sortData)
+      .then(checkShowNoneButton)
+      .then(submitNewDataUrlChange)
+      .catch(onError)
+    //
+    //
+    //
+    //
+    //
   }
-  */
 
   public render() {
     const { selectedPosts, showMoreButton } = this.state
 
-    const postViewer = (posts: CategoryStateInside[]) => {
-      if (posts.length === 0) {
+    // render posts
+    const postViewer = (posts: PostsStateInside[]): JSX.Element => {
+      // slice array by shown post number
+      const Posts = posts.slice(0, this.state.shownPost)
+
+      // if the url is wrong, render 404 not found
+      if (Posts.length === 0) {
         return <NotFound />
-      } else {
-        // return value
-        return (
-          <div className="category-all-container">
-            {posts[0].posts.map((object, i) => {
-              if (i < this.state.shownPost) {
-                return (
-                  <div className="category-all-child" key={i}>
-                    <div className="category-child-title">{object.title}</div>
-                    <div className="category-child-category">{object.category.category}</div>
-                    <div className="category-child-subTitle">{object.subTitle}</div>
-                    <div className="category-child-link">
-                      <div className="category-child-date">
-                        {object.date[0] + object.date[1] + object.date[2] + object.date[3]}년{' '}
-                        {object.date[5] + object.date[6]}월 {object.date[8] + object.date[9]}일
-                      </div>
-                      <NavLink to={'/' + object.category.category + '/' + object.title}>
-                        <button className="primary category-child-button">자세히 보기</button>
-                      </NavLink>
-                    </div>
-                  </div>
-                )
-              } else {
-                return null
-              }
-            })}{' '}
-          </div>
-        )
       }
+
+      // successfully rendering
+      // render current category posts
+      return (
+        <div className="category-all-container">
+          {Posts.map((object, i) => {
+            return (
+              <div className="category-all-child" key={i}>
+                <div className="category-child-title">{object.title}</div>
+                <div className="category-child-category">{object.category.category}</div>
+                <div className="category-child-subTitle">{object.subTitle}</div>
+                <div className="category-child-link">
+                  <div className="category-child-date">
+                    {object.date[0] + object.date[1] + object.date[2] + object.date[3]}년{' '}
+                    {object.date[5] + object.date[6]}월 {object.date[8] + object.date[9]}일
+                  </div>
+                  <NavLink to={'/' + object.category.category + '/' + object.title}>
+                    <button className="primary category-child-button">자세히 보기</button>
+                  </NavLink>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )
     }
 
-    const showMeTheNoMoreButton = (data: boolean) => {
+    // render more posts button
+    const showMeTheNoMoreButton = (data: boolean): JSX.Element | null => {
       if (data) {
         return (
-          <button className="primary block" onClick={this.handleShow}>
+          <button className="primary block" onClick={this.handleShowMore}>
             더보기 ...
           </button>
         )
@@ -278,20 +319,23 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>> {
       return null
     }
 
-    return (
-      <div className="layout-container for-margin-top">
-        {this.props.categoryPending ? (
+    // main render
+    const circleOrPosts = (data: boolean): JSX.Element | null => {
+      if (data) {
+        return (
           <div className="category-all-loading-circle">
             <LoadingCircle />
           </div>
-        ) : (
-          <React.Fragment>
-            {postViewer(selectedPosts)}
-            {showMeTheNoMoreButton(showMoreButton)}
-          </React.Fragment>
-        )}
-      </div>
-    )
+        )
+      }
+      return (
+        <React.Fragment>
+          {postViewer(selectedPosts)} {showMeTheNoMoreButton(showMoreButton)}
+        </React.Fragment>
+      )
+    }
+
+    return <div className="layout-container for-margin-top">{circleOrPosts(this.props.categoryPending)}</div>
   }
 }
 
