@@ -23,6 +23,7 @@ interface State {
   shownPost: number
   selectedPostNum: number
   selectedPosts: PostsStateInside[]
+  errorOrNot: boolean
 }
 
 // componentDidMount interface
@@ -49,7 +50,8 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
     showMoreButton: false,
     shownPost: 10,
     selectedPostNum: 0,
-    selectedPosts: []
+    selectedPosts: [],
+    errorOrNot: false
   }
 
   // the load value, if it increase, the viewer can see many posts before
@@ -90,8 +92,6 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
       // sort posts by url value
       const sortedPost = data.newProps.posts.filter(value => value.category === data.newProps.match.url.slice(1))
 
-      // tslint:disable-next-line:no-console
-      console.log(sortedPost)
       if (sortedPost.length !== 0) {
         return Promise.resolve({
           ...data,
@@ -122,14 +122,18 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
 
     // error handler
     const onError = (err: Error): void => {
-      // tslint:disable-next-line:no-console
-      console.log('error !')
       if (err.message === 'Not_Loaded') {
         // still loading
       } else if (err.message === 'Loading_Error') {
         toast('데이터 불러오기 실패 !')
+        this.setState({
+          errorOrNot: true
+        })
       } else if (err.message === 'Wrong_Url') {
         toast('없는 카테고리 입니다 !')
+        this.setState({
+          errorOrNot: true
+        })
       }
     }
 
@@ -157,7 +161,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
           sortedPostCount: sortedPost[0].posts.length
         })
       }
-      return Promise.reject(new Error('Wrong_Url'))
+      return Promise.reject(new Error('Wrong_URL'))
     }
 
     // check the button has to show or disappear
@@ -177,6 +181,11 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
         // just Wait
       } else if (err.message === 'URL_Not_Changed') {
         // do Nothing
+      } else if (err.message === 'Wrong_URL') {
+        toast('없는 카테고리 입니다 !')
+        this.setState({
+          errorOrNot: true
+        })
       }
     }
 
@@ -205,7 +214,8 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
       this.setState({
         selectedPostNum: data.sortedPostCount,
         selectedPosts: data.sortedPost,
-        showMoreButton: data.decisionButtonShowNone
+        showMoreButton: data.decisionButtonShowNone,
+        errorOrNot: false
       })
     }
 
@@ -246,7 +256,8 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
         selectedPostNum: data.sortedPostCount,
         selectedPosts: data.sortedPost,
         showMoreButton: data.decisionButtonShowNone,
-        shownPost: 10
+        shownPost: 10,
+        errorOrNot: false
       })
     }
     // first loading
@@ -269,15 +280,15 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
   }
 
   public render(): JSX.Element {
-    const { selectedPosts, showMoreButton } = this.state
+    const { selectedPosts, errorOrNot, showMoreButton } = this.state
 
     // render posts
-    const postViewer = (posts: PostsStateInside[]): JSX.Element => {
+    const postViewer = (posts: PostsStateInside[], error: boolean): JSX.Element => {
       // slice array by shown post number
       const Posts = posts.slice(0, this.state.shownPost)
 
       // if the url is wrong, render 404 not found
-      if (Posts.length === 0) {
+      if (error === true) {
         return <NotFound />
       }
 
@@ -330,7 +341,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
       }
       return (
         <React.Fragment>
-          {postViewer(selectedPosts)} {showMeTheNoMoreButton(showMoreButton)}
+          {postViewer(selectedPosts, errorOrNot)} {showMeTheNoMoreButton(showMoreButton)}
         </React.Fragment>
       )
     }
