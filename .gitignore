@@ -1,27 +1,28 @@
-# See https://help.github.com/ignore-files/ for more about ignoring files.
-
-# server dependencies
+# Server dependencies
 /Server/node_modules
 
-# dependencies
+# Server yarn-lock
+/Server/yarn.lock
+
+# Server DataBase config
+/Server/config.js
+
+
+# Client dependencies
 /Client/node_modules
 
-# yarn-lock
+# Client yarn-lock
 /Client/yarn.lock
 
-# testing
-/Client/coverage
-
-# production
+# Client production
 /Client/build
 
-# misc
+# Client misc
 /Client/.DS_Store
 /Client/.env.local
 /Client/.env.development.local
 /Client/.env.test.local
 /Client/.env.production.local
-
 /Client/npm-debug.log*
 /Client/yarn-debug.log*
 /Client/yarn-error.log*
