@@ -19,7 +19,7 @@
     "noUnusedLocals": true
   },
   "rules": {
-    "interface-name": false, 
+    "interface-name": false,
     "ordered-imports": false,
     "object-literal-sort-keys": false,
     "interface-over-type-literal": false,

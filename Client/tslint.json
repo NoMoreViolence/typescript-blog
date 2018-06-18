@@ -1,11 +1,7 @@
 {
   "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
   "linterOptions": {
-    "exclude": [
-      "config/**/*.js",
-      "node_modules/**/*.ts",
-      "Redux-Thunk.ts"
-    ]
+    "exclude": ["config/**/*.js", "node_modules/**/*.ts", "Redux-Thunk.ts"]
   },
   "rules": {
     "interface-name": false,
