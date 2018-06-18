@@ -159,7 +159,7 @@ exports.login = (req, res) => {
   }
 
   // respond to server
-  const respondToServer = data => {
+  const respondToClient = data => {
     res.json({
       success: true,
       message: '로그인 성공 !',
@@ -186,7 +186,7 @@ exports.login = (req, res) => {
     .then(encryptionPassword)
     .then(requestPasswordVerify)
     .then(makeJwtToken)
-    .then(respondToServer)
+    .then(respondToClient)
     .catch(onError)
 }
 
