@@ -43,8 +43,8 @@ export interface PutChangeAPIInterface {
   newCategory?: string
   oldTitle?: string
   newTitle?: string
-  subTitle?: string
-  mainText?: string
+  newSubTitle?: string
+  newMainText?: string
 }
 // API of Changing Post
 function putPostChangeAPI(value: PutChangeAPIInterface) {
@@ -53,8 +53,8 @@ function putPostChangeAPI(value: PutChangeAPIInterface) {
     {
       changeCategory: value.newCategory,
       changeTitle: value.newTitle,
-      subTitle: value.subTitle,
-      mainText: value.mainText
+      changeSubTitle: value.newSubTitle,
+      changeMainText: value.newMainText
     },
     {
       headers: {
