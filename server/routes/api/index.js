@@ -3,10 +3,10 @@ const auth = require('./auth')
 const category = require('./category')
 const post = require('./post')
 
-// 로긴 인증
+// login access
 router.use('/auth', auth)
-// 포스트 관련된 부분
+// post part
 router.use(post)
-// 카테고리 관련된 부분 받아오기
+// category part
 router.use(category)
 module.exports = router

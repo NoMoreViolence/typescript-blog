@@ -14,7 +14,7 @@ const Post = new Schema({
 
 // show the title, subTitle and category
 Post.statics.findAllPostsTitleAndSubTitle = function () {
-  // 포스트의 카테고리, 타이틀, 부제목만 리턴
+  // Retury of Posts Category, SubTitle, Date
   return this.find(
     {},
     {
