@@ -1,17 +1,18 @@
 const Category = require('./../../../models/Category')
 const Post = require('./../../../models/Post')
+
 /*
     public
     GET /api/categories
     GET /api/:category
 */
-// print All category
+// Print All category
 exports.showTitleAndSubTitle = (req, res) => {
   const { category } = req.params
 
-  // category Check, if data is 'admin' throw error, because 'admin' is can't be a category Name
+  // Category Check, if data is 'admin' throw error, because 'admin' is can't be a category Name
   const categoryNameAdminCheck = data => {
-    // right value
+    // Right value
     if (data.requestCategory.toLowerCase() !== 'admin') {
       return Promise.resolve(data)
     }
@@ -19,27 +20,27 @@ exports.showTitleAndSubTitle = (req, res) => {
     return Promise.reject(new Error(`'${data.requestCategory}' 는 관리자 이름의 카테고리라 존재할 수 없습니다 !`))
   }
 
-  // find Category
+  // Find Category
   const bringCategoryData = async data => {
-    // if the request is all category
+    // If the request is all category
     if (data.requestCategory === 'categories') {
       const CategoryData = await Category.findAllCategoriesTitleAndSubTitle()
       return Promise.resolve({ ...data, category: CategoryData, type: 'ALL' })
     }
 
-    // if the request is select category
+    // If the request is select category
     const CategoryData = await Category.findSomeCategorysTitleAndSubTitle(data.requestCategory)
     return Promise.resolve({ ...data, category: CategoryData, type: 'Select' })
   }
 
-  // check the category data is null or not
+  // Check the category data is null or not
   const checkBringedCategoryData = data => {
-    // select
+    // Select
     if (data.type === 'Select' && data.category.length !== 0) {
       return Promise.resolve(data)
     }
 
-    // all
+    // All
     if (data.type === 'ALL') {
       return Promise.resolve(data)
     }
@@ -47,9 +48,10 @@ exports.showTitleAndSubTitle = (req, res) => {
     return Promise.reject(new Error('검색하신 카테고리가 존재하지 않습니다 !'))
   }
 
+  // Respond to client
   // All category Search data === data
   const respondToClient = data => {
-    // respond to client with all category and all category data ( title, subTitle )
+    // Respond to client with all category and all category data ( title, subTitle )
     res.json({
       success: true,
       message: `'${data.requestCategory}' 카테고리 정보 가져오기 성공 !`,
@@ -57,7 +59,7 @@ exports.showTitleAndSubTitle = (req, res) => {
     })
   }
 
-  // error handler
+  // Error handler
   const onError = err => {
     res.status(403).json({
       success: false,
@@ -149,7 +151,7 @@ exports.categoryCreate = (req, res) => {
       'x-access-token': seesionStorage.getItem('token')
     }
 */
-// change Category
+// Category change
 exports.categoryChange = (req, res) => {
   const { category } = req.params
   const { changeCategory } = req.body
@@ -159,15 +161,19 @@ exports.categoryChange = (req, res) => {
     data.changeCategory => changeCategory
   */
 
-  // check data.category is real exist using mongo db
+  // Check data.category is real exist using mongo db
   const oldCategoryExistCheck = async data => {
-    if ((await Category.findSameCategory(data.category)) !== null) {
+    // Find category
+    const dataCategory = await Category.findSameCategory(data.category)
+
+    // Check data is exist or not
+    if (dataCategory !== null) {
       return Promise.resolve(data)
     }
     return Promise.reject(new Error('변경할 카테고리가 존재하지 않습니다 !'))
   }
 
-  // check data.chnageCategory is not null
+  // Check data.chnageCategory is not null
   const newCategoryNullCheck = data => {
     if (data.changeCategory !== '') {
       return Promise.resolve(data)
@@ -175,7 +181,7 @@ exports.categoryChange = (req, res) => {
     return Promise.reject(new Error('새로운 카테고리 값이 존재하지 않습니다 !'))
   }
 
-  // check data.changeCategory.toLowerCase() is not 'admin'
+  // Check data.changeCategory.toLowerCase() is not 'admin'
   const newCategoryAdminCheck = data => {
     if (data.changeCategory.toLowerCase() !== 'admin') {
       return Promise.resolve(data)
@@ -183,7 +189,7 @@ exports.categoryChange = (req, res) => {
     return Promise.reject(new Error('관리자 이름으로의 카테고리 변경은 불가능 합니다 !'))
   }
 
-  // check between oldCategory and changeCategory
+  // Check between oldCategory and changeCategory
   const bothCategorySameCheck = data => {
     if (data.category !== data.changeCategory) {
       return Promise.resolve(data)
@@ -191,11 +197,11 @@ exports.categoryChange = (req, res) => {
     return Promise.reject(new Error('같은 이름으로의 카테고리 변경은 필요 없습니다 !'))
   }
 
-  // check new category is real new Category
+  // Check new category is real new Category
   const newCategoryExistCheck = async data => {
     // TODO: ReadME
-    // the reason why I write this code, : data.category.toLowerCase() === data.changeCategory.toLowerCase()
-    // because data.changeCategory is already Verified in past function =>
+    // The reason why I write this code, : data.category.toLowerCase() === data.changeCategory.toLowerCase()
+    // Because data.changeCategory is already Verified in past function =>
     // => data.category is not same with data.changeCategory
     if (
       (await Category.findSameCategoryRegex(data.changeCategory)) === null ||
@@ -206,13 +212,13 @@ exports.categoryChange = (req, res) => {
     return Promise.reject(new Error('새로운 카테고리의 이름이 기존 다른 카테고리와 중복됩니다 !'))
   }
 
-  // category chagne using mongo db
+  // Category chagne using mongo db
   const categoryChange = async data => {
     await Category.changeCategory(data.category, data.changeCategory)
     return Promise.resolve(data)
   }
 
-  // response
+  // Response to client
   const respondToClient = data => {
     res.json({
       success: true,
@@ -221,7 +227,7 @@ exports.categoryChange = (req, res) => {
     })
   }
 
-  // error handler
+  // Error handler
   const onError = err => {
     res.status(409).json({
       success: false,
@@ -231,7 +237,7 @@ exports.categoryChange = (req, res) => {
   }
 
   // Promise
-  oldCategoryExistCheck({ category, changeCategory })
+  oldCategoryExistCheck({ category: category.trim(), changeCategory: changeCategory.trim() })
     .then(newCategoryNullCheck)
     .then(newCategoryAdminCheck)
     .then(bothCategorySameCheck)
@@ -250,21 +256,25 @@ exports.categoryChange = (req, res) => {
         'x-access-token': sessionStorage.getItem('token')
     }
 */
-// delete Category
+// Category delete
 exports.categoryDelete = (req, res) => {
-  // the category to delete
+  // The category to delete
   const { category } = req.params
   const { doubleCheck } = req.query
 
-  // check data.category is exist using mongo DB
+  // Check data.category is exist using mongo DB
   const categoryExistCheck = async data => {
-    if ((await Category.findSameCategory(data.category)) !== null) {
+    // Find category
+    const dataCategory = await Category.findSameCategory(data.category)
+
+    // Check req.params.category is exist or not
+    if (dataCategory !== null) {
       return Promise.resolve(data)
     }
     return Promise.reject(new Error('삭제할 카테고리가 존재하지 않습니다 !'))
   }
 
-  // compare between data.category and data.doubleCheck
+  // Compare between data.category and data.doubleCheck
   const categoryDoubleCheck = data => {
     if (data.category === data.doubleCheck) {
       return Promise.resolve(data)
@@ -272,7 +282,7 @@ exports.categoryDelete = (req, res) => {
     return Promise.reject(new Error('카테고리 중복 확인 실패 !'))
   }
 
-  // category delete using mongo db
+  // Category delete using mongo db
   const categoryDelete = async data => {
     // TODO: ReadME
     // First, delete Category, and delete Posts that has deleted categorys ID
@@ -280,16 +290,16 @@ exports.categoryDelete = (req, res) => {
     return Promise.resolve(data)
   }
 
-  // response
+  // Response to client
   const respondToClient = data => {
     res.json({
       success: true,
       message: `'${data.category}' 카테고리가 삭제 되었습니다 !`,
-      value: [data.category]
+      value: data.category
     })
   }
 
-  // error handler
+  // Error handler
   const onError = err => {
     res.status(409).json({
       success: false,
