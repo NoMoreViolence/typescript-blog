@@ -1,10 +1,10 @@
 /* each post box */
 .category-all-child {
-  width: 100%; 
+  width: 100%;
   display: inline-block;
   overflow: hidden;
   background-color: transparent;
-  border: 1px solid rgba(0,0,0,.125);
+  border: 1px solid rgba(0, 0, 0, .125);
   border-radius: .25rem;
   padding: 15px;
   margin-bottom: 15px;
@@ -13,7 +13,7 @@
 .category-child-link {
   display: flex;
   justify-content: space-between;
-  padding-top: 15px; 
+  padding-top: 15px;
 }
 
 /* mobile card view */
@@ -24,7 +24,7 @@
 
   .category-child-title {
     font-size: 1.1rem;
-    font-weight: 500; 
+    font-weight: 500;
     padding-bottom: 0.5rem;
   }
 
@@ -51,7 +51,7 @@
     padding: 0.5rem;
   }
 
-  .category-all-container { 
+  .category-all-container {
     -webkit-column-count: 1;
     column-count: 1;
     -webkit-column-gap: 1.25rem;
@@ -63,7 +63,7 @@
 @media only screen and (min-width: 426px) and (max-width: 768px) {
   .category-child-title {
     font-size: 1.1rem;
-    font-weight: 500; 
+    font-weight: 500;
     padding-bottom: 0.5rem;
   }
 
@@ -90,7 +90,7 @@
     padding: 0.5rem;
   }
 
-  .category-all-container { 
+  .category-all-container {
     -webkit-column-count: 2;
     column-count: 2;
     -webkit-column-gap: 1.25rem;
@@ -102,7 +102,7 @@
 @media only screen and (min-width: 769px) and (max-width: 1024px) {
   .category-child-title {
     font-size: 1.1rem;
-    font-weight: 500; 
+    font-weight: 500;
     padding-bottom: 0.5rem;
   }
 
@@ -141,7 +141,7 @@
 @media only screen and (min-width: 1025px) and (max-width: 1680px) {
   .category-child-title {
     font-size: 1.2rem;
-    font-weight: 500; 
+    font-weight: 500;
     padding-bottom: 0.5rem;
   }
 
@@ -180,7 +180,7 @@
 @media only screen and (min-width: 1681px) {
   .category-child-title {
     font-size: 1.5rem;
-    font-weight: 500; 
+    font-weight: 500;
     padding-bottom: 0.5rem;
   }
 
@@ -206,7 +206,7 @@
     text-align: center;
     padding: 0.5rem;
   }
-  
+
   .category-all-container {
     -webkit-column-count: 4;
     column-count: 4;

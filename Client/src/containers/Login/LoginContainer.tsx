@@ -25,7 +25,7 @@ class LoginContainer extends React.Component<Props> {
         loginUsername={this.props.loginUsername}
         handleChangePassword={this.props.LoginActions.handleChangePassword}
         loginPassword={this.props.loginPassword}
-        postLogin={this.props.LoginActions.postLogin}
+        postLogin={this.props.LoginActions.login}
         loginStatusCode={this.props.loginStatusCode}
         loginType={this.props.loginType}
         loginLogined={this.props.loginLogined}

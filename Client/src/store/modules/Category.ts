@@ -186,7 +186,6 @@ const reducer = handleActions<CategoryState, any>(
         draft.categoryLoaded = true
         draft.categoryPending = false
         draft.categoryError = true
-        draft.categoryCategory = [{ posts: [], _id: '', category: '', __v: 0 }]
       }),
 
     // change add category input

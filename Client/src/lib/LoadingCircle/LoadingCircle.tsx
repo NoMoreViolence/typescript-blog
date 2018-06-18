@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import './LoadingCircle.css'
 
-const LoadingBar: React.SFC = () => (
+const LoadingCircle: React.SFC = () => (
   <div className="loading-bar-container">
     <div className="loading-bar">
       <div className="spinnerBlock">
@@ -18,4 +18,4 @@ const LoadingBar: React.SFC = () => (
   </div>
 )
 
-export default LoadingBar
+export default LoadingCircle

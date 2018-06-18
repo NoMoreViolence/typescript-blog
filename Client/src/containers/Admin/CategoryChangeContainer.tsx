@@ -11,15 +11,10 @@ import { bindActionCreators } from 'redux'
 import { StoreState } from 'store/modules'
 
 interface Props {
-  // 로그인 변수
   loginLogined: boolean
-  // 카테고리
   category: CategoryStateInside[]
-  // 카테고리 체인지 인풋
   changeCategoryInputValue: string
-  // 카테고리 체인지 셀렉트값
   changeCategoryCategoryValue: string
-  // 각종 카테고리 변경 액션
   CategoryActions: typeof CategoryActions
   PostActions: typeof PostActions
   LoginActions: typeof LoginActions

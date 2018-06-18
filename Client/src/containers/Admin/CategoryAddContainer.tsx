@@ -1,11 +1,11 @@
 import * as React from 'react'
-// 헤더 카테고리
+
 import CategoryAdd from 'components/Templates/Admin/CategoryAdd'
 
-// 카테고리 액션 & 로그인 액션
+// category, post, login actions
 import { CategoryActions } from 'store/modules/Category'
-import { LoginActions } from 'store/modules/Login'
 import { PostActions } from 'store/modules/Post'
+import { LoginActions } from 'store/modules/Login'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -40,7 +40,6 @@ export default connect(
     addCategoryInputValue: Category.addCategoryInputValue
   }),
   dispatch => ({
-    // 디스패치
     CategoryActions: bindActionCreators(CategoryActions, dispatch),
     LoginActions: bindActionCreators(LoginActions, dispatch),
     PostActions: bindActionCreators(PostActions, dispatch)

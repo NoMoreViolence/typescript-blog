@@ -42,8 +42,8 @@ interface PutChangeMethodInterface {
   oldTitle?: string
   newCategory?: string
   newTitle?: string
-  subTitle?: string
-  mainText?: string
+  newSubTitle?: string
+  newMainText?: string
 }
 
 interface CTarget {
@@ -173,7 +173,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
 
     // check subTitle is  '' or not
     const subTitleCheck = (post: PutChangeMethodInterface): Promise<object> => {
-      if (post.subTitle !== '') {
+      if (post.newSubTitle !== '') {
         return Promise.resolve(post)
       }
       return Promise.reject(new Error('No_Data_Post_Sub_Title'))
@@ -181,7 +181,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
 
     // check mainText is '' or not
     const mainTextCheck = (post: PutChangeMethodInterface): Promise<object> => {
-      if (post.mainText !== '') {
+      if (post.newMainText !== '') {
         return Promise.resolve(post)
       }
       return Promise.reject(new Error('No_Data_Post_Main_Text'))
@@ -244,8 +244,8 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       newCategory: category.trim(),
       oldTitle: selectTitle.trim(),
       newTitle: title.trim(),
-      subTitle: subTitle.trim(),
-      mainText: mainText.trim()
+      newSubTitle: subTitle.trim(),
+      newMainText: mainText.trim()
     })
       .then(oldCategoryCheck)
       .then(oldTitleCheck)

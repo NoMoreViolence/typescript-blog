@@ -103,7 +103,7 @@ Category.statics.showPost = function (category, title) {
       _id: 0,
       __v: 0
     }
-  ).populate({ path: 'posts', select: '-__v -category', match: { title } })
+  ).populate({ path: 'posts', select: '-__v -category', match: { title } }).exec()
 }
 
 // export
