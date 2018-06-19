@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import * as CodeMirror from 'codemirror'
+import { Controlled as CodeMirror } from 'react-codemirror2'
 import './MarkDownEditor.css'
 import 'components/commonCSS/editor.css'
 
@@ -9,7 +9,7 @@ interface Props {
   changeTitle: (value: string) => void
   subTitle?: string
   changeSubTitle: (value: string) => void
-  MainText?: string
+  MainText: string
   changeMainText: (value: string) => void
   titleError: boolean
   subTitleError: boolean
@@ -17,39 +17,24 @@ interface Props {
   errorHandler: (value: string) => void
 }
 
+interface State {
+  mainText: string
+}
+
 interface Target {
   target: HTMLInputElement
 }
 
-class MarkDownEditor extends React.Component<Props> {
-  // html input
+class MarkDownEditor extends React.Component<Props, State> {
+  public state = {
+    mainText: ''
+  }
+
+  // Html input
   public title: any = null
   public subTitle: any = null
-  // editor
-  public editor: any = null // editor ref
-  public codeMirror: any = null // CodeMirror instance
-  public cursor: any = null // text cursor
 
-  // the editor create mothod
-  public initializeEditor = async () => {
-    await this.editor
-    this.codeMirror = CodeMirror(this.editor, {
-      mode: 'markdown',
-      theme: 'monokai',
-      lineNumbers: true, // view line number
-      lineWrapping: true // if the text is long, throw text to next line
-    })
-    this.codeMirror.on('change', this.handleChangeMarkdown)
-  }
-  // change Mark Down Method
-  public handleChangeMarkdown = async (doc: any) => {
-    const { MainText, changeMainText } = this.props
-    this.cursor = doc.getCursor() // save text cursor
-    if (MainText !== (await doc.getValue())) {
-      changeMainText(await doc.getValue())
-    }
-  }
-  // title & subtitle text change
+  // Title & subtitle text change
   public handleChange = (e: Target) => {
     if (e.target.name === 'title') {
       this.props.changeTitle(e.target.value)
@@ -57,29 +42,16 @@ class MarkDownEditor extends React.Component<Props> {
       this.props.changeSubTitle(e.target.value)
     }
   }
-  // first make editor
-  public async componentDidMount() {
-    // button click, show none
-    await this.initializeEditor()
-    await this.codeMirror
-    await this.codeMirror.setValue(this.props.MainText)
+
+  public componentDidMount() {
+    this.setState({
+      mainText: this.props.MainText
+    })
   }
 
-  // text cursor
+  // Text cursor
   public componentDidUpdate(prevProps: Props) {
-    // change cursor
-    if (prevProps.MainText !== this.props.MainText) {
-      const { codeMirror, cursor } = this
-      if (!codeMirror) {
-        return
-      } // instance is not yet
-      codeMirror.setValue(this.props.MainText)
-      if (!cursor) {
-        return
-      } // there is no cursor
-      codeMirror.setCursor(cursor)
-    }
-    // 에러가 생겼을 때의 부분
+    // Error handler
     if (this.props.titleError === true) {
       this.title.focus()
       this.props.errorHandler('clear')
@@ -89,16 +61,13 @@ class MarkDownEditor extends React.Component<Props> {
       this.props.errorHandler('clear')
     }
     if (this.props.mainTextError === true) {
-      this.codeMirror.focus()
       this.props.errorHandler('clear')
     }
   }
 
-  // unmount
   public componentWillUnmount() {
-    this.editor = null
-    this.cursor = null
-    this.codeMirror = null
+    this.title = null
+    this.subTitle = null
   }
 
   public render() {
@@ -120,7 +89,28 @@ class MarkDownEditor extends React.Component<Props> {
           onChange={this.handleChange}
           ref={ref => (this.subTitle = ref)}
         />
-        <div className="code-editor" ref={ref => (this.editor = ref)} />
+        <CodeMirror
+          className="code-editor"
+          value={this.state.mainText}
+          options={{
+            mode: 'markdown',
+            theme: 'monokai',
+            lineNumbers: true,
+            lineWrapping: true
+          }}
+          onBeforeChange={(editor, data, value) => {
+            this.props.changeMainText(value)
+            this.setState({
+              mainText: value
+            })
+          }}
+          onChange={(editor, data, value) => {
+            this.props.changeMainText(value)
+            this.setState({
+              mainText: value
+            })
+          }}
+        />
       </React.Fragment>
     )
   }
