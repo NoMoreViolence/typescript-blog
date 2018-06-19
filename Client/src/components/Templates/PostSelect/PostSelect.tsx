@@ -10,6 +10,7 @@ import LoadingCircle from 'lib/LoadingCircle'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 import MarkDownRendererContainer from 'containers/MarkDownRenderer/MarkDownRendererContainer'
+import { toast } from 'react-toastify'
 
 interface Props {
   postPending: boolean
@@ -17,7 +18,7 @@ interface Props {
   title: string
   subTitle: string
   date: number
-  showPost: (value: GetPostBringAPIInterface) => void
+  showPost: (value: GetPostBringAPIInterface) => any
 }
 
 interface State {
@@ -55,7 +56,12 @@ class PostSelect extends React.Component<Props & RouteComponentProps<History>, S
 
     // check title url data s real exist or not
     const titleUrlDataExistCheck = async (data: ReceiveDataParams): Promise<object> => {
-      const showPostData = await showPost({ category: data.category, title: data.title, type: 0 })
+      const showPostData = await showPost({ category: data.category, title: data.title, type: 0 }).catch((err: any) => {
+        this.setState({
+          wrongUrl: true
+        })
+        toast(err.response.data.message)
+      })
       return Promise.resolve({ ...data, showPostData })
     }
 

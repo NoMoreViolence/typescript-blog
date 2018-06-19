@@ -300,11 +300,11 @@ const reducer = handleActions<PostState, any>(
           draft.load.pending = false
           draft.load.error = false
           // post show data
-          draft.show.category = action.payload.data.value.category
-          draft.show.title = action.payload.data.value.posts[0].title
-          draft.show.subTitle = action.payload.data.value.posts[0].subTitle
-          draft.show.mainText = action.payload.data.value.posts[0].mainText
-          draft.show.date = action.payload.data.value.posts[0].date
+          draft.show.category = action.payload.data.value.post.category.category
+          draft.show.title = action.payload.data.value.post.title
+          draft.show.subTitle = action.payload.data.value.post.subTitle
+          draft.show.mainText = action.payload.data.value.post.mainText
+          draft.show.date = action.payload.data.value.post.date
         })
       } else if (action.payload.data.value.type * 1 === 1) {
         // call info for change Post
@@ -312,11 +312,11 @@ const reducer = handleActions<PostState, any>(
           draft.load.pending = false
           draft.load.error = false
           // post change data
-          draft.change.category = action.payload.data.value.category
-          draft.change.title = action.payload.data.value.posts[0].title
-          draft.change.subTitle = action.payload.data.value.posts[0].subTitle
-          draft.change.mainText = action.payload.data.value.posts[0].mainText
-          draft.change.date = action.payload.data.value.posts[0].date
+          draft.change.category = action.payload.data.value.post.category.category
+          draft.change.title = action.payload.data.value.post.title
+          draft.change.subTitle = action.payload.data.value.post.subTitle
+          draft.change.mainText = action.payload.data.value.post.mainText
+          draft.change.date = action.payload.data.value.post.date
         })
       } else if (action.payload.data.value.type * 1 === 2) {
         // call info for delete post
@@ -324,10 +324,11 @@ const reducer = handleActions<PostState, any>(
           draft.load.pending = false
           draft.load.error = false
           // post delete data
-          draft.delete.showTitle = action.payload.data.value.posts[0].title
-          draft.delete.subTitle = action.payload.data.value.posts[0].subTitle
-          draft.delete.mainText = action.payload.data.value.posts[0].mainText
-          draft.delete.date = action.payload.data.value.posts[0].date
+          draft.delete.category = action.payload.data.value.post.category.category
+          draft.delete.showTitle = action.payload.data.value.post.title
+          draft.delete.subTitle = action.payload.data.value.post.subTitle
+          draft.delete.mainText = action.payload.data.value.post.mainText
+          draft.delete.date = action.payload.data.value.post.date
         })
       }
       return produce(state, draft => {
