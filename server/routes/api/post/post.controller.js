@@ -2,32 +2,53 @@ const Post = require('./../../../models/Post')
 const Category = require('./../../../models/Category')
 
 /*
-    GET /api/categories/posts
+    GET /api/:category/:title
     {}
 */
-// Return all posts data
-exports.allPostsTitleAndSubTitle = (req, res) => {
-  // Activate find all post method
-  const findAllPostsTitleAndSubTitle = async () => {
-    // Find data
-    const PostsData = await Post.findAllPostsTitleAndSubTitle()
-    // Return
-    return Promise.resolve(PostsData)
+// Bring the data of :title
+exports.postShow = (req, res) => {
+  const { category, title } = req.params
+  const { type } = req.query
+
+  // Find Post & Check post is exist or not
+  const postExistCheck = async data => {
+    // Find post
+    const post = await Post.findPost(data.category, data.title)
+
+    // Check post is exist or not
+    if (post !== null) {
+      return Promise.resolve({ ...data, post })
+    }
+    return Promise.reject(new Error(`${data.title} 포스트가 존재하지 않습니다 !`))
+  }
+
+  // Check category exist or not
+  const postCategoryExistCheck = async data => {
+    // Check post has category or not
+    if (data.post.category !== null) {
+      return Promise.resolve(data)
+    }
+
+    // Check paramsCategory is exist or not
+    const paramsCategory = await Category.findSameCategory(data.category)
+    if (paramsCategory !== null) {
+      return Promise.reject(new Error(`'${data.title}'포스트는 '${data.category}' 카테고리가 아닙니다 !`))
+    }
+
+    return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
   }
 
   // Respond to client
   const respondToClient = data => {
-    // Return post data to client
     res.json({
       success: true,
-      message: '모든 포스트의 타이틀과 서브 타이틀 불러오기에 성공 !',
+      message: '',
       value: data
     })
   }
 
   // Error handler
   const onError = err => {
-    // Return error
     res.status(409).json({
       success: false,
       message: err.message,
@@ -36,90 +57,8 @@ exports.allPostsTitleAndSubTitle = (req, res) => {
   }
 
   // Promise
-  findAllPostsTitleAndSubTitle(null)
-    .then(respondToClient)
-    .catch(onError)
-}
-
-/*
-    GET /api/:category/:title
-    {}
-*/
-// Bring the data of :title
-exports.showPost = (req, res) => {
-  const { category, title } = req.params
-  const { type } = req.query
-
-  // Check req.params.category is '' or not
-  const reqCatagoryValueCheck = data => {
-    if (data.category.toLowerCase() !== 'admin') {
-      return Promise.resolve(data)
-    }
-    return Promise.reject(new Error("'admin' 카테고리는 존재하지 않습니다 !"))
-  }
-
-  // Check req.params.title is '' or not
-  const reqTitleValueCheck = data => {
-    if (data.title.toLowerCase() !== 'admin') {
-      return Promise.resolve(data)
-    }
-    return Promise.reject(new Error("'admin' 포스트는 존재하지 않습니다 !"))
-  }
-
-  // Excute Category.showPost() & return data
-  const findPost = async data => {
-    const postData = await Category.showPost(data.category, data.title)
-    return Promise.resolve({ ...data, postData })
-  }
-
-  // Check categoryData is exist => right category value
-  const checkPostCategoryExist = data => {
-    if (data.postData) {
-      return Promise.resolve(data)
-    }
-    return Promise.reject(new Error(`'${data.category}' 카테고리가 존재하지 않습니다 !`))
-  }
-
-  // If the postData is exist => right title value
-  const checkPostExist = data => {
-    if (data.postData.posts.length !== 0) {
-      return Promise.resolve(data)
-    }
-    return Promise.reject(new Error(`'${data.title}' 포스트가 존재하지 않습니다 !`))
-  }
-
-  // Respond to client
-  const respondToClient = data => {
-    res.json({
-      success: true,
-      message: '포스트 불러오기 성공 !',
-      value: {
-        type,
-        posts: data.postData.posts,
-        category: data.postData.category
-      }
-    })
-  }
-
-  // Error handler
-  const onError = err => {
-    res.status(409).json({
-      success: false,
-      message: err.message,
-      value: []
-    })
-  }
-
-  // Promise
-  reqCatagoryValueCheck({
-    category: category.trim(),
-    title: title.trim(),
-    postData: null
-  })
-    .then(reqTitleValueCheck)
-    .then(findPost)
-    .then(checkPostCategoryExist)
-    .then(checkPostExist)
+  postExistCheck({ category: category.trim(), title: title.trim(), type })
+    .then(postCategoryExistCheck)
     .then(respondToClient)
     .catch(onError)
 }
@@ -156,7 +95,7 @@ exports.postCreate = (req, res) => {
   // Double check title
   const titleDoubleCheck = async data => {
     // Find Post
-    const uniquePost = await Post.findPostRegex(data.title)
+    const uniquePost = await Post.findPostRegex(data.category, data.title)
 
     // If the title is unique
     if (uniquePost === null) {
@@ -260,63 +199,69 @@ exports.postChange = async (req, res) => {
     changeCategory, changeTitle, changeSubTitle, changeMainText
   } = req.body
 
-  // Check oldCategory is exist or not
-  const oldCategoryExistCheck = async data => {
-    // Find category
-    const paramsCategory = await Category.findSameCategory(data.oldCategory)
-
-    // If category is exist
-    if (paramsCategory !== null) {
-      // Return with oldCategory _id
-      return Promise.resolve({ ...data, oldCategoryID: paramsCategory.id })
-    }
-    return Promise.reject(new Error(`'${data.oldCategory}' 카테고리는 존재하지 않습니다 !`))
-  }
-
   // Check oldTitle is exist or not
   const oldTitleExistCheck = async data => {
     // Find post
-    const paramsTitle = await Post.findPost(data.oldTitle)
+    const paramsPostData = await Post.findPost(data.oldCategory, data.oldTitle)
 
-    // If post is exist
-    if (paramsTitle !== null) {
-      // Return with post _id
-      return Promise.resolve({ ...data, postID: paramsTitle.id })
+    // If paramsPostData is exist
+    if (paramsPostData !== null) {
+      return Promise.resolve({ ...data, postData: paramsPostData, postID: paramsPostData.id })
     }
-    return Promise.reject(new Error(`'${data.oldTitle}' 포스트가 존재하지 않습니다 !`))
+
+    return Promise.reject(new Error(`'${data.oldTitle}' 포스트가 존재하지 않아 변경이 불가능 합니다 !`))
   }
 
-  // Check newCategory is exist or not
-  const newCategoryExistCheck = async data => {
-    // Find category
-    const bodyCategory = await Category.findSameCategory(data.newCategory)
-
-    // If newCategory is exist
-    if (bodyCategory !== null) {
-      // Return with newCategory _id
-      return Promise.resolve({ ...data, newCategoryID: bodyCategory.id })
+  // Check oldCategory is exist, or category of data.oldTitle
+  const oldCategoryExistCheck = async data => {
+    // If oldCategory is the category of data.postData
+    if (data.postData.category !== null) {
+      return Promise.resolve({ ...data, oldCategoryID: data.postData.category.id })
     }
-    return Promise.reject(new Error(`'${data.newCategory}' 카테고리는 존재하지 않습니다 !`))
+
+    // Check paramsCategory is exist or not
+    const paramsCategory = await Category.findSameCategory(data.oldCategory)
+    if (paramsCategory !== null) {
+      return Promise.reject(new Error(`'${data.oldCategory}' 카테고리에는 '${data.oldTitle}' 포스트가 없습니다 !`))
+    }
+
+    return Promise.reject(new Error(`'${data.oldCategory}' 는 존재하지 않는 카테고리 입니다 !`))
   }
 
   // Check newTitle is exist or not
   const newTitleExistCheck = async data => {
-    // Find post
-    const bodyTitle = await Post.findPostRegex(data.newTitle)
+    // Find title with Regex
+    const bodyPostData = await Post.findPostRegex(data.newCategory, data.newTitle)
 
-    // Considering user doesn't change title
-    if (bodyTitle === null || data.oldTitle.toLowerCase() === data.newTitle.toLowerCase()) {
+    // If the result is null or oldTitle.toLowerCase === newTitle.toLowerCase()
+    if (bodyPostData === null || data.oldTitle.toLowerCase() === data.newTitle.toLowerCase()) {
       return Promise.resolve(data)
     }
-    return Promise.reject(new Error(`'${data.newTitle}' 포스트 제목은은 다른 포스트의 제목과 중복됩니다 !`))
+
+    return Promise.reject(new Error(`'${data.newTitle}' 포스트 제목은 다른 포스트의 제목과 중복됩니다 !`))
   }
 
   // Check newTitle is 'admin' or not
   const newTitleAdminCheck = data => {
-    if (data.newTitle.toLowerCase() !== 'admin') {
-      return Promise.resolve(data)
+    // Check admin
+    if (data.newTitle.toLowerCase() === 'admin') {
+      return Promise.reject(new Error("포스트 이름은 'admin' 이 될 수 없습니다 !"))
     }
-    return Promise.reject(new Error("포스트 이름은 'admin' 이 될 수 없습니다 !"))
+
+    return Promise.resolve(data)
+  }
+
+  // Check newCategory is exst or not
+  const newCategoryExistCheck = async data => {
+    // Find category
+    const bodyCategoryData = await Category.findSameCategory(data.newCategory)
+
+    // If newCategory is exist
+    if (bodyCategoryData !== null) {
+      // Return with newCategory _id
+      return Promise.resolve({ ...data, newCategoryID: bodyCategoryData.id })
+    }
+    return Promise.reject(new Error(`'${data.newCategory}' 카테고리는 존재하지 않습니다 !`))
   }
 
   // check newSubTitle is exist or not
@@ -357,6 +302,7 @@ exports.postChange = async (req, res) => {
 
   // Error handler
   const onError = err => {
+    console.log(err.message)
     res.status(409).json({
       success: false,
       message: err.message,
@@ -365,7 +311,7 @@ exports.postChange = async (req, res) => {
   }
 
   // Promise
-  oldCategoryExistCheck({
+  oldTitleExistCheck({
     oldCategory: category.trim(),
     oldTitle: title.trim(),
     newCategory: changeCategory.trim(),
@@ -374,12 +320,13 @@ exports.postChange = async (req, res) => {
     newMainText: changeMainText.trim(),
     oldCategoryID: null,
     newCategoryID: null,
-    postID: null
+    postID: null,
+    postData: null
   })
-    .then(oldTitleExistCheck)
-    .then(newCategoryExistCheck)
+    .then(oldCategoryExistCheck)
     .then(newTitleExistCheck)
     .then(newTitleAdminCheck)
+    .then(newCategoryExistCheck)
     .then(newSubTitleCheck)
     .then(newMainTextCheck)
     .then(postChange)
@@ -395,30 +342,36 @@ exports.postChange = async (req, res) => {
     }
 */
 // Post delete
-exports.delete = (req, res) => {
+exports.postDelete = (req, res) => {
   const { category, title } = req.params
 
-  // Check req.params.category is exist or not
-  const categoryExistCheck = async data => {
-    // Category data
-    const categoryData = await Category.findSameCategory(data.category)
-
-    if (categoryData !== null) {
-      return Promise.resolve(data)
-    }
-    return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
-  }
-
-  // Check req.params.title is exist or not
-  const titleExistCheck = async data => {
+  // Check data.title(req.params.title) is exist or not
+  const postExistCheck = async data => {
     // Title data
-    const postData = await Post.findPost(data.title)
+    const postData = await Post.findPost(data.category, data.title)
 
     if (postData !== null) {
       // Return with postID
-      return Promise.resolve({ ...data, postID: postData.id })
+      return Promise.resolve({ ...data, post: postData, postID: postData.id })
     }
     return Promise.reject(new Error(`'${data.title}' 타이틀이 존재하지 않습니다 !`))
+  }
+
+  // Check data.category(req.params.category) exist, and have req.params.title(data.title)
+  const categoryExistCheck = async data => {
+    // if category has post
+    if (data.post.category !== null) {
+      return Promise.resolve(data)
+    }
+
+    // Check paramsCategory is exist or not
+    const paramsCategory = await Category.findSameCategory(data.category)
+    if (paramsCategory !== null) {
+      return Promise.reject(new Error(`'${data.category}' 카테고리에는 '${data.title}' 포스트가 없습니다 !`))
+    }
+
+    // data.category is not category
+    return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않는 카테고리 입니다 !`))
   }
 
   // Delete Post
@@ -448,8 +401,8 @@ exports.delete = (req, res) => {
   }
 
   // Promise
-  categoryExistCheck({ category: category.trim(), title: title.trim(), postID: null })
-    .then(titleExistCheck)
+  postExistCheck({ category: category.trim(), title: title.trim(), postID: null })
+    .then(categoryExistCheck)
     .then(postDelete)
     .then(respondToClient)
     .catch(onError)
