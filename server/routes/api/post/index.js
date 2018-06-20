@@ -2,21 +2,19 @@ const router = require('express').Router()
 const controller = require('./post.controller')
 const authMiddleware = require('./../../../middlewares/auth')
 
-// Bring the title and subtitle of all categories
-router.get('/categories/posts', controller.allPostsTitleAndSubTitle)
 // Bring the post data
-router.get('/:category/:title', controller.showPost)
+router.get('/:category/:title', controller.postShow)
 
-// add post
+// Add post
 router.use('/:category/:title', authMiddleware) // 미들웨어
 router.post('/:category/:title', controller.postCreate)
 
-// change post
+// Change post
 router.use('/:category/:title', authMiddleware) // 미들웨어
 router.put('/:category/:title', controller.postChange)
 
-// delete post
+// Delete post
 router.use('/:category/:title', authMiddleware) // 미들웨어
-router.delete('/:category/:title', controller.delete)
+router.delete('/:category/:title', controller.postDelete)
 
 module.exports = router

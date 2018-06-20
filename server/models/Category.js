@@ -8,102 +8,98 @@ const Category = new Schema({
   posts: [{ type: Schema.Types.ObjectId, ref: 'post' }] // post, this is Ref array, contain _id
 })
 
-// whole categories data
+// Search
+// TODO: Search
+// All categories data
 Category.statics.findAllCategoriesTitleAndSubTitle = function () {
-  // all category
   return this.find({}, { category: 1 })
     .populate({
       path: 'posts',
       select: 'title subTitle date',
-      options: { sort: { date: -1 } },
+      sort: { date: -1 },
       populate: { path: 'category', select: 'category' }
     })
-    .sort({ category: 1 })
     .exec()
 }
-// some categorys data
+// Some categorys data
 Category.statics.findSomeCategorysTitleAndSubTitle = function (category) {
-  return this.find({ category })
+  return this.findOne({ category })
     .populate({
       path: 'posts',
       select: 'title subTitle, date',
-      options: { sort: { date: -1 } },
+      sort: { date: -1 },
       populate: { path: 'category', select: 'category' }
     })
-    .sort({ category: 1 })
     .exec()
 }
-
-// bring title in posts of category
-Category.statics.findPostNamesAndSubTitleOfCategory = function (category) {
-  // bring title, when you use populate, only bring select value
-  return this.findOne({ category })
-    .populate({ path: 'posts', select: 'title subTitle' })
-    .exec()
-  // .populate({ path: 'posts', select: 'title', match: { title: '백준 알고리즘 풀이 6' } })
-}
-
-// if there is category, return category, else, return null
+// Find same category
 Category.statics.findSameCategory = function (category) {
   return this.findOne({ category }).exec()
 }
-
-// if there is category, return category, else, return null
-// find Same Category using regular expression
-// don't care LowerCase or UpperCase
+// Find same category
+// Find Same Category using regular expression
+// Don't care LowerCase or UpperCase
 Category.statics.findSameCategoryRegex = function (category) {
-  // ues regular expression
   return this.findOne({ category: { $regex: category, $options: 'i' } }).exec()
 }
+// Search
 
-// add New Category
+// Create
+// TODO: Create
+// Create New Category
 Category.statics.createCategory = function (category) {
   const Cart = new this({
     category
   })
-  // save
   return Cart.save()
 }
+// Create
 
-// Change Category Name and return changed category data
+// Change
+// TODO: Change
+// Change Category Name
+// Return changed category data
 Category.statics.changeCategory = function (category, changeCategory) {
   return this.findOneAndUpdate({ category }, { category: changeCategory }).exec()
 }
+// Change
 
-// Delete Category and return category's _id
+// Delete
+// TODO: Delete
+// Delete Category
+// Return category's _id
 Category.statics.deleteCategory = function (category) {
-  // delete, and return deleted category's _id because posts has category's _id
-  return this.findOneAndRemove({ category }, { select: '_id' }).exec()
+  return this.findOneAndRemove({ category })
+    .select({ _id: 1 })
+    .exec()
 }
+// Delete
 
 /*
 
   Post task
-
+  TODO: Post Task
 */
 
 // $category$ ref push
-// return category
+// category: string, postID: ObjectID
 Category.statics.PostsRefPush = function (category, postID) {
   return this.findOneAndUpdate({ category }, { $push: { posts: postID } })
 }
 
 // $category$ ref pop
-// return category
+// category: string,  postID: ObjectID
 Category.statics.PostsRefPop = function (category, postID) {
   return this.findOneAndUpdate({ category }, { $pop: { posts: postID } })
 }
 
 // $post$ show
-// return post data
+// category: string, title: string
 Category.statics.showPost = function (category, title) {
-  return this.findOne(
-    { category },
-    {
-      _id: 0,
-      __v: 0
-    }
-  ).populate({ path: 'posts', select: '-__v -category', match: { title } }).exec()
+  return this.findOne({ category })
+    .select({ category: 1, posts: 1 })
+    .populate({ path: 'posts', select: 'title subTitle mainText date', match: { title } })
+    .exec()
 }
 
 // export
