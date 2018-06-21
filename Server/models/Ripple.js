@@ -3,21 +3,31 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 // Schema
-const PostRipple = new Schema({
+const Ripple = new Schema({
   text: { type: String, required: true }, // Post ripple
   writer: { type: String, required: true }, // Ripple writer
   password: { type: String, required: true }, // Ripple writer password
   categoryID: { type: Schema.Types.ObjectId, ref: 'category', required: true }, // Category ID
-  postID: { type: Schema.Types.ObjectId, ref: 'post' }, // Post ID
-  date: { type: Date, default: Date.now } // Ripple date
+  postID: { type: Schema.Types.ObjectId, ref: 'post', required: true }, // Post ID
+  top: { type: Boolean, required: true }, // Top class ripple or not
+  childRipple: [{ type: Schema.Types.ObjectId, ref: 'ripple' }], // Child Ripple ID's // It's only useful when top is true
+  date: { type: Date, default: Date.now }, // Ripple date
+  admin: { type: Boolean, default: false } // Admin value
 })
 
 // Search
 // TODO: Search
-// writer: string
-PostRipple.statics.searchComment = function (writer) {
+// rippleID: ObjectID
+Ripple.statics.searchOneRippleByID = function (rippleID) {
+  // return founded
+  return this.findOne({ _id: rippleID }).exec()
+}
+// category: string, title: string, writer: string
+Ripple.statics.searchOneRipple = function (category, title, writer) {
   // return founded post data except password
   return this.findOne({ writer })
+    .populate({ path: 'category', match: { category } })
+    .populate({ path: 'posts', match: { title } })
     .select({ password: 0 })
     .exec()
 }
@@ -26,13 +36,14 @@ PostRipple.statics.searchComment = function (writer) {
 // Ripple create
 // TODO: Create
 // text: string, writer: string, password: string, categoryID: ObjectID, postID: ObjectID
-PostRipple.statics.createComment = function (text, writer, password, categoryID, postID) {
+Ripple.statics.createRipple = function (categoryID, postID, writer, text, password, top) {
   const Cart = new this({
     text,
     writer,
     password,
     categoryID,
-    postID
+    postID,
+    top
   })
 
   return Cart.save()
@@ -42,15 +53,21 @@ PostRipple.statics.createComment = function (text, writer, password, categoryID,
 // Ripple change
 // TODO: Change
 //
-PostRipple.statics.changeComment = function () {}
+Ripple.statics.changeRipple = function () {}
 
 // Ripple delete
 // TODO: Delete
-PostRipple.statics.removeComment = function (category) {
+Ripple.statics.removeRipple = function (category) {
   return this.findOneAndRemove({ category })
 }
 // TODO: Delete
-PostRipple.statics.removeCommentAdmin = function () {}
+Ripple.statics.removeRippleAdmin = function () {}
 // Ripple delete
 
-module.exports = mongoose.model('postripple', PostRipple)
+// TODO: REFs
+// Add ref in top class
+Ripple.statics.rippleRefPush = function (parentID, childRippleID) {
+  return this.findByIdAndUpdate(parentID, { $push: { childRipple: childRippleID } }).exec()
+}
+
+module.exports = mongoose.model('ripple', Ripple)
