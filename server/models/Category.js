@@ -60,7 +60,7 @@ Category.statics.createCategory = function (category) {
 // Change Category Name
 // Return changed category data
 Category.statics.changeCategory = function (category, changeCategory) {
-  return this.findOneAndUpdate({ category }, { category: changeCategory }).exec()
+  return this.findOneAndUpdate({ category }, { category: changeCategory })
 }
 // Change
 

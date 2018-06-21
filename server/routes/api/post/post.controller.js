@@ -302,7 +302,6 @@ exports.postChange = async (req, res) => {
 
   // Error handler
   const onError = err => {
-    console.log(err.message)
     res.status(409).json({
       success: false,
       message: err.message,

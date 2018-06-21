@@ -8,7 +8,7 @@ const Post = new Schema({
   subTitle: { type: String, required: true }, // Sub Title
   mainText: { type: String, required: true }, // Main Text
   category: { type: Schema.Types.ObjectId, required: true, ref: 'category' }, // Category
-  comment: [{ type: Schema.Types.ObjectId, required: true, ref: 'postripple' }], // Post comment
+  comment: [{ type: Schema.Types.ObjectId, required: true, ref: 'ripple' }], // Post comment
   date: { type: Date, default: Date.now } // Post date
 })
 
@@ -77,6 +77,17 @@ Post.statics.deletePostsOfDeletedCategory = function (categoryID) {
   return this.remove({ category: categoryID }).exec()
 }
 // Post remove
+
+// Ripple
+//  TODO: Ripple stuff
+// postID: ObjectID, rippleID: ObjectID
+Post.statics.rippleRefPush = function (postID, rippleID) {
+  return this.findOneAndUpdate({ _id: postID }, { $push: { comment: rippleID } })
+}
+Post.statics.rippleRefPop = function (postID, rippleID) {
+  return this.findOneAndUpdate({ _id: postID }, { $pop: { comment: rippleID } })
+}
+// Ripple stuff
 
 // export
 module.exports = mongoose.model('post', Post)
