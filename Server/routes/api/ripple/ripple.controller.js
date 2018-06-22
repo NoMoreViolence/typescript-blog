@@ -5,17 +5,103 @@ const Ripple = require('./../../../models/Ripple')
 const crypto = require('crypto')
 
 /*
+    GET /api/:category/:title/ripple/all/all
+    {}
+*/
+// Show all ripple of /:category/:title
+exports.showAllRippleInSelectTitle = (req, res) => {
+  const { category, title } = req.params
+
+  // Find Post & Check post is exist or not
+  const postExistCheck = async data => {
+    console.log(data.category)
+    console.log('clear')
+    // Find post
+    const post = await Post.findPost(data.category, data.title)
+
+    // Check post is exist or not
+    if (post !== null) {
+      return Promise.resolve({ ...data, post, postID: post.id })
+    }
+    return Promise.reject(new Error(`${data.title} 포스트가 존재하지 않습니다 !`))
+  }
+
+  // Check category exist or not
+  const postCategoryExistCheck = async data => {
+    console.log('clear')
+    // Check post has category or not
+    if (data.post.category !== null) {
+      return Promise.resolve({ ...data, categoryID: data.post.category.id })
+    }
+
+    // Check paramsCategory is exist or not
+    const paramsCategory = await Category.findSameCategory(data.category)
+    if (paramsCategory !== null) {
+      return Promise.reject(new Error(`'${data.title}'포스트는 '${data.category}' 카테고리가 아닙니다 !`))
+    }
+
+    return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
+  }
+
+  // Find ripple
+  const topRippleBring = async data => {
+    console.log('clear')
+    const ripples = await Ripple.searchTopRipple(data.categoryID, data.postID, 0)
+
+    return Promise.resolve({ ...data, ripples })
+  }
+
+  // Respond to client
+  const respondToClient = data => {
+    res.json({
+      success: true,
+      message: `'${data.category}' 카테고리의 '${data.title}' 포스트의 댓글 불러오기 성공 !`,
+      value: data.ripples
+    })
+  }
+
+  // Error handler
+  const onError = err => {
+    res.status(409).json({
+      success: false,
+      message: err.message,
+      value: []
+    })
+  }
+
+  // Promise
+  postExistCheck({
+    category: category.trim(),
+    title: title.trim(),
+    categoryID: '',
+    postID: '',
+    ripples: []
+  })
+    .then(postCategoryExistCheck)
+    .then(topRippleBring)
+    .then(respondToClient)
+    .catch(onError)
+}
+
+/*
+    GET /api/:category/:title/:writer/all
+    {}
+*/
+exports.showAllRipple = (req, res) => {
+  const { category, title, writer } = req.params
+}
+
+/*
     GET /api/:category/:title/:writer
     {}
 */
-
 // Show ripple
 exports.showRipple = (req, res) => {
   const { category, title, writer } = req.params
 
   // Find ripple
   const writerExistCheck = async data => {
-    const ripple = await Ripple.searchRipple(data.category, data.title, data.writer)
+    const ripple = await Ripple.searchOneRipple(data.category, data.title, data.writer, 0)
 
     if (ripple !== null) {
       return Promise.resolve({ ...data, ripple })
@@ -116,7 +202,6 @@ exports.addRipple = (req, res) => {
     // Throw error
     return Promise.reject(new Error(`'${data.title}' 포스트는 존재하지 않습니다 !`))
   }
-
   // Check data.post.category is exist or not
   const categoryExistCheck = async data => {
     // Check data.post.category
@@ -129,7 +214,6 @@ exports.addRipple = (req, res) => {
     if (categoryData !== null) {
       return Promise.reject(new Error(`'${data.title}'포스트는 '${data.category}' 카테고리가 아닙니다 !`))
     }
-
     // Throw error
     return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
   }
@@ -139,10 +223,9 @@ exports.addRipple = (req, res) => {
     if (data.writer.toLowerCase() !== ('admin' || 'nomoreviolence')) {
       return Promise.resolve({ ...data, admin: false })
     }
-
+    // Throw error
     return Promise.reject(new Error('관리자 이름은 댓글 작성자 이름이 될 수 없습니다 !'))
   }
-
   // Check body.ripple exist or not
   const rippleExistCheck = data => {
     // Check ripple exist or not
@@ -155,7 +238,6 @@ exports.addRipple = (req, res) => {
     }
     return Promise.reject(new Error('추가할 댓글이 없습니다 !'))
   }
-
   // Check body.password is exist or not
   const passwordExistCheck = data => {
     // Check password exist or not
@@ -168,7 +250,6 @@ exports.addRipple = (req, res) => {
     }
     return Promise.reject(new Error('댓글 비빌번호가 존재하지 않습니다 !'))
   }
-
   // Encrypt data.password
   const passwordEncryption = async data => {
     // Encryption
@@ -194,7 +275,6 @@ exports.addRipple = (req, res) => {
     console.log('awefawef')
     return Promise.resolve(data)
   }
-
   // Check data.parentRippleData
   const parentRippleCheck = async data => {
     if (data.parentRippleData !== null) {
