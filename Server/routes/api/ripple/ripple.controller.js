@@ -3,7 +3,6 @@ const Post = require('./../../../models/Post')
 const Ripple = require('./../../../models/Ripple')
 
 const crypto = require('crypto')
-const urlEncode = require('urlencode')
 
 /*
     GET /api/:category/:title/ripples/:toporchild?topID='value'
@@ -13,8 +12,6 @@ const urlEncode = require('urlencode')
 exports.showRipples = (req, res) => {
   const { category, title, toporchild } = req.params
   const { topID } = req.query
-
-  console.log(category)
 
   // Find Post & Check post is exist or not
   const postExistCheck = async data => {
@@ -56,7 +53,7 @@ exports.showRipples = (req, res) => {
     if (data.topOrChild === 'child' && data.topID !== undefined) {
       // Check data.topID is ObjectID
       const topIDValidCheck = await Ripple.checkObjectID(data.topID)
-      if (topIDValidCheck === false) {
+      if (topIDValidCheck !== true) {
         return Promise.reject(new Error('댓글의 ID 형식이 올바르지 않습니다 !'))
       }
 
@@ -70,13 +67,20 @@ exports.showRipples = (req, res) => {
       if (topRipples.top !== true) {
         return Promise.reject(new Error('대댓글의 대댓글은 존재하지 않습니다 !'))
       }
+      // Check founded Top Ripple categoryID & postID === req.params.category & post's ID
+      if (
+        topRipples.categoryID.toString() !== data.categoryID.toString() &&
+        topRipples.postID.toString() !== data.postID.toString()
+      ) {
+        return Promise.reject(new Error('대댓글을 달려고 하는 댓글의 카테고리와 포스트가 일치하지 않습니다 !'))
+      }
 
       // Find Child Ripple
       // Child ripple is exist or not
-      const childRipples = await Ripple.searchChildRipple(topRipples.cildRipple, 0)
-      if (childRipples.length === 0) {
-        return Promise.reject(new Error('가져올 댓글 데이터가 없습니다 !'))
-      }
+      const childRipples = await Ripple.searchChildRipple(topRipples.childRipple, 0)
+      // if (childRipples.length === 0) {
+      //  return Promise.reject(new Error('가져올 댓글 데이터가 없습니다 !'))
+      // }
 
       return Promise.resolve({ ...data, ripples: childRipples })
     }
@@ -89,7 +93,7 @@ exports.showRipples = (req, res) => {
     res.json({
       success: true,
       message: `'${data.category}' 카테고리의 '${data.title}' 포스트의 댓글 불러오기 성공 !`,
-      value: data.ripples
+      value: data
     })
   }
 
@@ -133,7 +137,6 @@ exports.addRipple = (req, res) => {
   const { topID } = req.query
   const { ripple, password } = req.body
 
-  console.log(urlEncode(category, 'utf8'))
   // Check data.title is exist or not
   const postExistCheck = async data => {
     // Find
@@ -215,10 +218,12 @@ exports.addRipple = (req, res) => {
 
       // add ripple to title
       await Post.rippleRefPush(data.postID, addedRipple.id)
+
+      return Promise.resolve({ ...data, password: '!!!' })
     }
 
     // Child class ripple
-    if (data.topOrChild === 'child') {
+    if (data.topOrChild === 'child' && data.topID !== undefined) {
       // Check data.topID is ObjectID
       const topIDValidCheck = await Ripple.checkObjectID(data.topID)
       if (topIDValidCheck === false) {
@@ -227,6 +232,14 @@ exports.addRipple = (req, res) => {
 
       // Check parentRipple data === add Ripple data
       const parentRipple = await Ripple.searchOneRippleByID(data.topID, 0)
+      if (parentRipple === null) {
+        return Promise.reject(new Error('대댓글을 달아야 할 댓글이 존재하지 않습니다 !'))
+      }
+      // Check founded parentRipple is top or not
+      if (parentRipple.top !== true) {
+        return Promise.reject(new Error('대댓글에 대댓글을 다는 것은 불가능 합니다 !'))
+      }
+      // Check categoryID & postID is same with childripple value
       if (
         parentRipple.categoryID.toString() !== data.categoryID.toString() &&
         parentRipple.postID.toString() !== data.postID.toString()
@@ -237,9 +250,11 @@ exports.addRipple = (req, res) => {
       // Create Ripple
       const addedRipple = await Ripple.createRipple(data.categoryID, data.postID, data.writer, data.ripple, data.password, false)
       await Ripple.rippleRefPush(data.topID, addedRipple.id)
+
+      return Promise.resolve({ ...data, password: '!!!', topData: parentRipple })
     }
 
-    return Promise.resolve({ ...data, password: '!!!' })
+    return Promise.reject(new Error('잘못된 요청입니다 !'))
   }
 
   // Respond to client
