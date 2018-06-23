@@ -53,7 +53,7 @@ Ripple.statics.searchTopRipple = function (categoryID, postID, passwordShow) {
 // childRippleArray: string[]
 Ripple.statics.searchChildRipple = function (childRippleArray, passwordShow) {
   // Return founded ripple data
-  return this.find({ _id: { $all: childRippleArray } })
+  return this.find({ _id: { $in: childRippleArray }, top: false })
     .select({ password: passwordShow })
     .sort({ date: -1 })
     .exec()
