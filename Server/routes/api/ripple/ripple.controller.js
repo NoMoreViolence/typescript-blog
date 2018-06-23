@@ -3,19 +3,21 @@ const Post = require('./../../../models/Post')
 const Ripple = require('./../../../models/Ripple')
 
 const crypto = require('crypto')
+const urlEncode = require('urlencode')
 
 /*
-    GET /api/:category/:title/ripple/all/all
+    GET /api/:category/:title/ripples/:toporchild?topID='value'
     {}
 */
 // Show all ripple of /:category/:title
-exports.showAllRippleInSelectTitle = (req, res) => {
-  const { category, title } = req.params
+exports.showRipples = (req, res) => {
+  const { category, title, toporchild } = req.params
+  const { topID } = req.query
+
+  console.log(category)
 
   // Find Post & Check post is exist or not
   const postExistCheck = async data => {
-    console.log(data.category)
-    console.log('clear')
     // Find post
     const post = await Post.findPost(data.category, data.title)
 
@@ -28,7 +30,6 @@ exports.showAllRippleInSelectTitle = (req, res) => {
 
   // Check category exist or not
   const postCategoryExistCheck = async data => {
-    console.log('clear')
     // Check post has category or not
     if (data.post.category !== null) {
       return Promise.resolve({ ...data, categoryID: data.post.category.id })
@@ -43,12 +44,44 @@ exports.showAllRippleInSelectTitle = (req, res) => {
     return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
   }
 
-  // Find ripple
-  const topRippleBring = async data => {
-    console.log('clear')
-    const ripples = await Ripple.searchTopRipple(data.categoryID, data.postID, 0)
+  // Find Ripple
+  const topOrChildBring = async data => {
+    // Top Ripple
+    if (data.topOrChild === 'top') {
+      const ripples = await Ripple.searchTopRipple(data.categoryID, data.postID, 0)
+      return Promise.resolve({ ...data, ripples })
+    }
 
-    return Promise.resolve({ ...data, ripples })
+    // Child Ripple
+    if (data.topOrChild === 'child' && data.topID !== undefined) {
+      // Check data.topID is ObjectID
+      const topIDValidCheck = await Ripple.checkObjectID(data.topID)
+      if (topIDValidCheck === false) {
+        return Promise.reject(new Error('댓글의 ID 형식이 올바르지 않습니다 !'))
+      }
+
+      // Find Top Ripple
+      // Top ripple is exist or not
+      const topRipples = await Ripple.searchOneRippleByID(data.topID, 0)
+      if (topRipples === null) {
+        return Promise.reject(new Error('찾고자 하는 대댓글의 댓글이 존재하지 않습니다 !'))
+      }
+      // Check founded Top Ripple is top or not
+      if (topRipples.top !== true) {
+        return Promise.reject(new Error('대댓글의 대댓글은 존재하지 않습니다 !'))
+      }
+
+      // Find Child Ripple
+      // Child ripple is exist or not
+      const childRipples = await Ripple.searchChildRipple(topRipples.cildRipple, 0)
+      if (childRipples.length === 0) {
+        return Promise.reject(new Error('가져올 댓글 데이터가 없습니다 !'))
+      }
+
+      return Promise.resolve({ ...data, ripples: childRipples })
+    }
+
+    return Promise.reject(new Error('잘못된 요청입니다 !'))
   }
 
   // Respond to client
@@ -75,125 +108,36 @@ exports.showAllRippleInSelectTitle = (req, res) => {
     title: title.trim(),
     categoryID: '',
     postID: '',
-    ripples: []
+    ripples: [],
+    topOrChild: toporchild,
+    topID
   })
     .then(postCategoryExistCheck)
-    .then(topRippleBring)
+    .then(topOrChildBring)
     .then(respondToClient)
     .catch(onError)
 }
 
 /*
-    GET /api/:category/:title/:writer/all
-    {}
-*/
-exports.showAllRipple = (req, res) => {
-  const { category, title, writer } = req.params
-}
-
-/*
-    GET /api/:category/:title/:writer
-    {}
-*/
-// Show ripple
-exports.showRipple = (req, res) => {
-  const { category, title, writer } = req.params
-
-  // Find ripple
-  const writerExistCheck = async data => {
-    const ripple = await Ripple.searchOneRipple(data.category, data.title, data.writer, 0)
-
-    if (ripple !== null) {
-      return Promise.resolve({ ...data, ripple })
-    }
-
-    return Promise.reject(new Error(`'${data.writer}' 가 쓴 댓글을 찾을 수 없습니다 !`))
-  }
-
-  // Check data.ripple.category is exist or not
-  const categoryExistCheck = async data => {
-    // Check the ripple have category or not
-    if (data.ripple.category !== null) {
-      return Promise.resolve(data)
-    }
-
-    // Find category
-    const paramsCategory = await Category.findSameCategory(data.category)
-    // If category is exist
-    if (paramsCategory !== null) {
-      return Promise.reject(new Error(`'${data.category}' 카테고리 에는 '${data.writer}' 가 쓴 댓글이 없습니다 !`))
-    }
-
-    // Throw error
-    return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
-  }
-
-  // Check data.ripple.post is exist or not
-  const postExistCheck = async data => {
-    // Check the ripple have post or not
-    if (data.ripple.post !== null) {
-      return Promise.resolve(data)
-    }
-
-    // Find post
-    const paramsTitle = await Post.findPost(data.category, data.title)
-    if (paramsTitle !== null) {
-      return Promise.reject(new Error(`'${data.title}' 포스트에는 '${data.writer}' 가 쓴 댓글이 없습니다 !`))
-    }
-
-    // Throw error
-    return Promise.reject(new Error(`'${data.title}' 포스트는 존재하지 않습니다 !`))
-  }
-
-  //  Respond to client
-  const respondToClient = data => {
-    res.json({
-      success: true,
-      message: `'${data.writer}' 댓글 불러오기 성공`,
-      value: data
-    })
-  }
-
-  // Error handler
-  const onError = err => {
-    res.status(409).json({
-      success: false,
-      message: err.message,
-      value: []
-    })
-  }
-
-  // Promise
-  writerExistCheck({
-    category: category.trim(),
-    title: title.trim(),
-    writer: writer.trim(),
-    ripple: null
-  })
-    .then(categoryExistCheck)
-    .then(postExistCheck)
-    .then(respondToClient)
-    .catch(onError)
-}
-
-/*
-    POST /api/:category/:title/:writer
+    POST /api/:category/:title/:writer/:toporchild?topID='value'
     {
       ripple: string,
-      password: string,
-      parentID: ObjectID
+      password: string
     }
 */
 exports.addRipple = (req, res) => {
-  // Params & Category
-  const { category, title, writer } = req.params
-  const { ripple, password, parentID } = req.body
+  // Params & query & body
+  const {
+    category, title, writer, toporchild
+  } = req.params
+  const { topID } = req.query
+  const { ripple, password } = req.body
 
+  console.log(urlEncode(category, 'utf8'))
   // Check data.title is exist or not
   const postExistCheck = async data => {
     // Find
     const postData = await Post.findPost(data.category, data.title)
-
     // Cehck postData is exist or not
     if (postData !== null) {
       return Promise.resolve({ ...data, postData, postID: postData.id })
@@ -221,34 +165,35 @@ exports.addRipple = (req, res) => {
   // Check params.writer.toLowerCase() is ('admin' or 'nomoreviolence) or not
   const writerAdminCheck = data => {
     if (data.writer.toLowerCase() !== ('admin' || 'nomoreviolence')) {
-      return Promise.resolve({ ...data, admin: false })
+      return Promise.resolve(data)
     }
-    // Throw error
     return Promise.reject(new Error('관리자 이름은 댓글 작성자 이름이 될 수 없습니다 !'))
   }
   // Check body.ripple exist or not
   const rippleExistCheck = data => {
-    // Check ripple exist or not
-    if (data.ripple !== undefined) {
-      // Check with trim()
-      if (data.ripple.trim() !== '') {
-        return Promise.resolve({ ...data, ripple: data.ripple.trim() })
-      }
+    // Check body.ripple exist or not
+    if (data.ripple === undefined) {
       return Promise.reject(new Error('추가할 댓글이 없습니다 !'))
     }
-    return Promise.reject(new Error('추가할 댓글이 없습니다 !'))
-  }
-  // Check body.password is exist or not
-  const passwordExistCheck = data => {
-    // Check password exist or not
-    if (data.password !== undefined) {
-      // Check with trim()
-      if (data.password.trim() !== '') {
-        return Promise.resolve({ ...data, password: data.password.trim() })
-      }
-      return Promise.reject(new Error('댓글 비밀번호가 존재하지 않습니다 !'))
+    // Check body.ripple.trim().length() is 0 or not
+    if (data.ripple.trim() === '') {
+      return Promise.reject(new Error('추가할 댓글이 없습니다 ! '))
     }
-    return Promise.reject(new Error('댓글 비빌번호가 존재하지 않습니다 !'))
+
+    return Promise.resolve({ ...data, ripple: data.ripple.trim() })
+  }
+  // Check body.passowrd is exist or not
+  const passwordExistCheck = data => {
+    // Check body.password exist or not
+    if (data.password === undefined) {
+      return Promise.reject(new Error('추가할 댓글이 없습니다 !'))
+    }
+    // Check body.password.trim().length() is 0 or not
+    if (data.password.trim() === '') {
+      return Promise.reject(new Error('추가할 댓글이 없습니다 ! '))
+    }
+
+    return Promise.resolve({ ...data, password: data.password.trim() })
   }
   // Encrypt data.password
   const passwordEncryption = async data => {
@@ -261,56 +206,37 @@ exports.addRipple = (req, res) => {
     return Promise.resolve({ ...data, password: encryptedPassword })
   }
 
-  // Check data.parentID
-  const parentIDCheck = async data => {
-    if (data.parentID !== undefined) {
-      // Find parentRipple
-      const parentRippleData = await Ripple.searchOneRippleByID(data.parentID)
-
-      return parentRippleData !== null
-        ? Promise.resolve({ ...data, parentRippleData })
-        : Promise.reject(new Error('대댓글을 할 댓글이 존재하지 않습니다 !'))
-    }
-
-    console.log('awefawef')
-    return Promise.resolve(data)
-  }
-  // Check data.parentRippleData
-  const parentRippleCheck = async data => {
-    if (data.parentRippleData !== null) {
-      if (
-        data.parentRippleData.categoryID.toString() === data.categoryID.toString() &&
-        data.parentRippleData.postID.toString() === data.postID.toString()
-      ) {
-        return Promise.resolve({ ...data, parentRippleID: data.parentRippleData.id, top: false })
-      }
-
-      return Promise.reject(new Error('대댓글을 달려고 하는 댓글의 카테고리와 포스트가 일치하지 않습니다 !'))
-    }
-
-    return Promise.resolve({ ...data, top: true })
-  }
-
   // Ripple create
   const rippleCreate = async data => {
     // Top class ripple
-    if (data.top === true) {
-      console.log('TOP')
+    if (data.topOrChild === 'top') {
       // Create ripple
-      const addedRipple = await Ripple.createRipple(data.categoryID, data.postID, data.writer, data.ripple, data.password, data.top)
+      const addedRipple = await Ripple.createRipple(data.categoryID, data.postID, data.writer, data.ripple, data.password, true)
 
-      console.log(data.postID)
       // add ripple to title
       await Post.rippleRefPush(data.postID, addedRipple.id)
     }
 
     // Child class ripple
-    if (data.top === false) {
-      console.log('CHILD')
-      // Create Ripple
-      const addedRipple = await Ripple.createRipple(data.categoryID, data.postID, data.writer, data.ripple, data.password, data.top)
+    if (data.topOrChild === 'child') {
+      // Check data.topID is ObjectID
+      const topIDValidCheck = await Ripple.checkObjectID(data.topID)
+      if (topIDValidCheck === false) {
+        return Promise.reject(new Error('댓글의 데이터가 올바르지 않습니다 !'))
+      }
 
-      await Ripple.rippleRefPush(data.parentRippleID, addedRipple.id)
+      // Check parentRipple data === add Ripple data
+      const parentRipple = await Ripple.searchOneRippleByID(data.topID, 0)
+      if (
+        parentRipple.categoryID.toString() !== data.categoryID.toString() &&
+        parentRipple.postID.toString() !== data.postID.toString()
+      ) {
+        return Promise.reject(new Error('대댓글을 달려고 하는 댓글의 카테고리와 포스트가 일치하지 않습니다 !'))
+      }
+
+      // Create Ripple
+      const addedRipple = await Ripple.createRipple(data.categoryID, data.postID, data.writer, data.ripple, data.password, false)
+      await Ripple.rippleRefPush(data.topID, addedRipple.id)
     }
 
     return Promise.resolve({ ...data, password: '!!!' })
@@ -336,27 +262,23 @@ exports.addRipple = (req, res) => {
 
   // Promise
   postExistCheck({
-    admin: false,
     category: category.trim(),
     title: title.trim(),
     writer: writer.trim(),
     ripple,
     password,
-    parentID,
     postData: null,
     postID: null,
     categoryID: null,
-    parentRippleData: null,
-    parentRippleID: null,
-    top: null
+    topOrChild: toporchild,
+    topData: null,
+    topID
   })
     .then(categoryExistCheck)
     .then(writerAdminCheck)
     .then(rippleExistCheck)
     .then(passwordExistCheck)
     .then(passwordEncryption)
-    .then(parentIDCheck)
-    .then(parentRippleCheck)
     .then(rippleCreate)
     .then(respondToClient)
     .catch(onError)

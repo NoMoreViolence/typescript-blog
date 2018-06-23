@@ -18,17 +18,44 @@ const Ripple = new Schema({
 // Search
 // TODO: Search
 // rippleID: ObjectID
-Ripple.statics.searchOneRippleByID = function (rippleID) {
+Ripple.statics.searchOneRippleByID = function (rippleID, passwordShow) {
   // return founded
-  return this.findOne({ _id: rippleID }).exec()
+  return this.findOne({ _id: rippleID })
+    .select({ password: passwordShow })
+    .exec()
 }
-// category: string, title: string, writer: string
-Ripple.statics.searchOneRipple = function (category, title, writer) {
-  // return founded post data except password
+// category: string, title: string, writer: string, passwordShow: number
+Ripple.statics.searchOneRipple = function (category, title, writer, passwordShow) {
+  // return founded post data
   return this.findOne({ writer })
     .populate({ path: 'category', match: { category } })
     .populate({ path: 'posts', match: { title } })
-    .select({ password: 0 })
+    .select({ password: passwordShow })
+    .exec()
+}
+// category: string, title: string, writer: string, passwordShow: number
+Ripple.statics.searchRipple = function (category, title, writer, passwordShow) {
+  // return founded post data
+  return this.find({ writer })
+    .populate({ path: 'category', match: { category } })
+    .populate({ path: 'posts', match: { title } })
+    .select({ password: passwordShow })
+    .exec()
+}
+// categoryID: ObjectID, postID: ObjectID, passwordShow: number
+Ripple.statics.searchTopRipple = function (categoryID, postID, passwordShow) {
+  // return founded ripple data
+  return this.find({ categoryID, postID, top: true })
+    .select({ password: passwordShow })
+    .sort({ date: -1 })
+    .exec()
+}
+// childRippleArray: string[]
+Ripple.statics.searchChildRipple = function (childRippleArray, passwordShow) {
+  // Return founded ripple data
+  return this.find({ _id: { $all: childRippleArray } })
+    .select({ password: passwordShow })
+    .sort({ date: -1 })
     .exec()
 }
 // Search
@@ -68,6 +95,15 @@ Ripple.statics.removeRippleAdmin = function () {}
 // Add ref in top class
 Ripple.statics.rippleRefPush = function (parentID, childRippleID) {
   return this.findByIdAndUpdate(parentID, { $push: { childRipple: childRippleID } }).exec()
+}
+
+// TODO: valid check
+// ObjectID: string
+Ripple.statics.checkObjectID = function (ObjectID) {
+  if (mongoose.Types.ObjectId.isValid(ObjectID) === true) {
+    return true
+  }
+  return false
 }
 
 module.exports = mongoose.model('ripple', Ripple)
