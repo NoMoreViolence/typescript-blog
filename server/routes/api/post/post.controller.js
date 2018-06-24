@@ -2,11 +2,12 @@ const Post = require('./../../../models/Post')
 const Category = require('./../../../models/Category')
 
 /*
-    GET /api/:category/:title
+    GET /api/:category/:title?type='value'
     {}
 */
 // Bring the data of :title
 exports.postShow = (req, res) => {
+  console.log(req.params)
   const { category, title } = req.params
   const { type } = req.query
 
@@ -42,7 +43,7 @@ exports.postShow = (req, res) => {
   const respondToClient = data => {
     res.json({
       success: true,
-      message: '',
+      message: `'${data.category}' 의 '${data.title}' 포스트 불러오기 성공 !`,
       value: data
     })
   }
@@ -114,18 +115,26 @@ exports.postCreate = (req, res) => {
 
   // Check subTitle data exist or not
   const subTitleExistCheck = data => {
-    if (data.subTitle !== '') {
-      return Promise.resolve(data)
+    if (data.subTitle === undefined) {
+      return Promise.reject(new Error('추가할 포스트의 부제목이 존재하지 않습니다 !'))
     }
-    return Promise.reject(new Error('추가할 포스트의 부제목이 존재하지 않습니다 !'))
+    if (data.subTitle.trim() === '') {
+      return Promise.reject(new Error('추가할 포스트의 부제목이 존재하지 않습니다 !'))
+    }
+
+    return Promise.resolve({ ...data, subTitle: data.subTitle.trim() })
   }
 
   // Check mainText data exsit or not
   const mainTextExistCheck = data => {
-    if (data.mainText !== '') {
-      return Promise.resolve(data)
+    if (data.mainText === undefined) {
+      return Promise.reject(new Error('추가할 포스트의 본문이 존재하지 않습니다 !'))
     }
-    return Promise.reject(new Error('추가할 포스트의 본문이 존재하지 않습니다 !'))
+    if (data.mainText.trim() === '') {
+      return Promise.reject(new Error('추가할 포스트의 본문이 존재하지 않습니다 !'))
+    }
+
+    return Promise.resolve({ ...data, mainText: data.mainText.trim() })
   }
 
   // Create post method
@@ -163,8 +172,8 @@ exports.postCreate = (req, res) => {
   categoryExistCheck({
     category: category.trim(),
     title: title.trim(),
-    subTitle: subTitle.trim(),
-    mainText: mainText.trim(),
+    subTitle,
+    mainText,
     CategoryID: null,
     PostID: null
   })
@@ -226,6 +235,29 @@ exports.postChange = async (req, res) => {
     }
 
     return Promise.reject(new Error(`'${data.oldCategory}' 는 존재하지 않는 카테고리 입니다 !`))
+  }
+
+  // Check new values is exist or not
+  const bodyValueExistCheck = data => {
+    const newCategory = data.newCategory !== undefined
+    const newTitle = data.newTitle !== undefined
+    const newSubTitle = data.newSubTitle !== undefined
+    const newMainText = data.newMainText !== undefined
+
+    if (newCategory && newTitle && newSubTitle && newMainText) {
+      return Promise.reject(new Error('포스트 변경에 필요한 값이 불충분 합니다 !'))
+    }
+
+    if (
+      data.newCategory.trim() === '' &&
+      data.newTitle.trim() === '' &&
+      data.newSubTitle.trim() === '' &&
+      data.newMainText.trim() === ''
+    ) {
+      return Promise.reject(new Error('포스트 변경에 필요한 값이 불충분 합니다 !'))
+    }
+
+    return Promise.resolve(data)
   }
 
   // Check newTitle is exist or not
@@ -313,16 +345,17 @@ exports.postChange = async (req, res) => {
   oldTitleExistCheck({
     oldCategory: category.trim(),
     oldTitle: title.trim(),
-    newCategory: changeCategory.trim(),
-    newTitle: changeTitle.trim(),
-    newSubTitle: changeSubTitle.trim(),
-    newMainText: changeMainText.trim(),
+    newCategory: changeCategory,
+    newTitle: changeTitle,
+    newSubTitle: changeSubTitle,
+    newMainText: changeMainText,
     oldCategoryID: null,
     newCategoryID: null,
     postID: null,
     postData: null
   })
     .then(oldCategoryExistCheck)
+    .then(bodyValueExistCheck)
     .then(newTitleExistCheck)
     .then(newTitleAdminCheck)
     .then(newCategoryExistCheck)

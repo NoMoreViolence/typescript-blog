@@ -36,7 +36,7 @@ exports.showTitleAndSubTitle = (req, res) => {
   // Check the category data is null or not
   const checkBringedCategoryData = data => {
     // Select
-    if (data.type === 'Select' && data.category.length !== 0) {
+    if (data.type === 'Select' && data.category) {
       return Promise.resolve(data)
     }
 
@@ -165,7 +165,6 @@ exports.categoryChange = (req, res) => {
   const oldCategoryExistCheck = async data => {
     // Find category
     const dataCategory = await Category.findSameCategory(data.category)
-
     // Check data is exist or not
     if (dataCategory !== null) {
       return Promise.resolve(data)
@@ -175,10 +174,13 @@ exports.categoryChange = (req, res) => {
 
   // Check data.chnageCategory is not null
   const newCategoryNullCheck = data => {
-    if (data.changeCategory !== '') {
-      return Promise.resolve(data)
+    if (data.changeCategory === undefined) {
+      return Promise.reject(new Error('새로운 카테고리 값이 존재하지 않습니다 !'))
     }
-    return Promise.reject(new Error('새로운 카테고리 값이 존재하지 않습니다 !'))
+    if (data.changeCategory.trim() === '') {
+      return Promise.reject(new Error('새로운 카테고리 값이 존재하지 않습니다 !'))
+    }
+    return Promise.resolve({ ...data, changeCategory: data.changeCategory.trim() })
   }
 
   // Check data.changeCategory.toLowerCase() is not 'admin'
@@ -237,7 +239,7 @@ exports.categoryChange = (req, res) => {
   }
 
   // Promise
-  oldCategoryExistCheck({ category: category.trim(), changeCategory: changeCategory.trim() })
+  oldCategoryExistCheck({ category: category.trim(), changeCategory })
     .then(newCategoryNullCheck)
     .then(newCategoryAdminCheck)
     .then(bothCategorySameCheck)
@@ -248,7 +250,7 @@ exports.categoryChange = (req, res) => {
 }
 
 /*
-    DELETE /api/:category
+    DELETE /api/:category?doubleCheck='value'
     {
 
     },
