@@ -43,12 +43,6 @@ class MarkDownEditor extends React.Component<Props, State> {
     }
   }
 
-  public componentDidMount() {
-    this.setState({
-      mainText: this.props.MainText
-    })
-  }
-
   // Text cursor
   public componentDidUpdate(prevProps: Props) {
     // Error handler
@@ -91,7 +85,7 @@ class MarkDownEditor extends React.Component<Props, State> {
         />
         <CodeMirror
           className="code-editor"
-          value={this.state.mainText}
+          value={this.props.MainText}
           options={{
             mode: 'markdown',
             theme: 'monokai',
@@ -100,15 +94,6 @@ class MarkDownEditor extends React.Component<Props, State> {
           }}
           onBeforeChange={(editor, data, value) => {
             this.props.changeMainText(value)
-            this.setState({
-              mainText: value
-            })
-          }}
-          onChange={(editor, data, value) => {
-            this.props.changeMainText(value)
-            this.setState({
-              mainText: value
-            })
           }}
         />
       </React.Fragment>

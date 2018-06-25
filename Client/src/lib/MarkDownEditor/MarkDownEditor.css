@@ -8,6 +8,7 @@
   color: white;
   font-weight: 500;
 }
+
 .editor-sub-title {
   background: gray;
   border: none;
@@ -17,22 +18,26 @@
   color: white;
   font-weight: 500;
 }
+
 .editor-title::-webkit-input-placeholder {
   color: rgb(66, 62, 62);
 }
+
 .editor-sub-title::-webkit-input-placeholder {
   color: rgb(66, 62, 62);
 }
 
 /* Code editor*/
 .code-editor {
-  flex: 1; 
+  height: 80vh;
+  flex: 1;
   background: gray;
   display: flex;
   flex-direction: column;
 }
+
 .CodeMirror {
-  font-size: 1rem;
+  font-size: 1.1rem;
   flex: 1;
   font-family: 'D2 Coding';
 }

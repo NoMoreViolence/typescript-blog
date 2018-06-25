@@ -1,3 +1,6 @@
+.markdown-render {
+}
+
 .markdown-render blockquote {
   border-left: 4px solid #007bff;
   padding: 1rem;
@@ -5,13 +8,24 @@
   margin-left: 0;
   margin-right: 0;
 }
+
 .markdown-render blockquote p {
   margin: 0;
 }
-.markdown-render h1, .markdown-render h2, .markdown-render h3, .markdown-render h4 {
+
+.markdown-render h1,
+.markdown-render h2,
+.markdown-render h3,
+.markdown-render h4 {
   font-weight: 500;
 }
-.markdown-render h1 code, .markdown-render h2 code, .markdown-render h3 code, .markdown-render h4 code, .markdown-render h5 code, .markdown-render p code {
+
+.markdown-render h1 code,
+.markdown-render h2 code,
+.markdown-render h3 code,
+.markdown-render h4 code,
+.markdown-render h5 code,
+.markdown-render p code {
   font-family: 'D2 Coding';
   color: #383e41;
   font-weight: 300;
@@ -20,28 +34,39 @@
   border: 1px solid #f3f6fa;
   border-radius: 2px;
 }
-.markdown-render code[class*="language-"], .markdown-render pre[class*="language-"] {
+
+.markdown-render code[class*="language-"],
+.markdown-render pre[class*="language-"] {
   font-family: 'D2 Coding';
 }
+
 .markdown-render a {
   color: #007bff;
 }
+
 .markdown-render a:hover {
   color: #007bff;
   text-decoration: underline;
 }
+
 .markdown-render table {
   border-collapse: collapse;
   width: 100%;
 }
-.markdown-render table, .markdown-render th, .markdown-render td {
+
+.markdown-render table,
+.markdown-render th,
+.markdown-render td {
   border: 1px solid gray;
 }
-.markdown-render th, .markdown-render td {
+
+.markdown-render th,
+.markdown-render td {
   font-size: 0.9rem;
   padding: 0.25rem;
   text-align: left;
 }
+
 .markdown-render img {
   max-width: 100%;
   margin: 0 auto;
