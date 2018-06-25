@@ -167,6 +167,8 @@ export interface ShowPostState {
   subTitle: string
   mainText: string
   date: number
+  postID: string
+  categoryID: string
 }
 // state of add Post
 export interface AddPostState {
@@ -217,7 +219,7 @@ export interface PostState {
 }
 const initialState: PostState = {
   load: { pending: false, error: false },
-  show: { category: '', title: '', subTitle: '', mainText: '', date: 0 },
+  show: { category: '', title: '', subTitle: '', mainText: '', date: 0, postID: '', categoryID: '' },
   add: {
     pending: false,
     error: false,
@@ -305,6 +307,8 @@ const reducer = handleActions<PostState, any>(
           draft.show.subTitle = action.payload.data.value.post.subTitle
           draft.show.mainText = action.payload.data.value.post.mainText
           draft.show.date = action.payload.data.value.post.date
+          draft.show.postID = action.payload.data.value.post._id
+          draft.show.categoryID = action.payload.data.value.post.category._id
         })
       } else if (action.payload.data.value.type * 1 === 1) {
         // call info for change Post
@@ -513,6 +517,8 @@ const reducer = handleActions<PostState, any>(
         draft.show.subTitle = ''
         draft.show.mainText = ''
         draft.show.date = Date.now()
+        draft.show.postID = ''
+        draft.show.categoryID = ''
 
         // add state
         draft.add.category = '카테고리 선택'
