@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 
+import './PostAdd.css'
 import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
@@ -25,10 +26,10 @@ interface Props {
 }
 
 interface State {
-  leftPercentage: number
   postAddMessage: string
   showNone: boolean
   dropdown: boolean
+  editorOrPreview: boolean
 }
 
 interface PostAddMethodInterface {
@@ -49,7 +50,7 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     // for mde container's type
     editorType: 'add',
     resource: 'Post',
-    leftPercentage: 0.5,
+    editorOrPreview: true,
     postAddMessage: '포스트 추가 하기 !',
     showNone: false,
     dropdown: false
@@ -60,7 +61,6 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     if (this.state.showNone === false) {
       this.setState({
         showNone: !this.state.showNone,
-        leftPercentage: 0.5,
         postAddMessage: '포스트 추가 접기 !'
       })
     } else {
@@ -83,6 +83,12 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
       dropdown: false
     })
     this.props.changeCategory(e.currentTarget.innerText)
+  }
+
+  public changeEditAndPreview = () => {
+    this.setState({
+      editorOrPreview: !this.state.editorOrPreview
+    })
   }
 
   // Submit => Post Add
@@ -193,40 +199,9 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
       .catch(onError)
   }
 
-  // handle size between EditorView, PreVeiw
-  // separator click, and mouse move
-  public handleSeparatorMouseMove = (e: MouseEvent): void => {
-    this.setState({
-      leftPercentage: e.clientX / window.innerWidth
-    })
-  }
-  // hand off
-  public handleSeparatorMouseUp = (e: MouseEvent): void => {
-    document.body.removeEventListener('mousemove', this.handleSeparatorMouseMove)
-    window.removeEventListener('mouseup', this.handleSeparatorMouseUp)
-  }
-  // separator click
-  public handleSeparatorMouseDown = (e: React.MouseEvent<any>): void => {
-    document.body.addEventListener('mousemove', this.handleSeparatorMouseMove)
-    window.addEventListener('mouseup', this.handleSeparatorMouseUp)
-  }
-  // handle size between EditorView, PreView
-
   public render(): JSX.Element {
-    // handle size bar
-    const { leftPercentage } = this.state
-    const leftStyle = {
-      flex: leftPercentage
-    }
-    const rightStyle = {
-      flex: 1 - leftPercentage
-    }
-    const separatorStyle = {
-      left: `${leftPercentage * 100}%`
-    }
-
     // show current category
-    const CurrentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] => {
+    const currentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         return (
           <button key={i} onClick={this.handleCategorySelectChange} className="primary">
@@ -236,63 +211,75 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
       })
     }
 
-    return (
-      <div className="editor-template">
-        <div className="layout-container">
-          <Button block={true} outline={true} color="primary" onClick={this.handlePostAddShowNoneToogle}>
-            {this.state.postAddMessage}
-          </Button>
+    // Show editor, or preview
+    // data: this.state.editorOrPreview
+    const editorOrPreview = (data: boolean): JSX.Element => {
+      if (data === true) {
+        return (
+          <div className="admin-post-editor-container">
+            <div className="admin-post-editor">
+              <MarkdownEditorContainer type={this.state.editorType} resource={this.state.resource} />
+            </div>
+          </div>
+        )
+      }
+
+      return (
+        <div className="admin-post-preview-container">
+          <div className="admin-post-preview">
+            <h1 className="admin-post-preview-title">{this.props.add.title}</h1>
+            <h3 className="admin-post-preview-sub-title">{this.props.add.subTitle}</h3>
+            <div className="admin-post-preview-main-text">
+              <MarkdownRendererContainer type={this.state.editorType} />
+            </div>
+          </div>
         </div>
+      )
+    }
+
+    return (
+      <div className="admin-post-container">
+        {/* Button that post add start or not */}
+        <Button block={true} outline={true} color="primary" onClick={this.handlePostAddShowNoneToogle}>
+          {this.state.postAddMessage}
+        </Button>
+
+        {/* This part show when activate post add button */}
         {this.state.showNone && (
           <React.Fragment>
-            <div className="editor-and-viewer">
-              <div className="editor" style={leftStyle}>
-                <div className="editor-category">
-                  <button className="primary" onClick={this.handleCategorySelectShowNoneToogle}>
-                    {this.props.add.category}
-                  </button>
-                  {this.state.dropdown && (
-                    <div className="editor-category-child-container">
-                      <div className="editor-category-child">
-                        {this.props.add.category !== '카테고리 선택' && (
-                          <button onClick={this.handleCategorySelectChange} className="primary">
-                            카테고리 선택
-                          </button>
-                        )}
-                        {CurrentCategoryChange(this.props.category)}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="editor-inside">
-                  <MarkdownEditorContainer type={this.state.editorType} resource={this.state.resource} />
-                </div>
-                {/* */}
-                {/* only can see mobile view */}
-                <div className="editor-submit-mobile">
-                  <button className="primary" onClick={this.handleSubmit}>
-                    포스트 생성 하기 !
-                  </button>
-                </div>
-                {/* only can see mobile view */}
-                {/* */}
+            <div className="admin-post-editor-and-preview">
+              <div className="admin-post-view-change-button">
+                <Button color="primary" onClick={this.changeEditAndPreview}>
+                  에디터 / 프리뷰 화면 전환
+                </Button>
               </div>
-              <div className="preview" style={rightStyle}>
-                <div className="preview-submit">
-                  <button className="primary" onClick={this.handleSubmit}>
-                    포스트 생성 하기 !
-                  </button>
-                </div>
 
-                <div className="preview-inside">
-                  <h1 className="preview-title">{this.props.add.title}</h1>
-                  <h3 className="preview-sub-title">{this.props.add.subTitle}</h3>
-                  <div>
-                    <MarkdownRendererContainer type={this.state.editorType} />
+              <div className="admin-post-select-container">
+                <button className="primary" onClick={this.handleCategorySelectShowNoneToogle}>
+                  {this.props.add.category}
+                </button>
+                {this.state.dropdown && (
+                  <div className="admin-post-select-child-container">
+                    <div className="admin-post-select-child">
+                      {this.props.add.category !== '카테고리 선택' && (
+                        <button onClick={this.handleCategorySelectChange} className="primary">
+                          카테고리 선택
+                        </button>
+                      )}
+                      {currentCategoryChange(this.props.category)}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
-              <div className="separator" style={separatorStyle} onMouseDown={this.handleSeparatorMouseDown} />
+
+              {/* Edior And Preview */}
+              {editorOrPreview(this.state.editorOrPreview)}
+
+              <div className="admin-post-submit">
+                <button className="primary" onClick={this.handleSubmit}>
+                  포스트 생성 하기 !
+                </button>
+              </div>
             </div>
           </React.Fragment>
         )}

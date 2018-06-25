@@ -1,0 +1,84 @@
+.admin-post-container {
+  width: 100%;
+  padding-top: 5%;
+}
+
+.admin-post-editor-and-preview {
+  width: 100%;
+  padding-top: 2.5%;
+}
+
+.admin-post-view-change-button {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.admin-post-select-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 2.5%;
+}
+
+.admin-post-select-child-container {
+  width: 100%;
+  height: 150px;
+  overflow-y: auto;
+}
+
+.admin-post-select-child {
+  width: 100%;
+}
+
+.admin-post-select-child > button {
+  width: 100%;
+}
+
+.admin-post-editor-container {
+  width: 100%;
+}
+
+.admin-post-editor {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-post-preview-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-post-preview {
+  flex: 1;
+  padding: 2rem;
+  font-size: 1.125rem;
+}
+
+.admin-post-preview-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid gray;
+}
+
+.admin-post-preview-sub-title {
+  font-size: 1.3rem;
+  font-weight: 200;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+}
+
+.admin-post-preview-main-text {
+  height: 80vh;
+  overflow: auto;
+}
+
+.admin-post-submit {
+  width: 100%;
+  padding-bottom: 5%;
+}
+
+.admin-post-submit > button {
+  width: 100%;
+}
