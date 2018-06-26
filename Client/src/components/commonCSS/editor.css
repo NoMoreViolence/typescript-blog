@@ -1,144 +1,95 @@
 @import url("https://cdn.jsdelivr.net/gh/velopert/font-d2coding@1.2.1/d2coding.css");
 
-.editor-template {
-  margin-top: 5%;
-}
-
-.editor-and-viewer {
-  height: calc(100vh - 4rem);
-  display: flex;
-  position: relative;
+.admin-post-container {
+  width: 100%;
   padding-top: 5%;
 }
 
-.editor {
+.admin-post-editor-and-preview {
+  width: 100%;
+  padding-top: 2.5%;
+}
+
+.admin-post-view-change-button {
+}
+
+.admin-post-select-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  overflow: auto;
+  padding-top: 2.5%;
 }
 
-.editor-category {
-  display: flex;
-  flex-direction: column;
-  border-color: #aeb87a;
-}
-
-.editor-change-select-part {
+.admin-post-select-category-and-post {
+  width: 100%;
   display: flex;
 }
 
-.editor-change-select-category {
+.admin-post-select {
   flex: 1;
 }
 
-.editor-change-select-category button {
+.admin-post-select > button {
   width: 100%;
 }
 
-.editor-change-select-post {
-  flex: 1;
-}
-
-.editor-change-select-post button {
+.admin-post-select-child-container {
   width: 100%;
-}
-
-.editor-category-child-container {
   height: 150px;
   overflow-y: auto;
 }
 
-.editor-category-child {
-  display: flex;
-  flex-direction: column;
-}
-
-.editor-category-child-button {
+.admin-post-select-child {
   width: 100%;
 }
 
+.admin-post-select-child > button {
+  width: 100%;
+}
 
-/* cover the markdown editor */
-.editor-inside {
-  flex: 1;
+.admin-post-editor-container {
+  width: 100%;
+}
+
+.admin-post-editor {
   display: flex;
   flex-direction: column;
 }
 
-.preview {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: auto;
-}
-
-.preview-submit {
+.admin-post-preview-container {
   display: flex;
   flex-direction: column;
 }
 
-.editor-submit-mobile {
-  display: flex;
-  flex-direction: column;
-}
-
-/* cover the markdown renderer */
-.preview-inside {
+.admin-post-preview {
   flex: 1;
   padding: 2rem;
-  overflow-y: auto;
   font-size: 1.125rem;
 }
 
-.preview-title {
+.admin-post-preview-title {
   font-size: 2.5rem;
   font-weight: 300;
   padding-bottom: 2rem;
   border-bottom: 1px solid gray;
 }
 
-.preview-sub-title {
+.admin-post-preview-sub-title {
   font-size: 1.3rem;
   font-weight: 200;
   padding-top: 0.8rem;
   padding-bottom: 0.8rem;
 }
 
-
-
-/* the separator to handle size that between editor and renderer */
-.separator {
-  width: 1rem;
-  height: 100%;
-  position: absolute;
-  transform: translate(-50%);
-  cursor: col-resize;
+.admin-post-preview-main-text {
+  height: 80vh;
+  overflow: auto;
 }
 
-
-
-/* mobile editor view, unvisible preview */
-@media only screen and (max-width: 768px) {
-  .editor {
-    flex: 1 !important;
-  }
-
-  .separator {
-    display: none;
-  }
-
-  .preview {
-    display: none;
-  }
+.admin-post-submit {
+  width: 100%;
 }
-/* if the width longer than 768px, unvisivle the submit button for mobile */
-@media only screen and (min-width: 769px) {
-  .preview-submit-mobile {
-    display: none;
-  }
 
-  .editor-submit-mobile {
-    display: none;
-  }
+.admin-post-submit > button {
+  width: 100%;
 }

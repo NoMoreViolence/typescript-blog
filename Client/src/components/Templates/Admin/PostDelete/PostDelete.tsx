@@ -1,6 +1,5 @@
 import * as React from 'react'
 
-import './PostDelete.css'
 import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
@@ -59,7 +58,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     selectDropdown: false
   }
 
-  // category delete dropdown
+  // Category delete dropdown
   public handlePostDeleteShowNoneToogle = (): void => {
     if (this.state.showNone === false) {
       this.setState({
@@ -74,37 +73,37 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     }
   }
 
-  // category select & title select dropdown
-  public handleCategoryAndTitleShowNoneToogle = (): void => {
+  // Category select & title select dropdown
+  public handleCategoryAndPostShowNoneToogle = (): void => {
     this.setState({
       selectDropdown: !this.state.selectDropdown
     })
   }
 
-  // change category
+  // Change category
   public handleCategorySelectChange = (e: CTarget): void => {
     this.props.changeCategorySelect(e.currentTarget.innerText)
   }
-  // change title
+  // Change title
   public handlePostSelectChange = (e: CTarget): void => {
     const { changeTitleSelect, loadPost, deleteCategory } = this.props
 
-    // setState
+    // SetState
     this.setState({
       selectDropdown: !this.state.selectDropdown
     })
 
-    // this.props.changeTitleSelect(innerText)
+    // ChangeTitleSelect(innerText)
     const titleSelectChange = (data: ChangeTitleValues): Promise<object> => {
-      // change
+      // Change
       changeTitleSelect(data.title)
-      // return innerText
+      // Return innerText
       return Promise.resolve(data)
     }
 
-    // post load part
+    // Post load part
     const bringPostMightBeDeleted = (data: ChangeTitleValues): void => {
-      // if the innerText Data is not initial value, excute loadPost
+      // If the innerText Data is not initial value, excute loadPost
       if (data.title !== '삭제할 포스트 선택') {
         loadPost({ category: this.props.deleteCategory, title: data.title, type: data.type })
       }
@@ -116,7 +115,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     )
   }
 
-  // submit => post delete
+  // Submit => post delete
   public handleSubmit = (): void => {
     // Props
     const {
@@ -131,7 +130,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
       loadCategory
     } = this.props
 
-    // check user is logined or not
+    // Check user is logined or not
     const userAdminCheck = (data: DeleteDeleteMethodInterface): Promise<object> => {
       if (data.loginLogined === true) {
         return Promise.resolve(data)
@@ -139,23 +138,23 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
       return Promise.reject(new Error('Not_Admin_User'))
     }
 
-    // check category is empty or not
+    // Check category is empty or not
     const categoryCheck = (data: DeleteDeleteMethodInterface): Promise<object> => {
-      if (data.category !== '') {
+      if (data.category !== '카테고리 선택') {
         return Promise.resolve(data)
       }
       return Promise.reject(new Error('No_Data_Category_Select'))
     }
 
-    // check title is empty or not
+    // Check title is empty or not
     const titleCheck = (data: DeleteDeleteMethodInterface): Promise<object> => {
-      if (data.title !== '') {
+      if (data.title !== '삭제할 포스트 선택') {
         return Promise.resolve(data)
       }
       return Promise.reject(new Error('No_Data_Title_Select'))
     }
 
-    // request
+    // Request
     const requestToServer = async (data: DeleteDeleteMethodInterface): Promise<void> => {
       await deletePost({ category: data.category, title: data.title })
         .then((res: any) => {
@@ -164,33 +163,35 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
         .catch((err: any) => {
           toast(err.response.data.message)
 
-          // if user who has wrong login key or doesn't have login key request, throw error
+          // If user who has wrong login key or doesn't have login key request, throw error
           if (err.response.data.type) {
             toast('서비스를 이용하시려면 다시 로그인 해 주세요 !')
             logout()
             history.push('/')
           }
         })
-      // this clean method will execute when all task processed
+      // This clean method will execute when all task processed
       categoryDone()
       postDone()
       loadCategory()
     }
 
-    // error handler
+    // Error handler
     const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
         toast('관리자만 이용 가능합니다 !')
-        // logout method
+        // Logout method
         sessionStorage.clear()
         logout()
         history.push('/')
       } else if (err.message === 'No_Data_Category_Select') {
-        toast('삭제할 포트스의 카테고리를 선택해 주세요 !')
+        toast('삭제할 포스트의 카테고리를 선택해 주세요 !')
       } else if (err.message === 'No_Data_Title_Select') {
         toast('삭제할 포스트를 선택해 주세요 !')
       }
     }
+
+    // Promise
     userAdminCheck({ loginLogined, category: deleteCategory.trim(), title: deleteTitle.trim() })
       .then(categoryCheck)
       .then(titleCheck)
@@ -199,7 +200,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
   }
 
   public render(): JSX.Element {
-    // category buttons
+    // Category buttons
     const CurrentCategorySelectChange = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         return (
@@ -210,7 +211,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
       })
     }
 
-    // title buttons
+    // Title buttons
     const CurrentPostSelectChange = (data: CategoryStateInside[]): JSX.Element[] | JSX.Element => {
       const SelectedPosts = data.filter(value => value.category === this.props.deleteCategory)
 
@@ -227,21 +228,22 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     }
 
     return (
-      <div className="editor-template">
-        <div className="layout-container">
-          <Button block={true} outline={true} color="danger" onClick={this.handlePostDeleteShowNoneToogle}>
-            {this.state.postDeleteMessage}
-          </Button>
-          {this.state.showNone && (
-            <div className="only-viewer">
-              <div className="flex">
-                <div className="viewer-category">
-                  <button onClick={this.handleCategoryAndTitleShowNoneToogle} className="danger">
+      <div className="admin-post-container">
+        <Button block={true} outline={true} color="danger" onClick={this.handlePostDeleteShowNoneToogle}>
+          {this.state.postDeleteMessage}
+        </Button>
+
+        {this.state.showNone && (
+          <div className="admin-post-only-preview">
+            <div className="admin-post-select-container">
+              <div className="admin-post-select-category-and-post">
+                <div className="admin-post-select">
+                  <button className="danger" onClick={this.handleCategoryAndPostShowNoneToogle}>
                     {this.props.deleteCategory}
                   </button>
                   {this.state.selectDropdown && (
-                    <div className="editor-category-child-container">
-                      <div className="editor-category-child">
+                    <div className="admin-post-select-child-container">
+                      <div className="admin-post-select-child">
                         {this.props.deleteCategory !== '카테고리 선택' && (
                           <button onClick={this.handleCategorySelectChange} className="danger">
                             카테고리 선택
@@ -252,13 +254,13 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
                     </div>
                   )}
                 </div>
-                <div className="viewer-title">
-                  <button onClick={this.handleCategoryAndTitleShowNoneToogle} className="danger">
+                <div className="admin-post-select">
+                  <button className="danger" onClick={this.handleCategoryAndPostShowNoneToogle}>
                     {this.props.deleteTitle}
                   </button>
                   {this.state.selectDropdown && (
-                    <div className="editor-category-child-container">
-                      <div className="editor-category-child">
+                    <div className="admin-post-select-child-container">
+                      <div className="admin-post-select-child">
                         {this.props.deleteTitle !== '삭제할 포스트 선택' && (
                           <button onClick={this.handlePostSelectChange} className="danger">
                             삭제할 포스트 선택
@@ -270,23 +272,27 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
                   )}
                 </div>
               </div>
-              <div className="preview-inside">
-                <h1 className="preview-title">{this.props.deleteShowTitle}</h1>
-                <h3 className="preview-sub-title">{this.props.deleteSubTitle}</h3>
-                <div>
+            </div>
+
+            {/* Post delete */}
+            <div className="admin-post-preview-container">
+              <div className="admin-post-preview">
+                <h1 className="admin-post-preview-title">{this.props.deleteShowTitle}</h1>
+                <h3 className="admin-post-preview-sub-title">{this.props.deleteSubTitle}</h3>
+                <div className="admin-post-preview-main-text">
                   <MarkdownRendererContainer type={this.state.editorType} />
                 </div>
               </div>
-              <div className="flex">
-                <div className="viewer-submit">
-                  <button className="danger" onClick={this.handleSubmit}>
-                    포스트 삭제 하기 !
-                  </button>
-                </div>
-              </div>
             </div>
-          )}
-        </div>
+
+            {/* Submit */}
+            <div className="admin-post-submit">
+              <button className="danger" onClick={this.handleSubmit}>
+                포스트 삭제 하기 !
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     )
   }

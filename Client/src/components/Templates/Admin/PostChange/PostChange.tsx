@@ -28,12 +28,11 @@ interface Props {
 }
 
 interface State {
-  leftPercentage: number
-  postAddMessage: string
+  postChangeMessage: string
   showNone: boolean
-  categorySelectDropdown: boolean
+  editorOrPreview: boolean
+  categoryAndPostSelectDropdown: boolean
   categoryDropdown: boolean
-  postSelectDropdown: boolean
 }
 
 interface PutChangeMethodInterface {
@@ -52,78 +51,68 @@ interface CTarget {
 
 class PostChange extends React.Component<Props & RouteComponentProps<History>, State> {
   public state = {
-    // for mde container's type
+    // For mde container's type
     editorType: 'change',
     resource: 'Put',
-    leftPercentage: 0.5,
-    postAddMessage: '포스트 수정 하기 !',
+    postChangeMessage: '포스트 수정 하기 !',
     showNone: false,
-    categorySelectDropdown: false,
-    categoryDropdown: false,
-    postSelectDropdown: false
+    editorOrPreview: true,
+    categoryAndPostSelectDropdown: false,
+    categoryDropdown: false
   }
 
-  // handle category change part show none
+  // Handle Category add part show none
   public handlePostChangeShowNoneToogle = (): void => {
     if (this.state.showNone === false) {
       this.setState({
         showNone: !this.state.showNone,
-        leftPercentage: 0.5,
-        postAddMessage: '포스트 수정 접기 !'
+        postChangeMessage: '포스트 수정 접기 !'
       })
     } else {
       this.setState({
         showNone: !this.state.showNone,
-        postAddMessage: '포스트 수정 하기 !'
+        postChangeMessage: '포스트 수정 하기 !'
       })
     }
   }
 
-  // Select
-  // Dropdown Select Category ShowNone Toogle
-  public handleCategorySelectShowNoneToogle = (): void => {
+  // Change editor view or render view
+  public changeEditAndPreview = (): void => {
     this.setState({
-      categorySelectDropdown: !this.state.categorySelectDropdown
+      editorOrPreview: !this.state.editorOrPreview
     })
   }
-  // Dropdown Category ShowNone Toogle
-  public handleCategoryShowNoneToogle = (): void => {
-    this.setState({
-      categoryDropdown: !this.state.categoryDropdown
-    })
-  }
-  // Dropdown Select Post ShowNone Toogle
-  public handlePostSelectShowNoneToogle = (): void => {
-    this.setState({
-      postSelectDropdown: !this.state.postSelectDropdown
-    })
-  }
-  // Select
 
-  // Category Select Change
-  public handleCategorySelectChange = (e: CTarget): void => {
+  // Category & post select dropdown
+  public handleCategoryAndPostSelectShowNoneToogle = () => {
     this.setState({
-      categorySelectDropdown: false
+      categoryAndPostSelectDropdown: !this.state.categoryAndPostSelectDropdown
     })
+  }
+
+  // Change category select value
+  public handleCategorySelectChange = (e: CTarget) => {
     this.props.changeCategorySelect(e.currentTarget.innerText)
   }
-  // Category Select Change
-  public handleCategoryChange = (e: CTarget): void => {
+
+  // Change post select value
+  public handlePostSelectChange = (e: CTarget) => {
     this.setState({
-      categoryDropdown: false
+      categoryAndPostSelectDropdown: !this.state.categoryAndPostSelectDropdown
     })
-    this.props.changeCategory(e.currentTarget.innerText)
-  }
-  // post Select change
-  public handlePostSelectChange = (e: CTarget): void => {
-    this.setState({
-      postSelectDropdown: !this.state.postSelectDropdown
-    })
+
     this.props.changeTitleSelect(e.currentTarget.innerText)
 
     if (e.currentTarget.innerText !== '변경할 포스트 선택') {
       this.props.loadPost({ category: this.props.change.selectCategory, title: e.currentTarget.innerText, type: 1 })
     }
+  }
+
+  // Category select dropdown
+  public handleCategoryShowNoneToogle = () => {
+    this.setState({
+      categoryDropdown: !this.state.categoryDropdown
+    })
   }
 
   // submit => post change
@@ -257,37 +246,9 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       .catch(onError)
   }
 
-  // separator click, and mouse move
-  public handleSeparatorMouseMove = (e: MouseEvent): void => {
-    this.setState({
-      leftPercentage: e.clientX / window.innerWidth
-    })
-  }
-  // hand off
-  public handleSeparatorMouseUp = (e: MouseEvent): void => {
-    document.body.removeEventListener('mousemove', this.handleSeparatorMouseMove)
-    window.removeEventListener('mouseup', this.handleSeparatorMouseUp)
-  }
-  // separator click
-  public handleSeparatorMouseDown = (e: React.MouseEvent<any>): void => {
-    document.body.addEventListener('mousemove', this.handleSeparatorMouseMove)
-    window.addEventListener('mouseup', this.handleSeparatorMouseUp)
-  }
-
   public render(): JSX.Element {
-    const { leftPercentage } = this.state
-    const leftStyle = {
-      flex: leftPercentage
-    }
-    const rightStyle = {
-      flex: 1 - leftPercentage
-    }
-    const separatorStyle = {
-      left: `${leftPercentage * 100}%`
-    }
-
-    // current category select change
-    const CurrentCategorySelectChange = (data: CategoryStateInside[]): JSX.Element[] => {
+    // Current category select
+    const currentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] | JSX.Element => {
       return data.map((object, i) => {
         return (
           <button key={i} onClick={this.handleCategorySelectChange} className="info">
@@ -297,18 +258,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       })
     }
 
-    // current category change
-    const CurrentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] => {
-      return data.map((object, i) => {
-        return (
-          <button key={i} onClick={this.handleCategoryChange} className="info">
-            {object.category}
-          </button>
-        )
-      })
-    }
-
-    // current category select's posts
+    // Current category select's posts
     const CurrentPostSelectChange = (data: CategoryStateInside[]): JSX.Element[] | JSX.Element => {
       const SelectedPosts = data.filter(value => value.category === this.props.change.selectCategory)
 
@@ -324,102 +274,93 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       return <button className="info">카테고리를 선택한 후에 포스트 선택을 해주세요</button>
     }
 
-    return (
-      <div className="editor-template">
-        <div className="layout-container">
-          <Button block={true} outline={true} color="info" onClick={this.handlePostChangeShowNoneToogle}>
-            {this.state.postAddMessage}
-          </Button>
-        </div>
-        {this.state.showNone && (
-          <React.Fragment>
-            <div className="editor-and-viewer">
-              <div className="editor" style={leftStyle}>
-                <div className="editor-category">
-                  <div className="editor-change-select-part">
-                    <div className="editor-change-select-category">
-                      <button className="info" onClick={this.handleCategorySelectShowNoneToogle}>
-                        {this.props.change.selectCategory}
-                      </button>
-                      {this.state.categorySelectDropdown && (
-                        <div className="editor-category-child-container">
-                          <div className="editor-category-child">
-                            {this.props.change.selectCategory !== '카테고리 선택' && (
-                              <button onClick={this.handleCategorySelectChange} className="info">
-                                카테고리 선택
-                              </button>
-                            )}
-                            {CurrentCategorySelectChange(this.props.category)}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="editor-change-select-post">
-                      <button className="info" onClick={this.handlePostSelectShowNoneToogle}>
-                        {this.props.change.selectTitle}
-                      </button>
-                      {this.state.postSelectDropdown && (
-                        <div className="editor-category-child-container">
-                          <div className="editor-category-child">
-                            {this.props.change.selectTitle !== '변경할 포스트 선택' && (
-                              <button onClick={this.handlePostSelectChange} className="info">
-                                변경할 포스트 선택
-                              </button>
-                            )}
-                            {CurrentPostSelectChange(this.props.category)}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+    // Show editor, or preview
+    // Data: this.state.editorOrPreview
+    const editorOrPreview = (data: boolean) => {
+      if (data === true) {
+        return (
+          <div className="admin-post-editor-container">
+            <div className="admin-post-editor">
+              <MarkdownEditorContainer type={this.state.editorType} resource={this.state.resource} />
+            </div>
+          </div>
+        )
+      }
 
-                  <button className="info" onClick={this.handleCategoryShowNoneToogle}>
-                    {this.props.change.category}
+      return (
+        <div className="admin-post-preview-container">
+          <div className="admin-post-preview">
+            <h1 className="admin-post-preview-title">{this.props.change.title}</h1>
+            <h3 className="admin-post-preview-sub-title">{this.props.change.subTitle}</h3>
+            <div className="admin-post-preview-main-text">
+              <MarkdownRendererContainer type={this.state.editorType} />
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="admin-post-container">
+        <Button block={true} outline={true} color="info" onClick={this.handlePostChangeShowNoneToogle}>
+          {this.state.postChangeMessage}
+        </Button>
+
+        {this.state.showNone && (
+          <div className="admin-post-editor-and-preview">
+            <div className="admin-post-preview-change-button">
+              <Button color="info" onClick={this.changeEditAndPreview}>
+                에디터 / 프리뷰 화면 전환
+              </Button>
+            </div>
+
+            <div className="admin-post-select-container">
+              <div className="admin-post-select-category-and-post">
+                <div className="admin-post-select">
+                  <button className="info" onClick={this.handleCategoryAndPostSelectShowNoneToogle}>
+                    {this.props.change.selectCategory}
                   </button>
-                  {this.state.categoryDropdown && (
-                    <div className="editor-category-child-container">
-                      <div className="editor-category-child">
+                  {this.state.categoryAndPostSelectDropdown && (
+                    <div className="admin-post-select-child-container">
+                      <div className="admin-post-select-child">
                         {this.props.change.selectCategory !== '카테고리 선택' && (
-                          <button onClick={this.handleCategoryChange} className="info">
+                          <button onClick={this.handleCategorySelectChange} className="info">
                             카테고리 선택
                           </button>
                         )}
-                        {CurrentCategoryChange(this.props.category)}
+                        {currentCategoryChange(this.props.category)}
                       </div>
                     </div>
                   )}
                 </div>
-                <div className="editor-inside">
-                  <MarkdownEditorContainer type={this.state.editorType} resource={this.state.resource} />
-                </div>
-                {/* */}
-                {/* only can see mobile view */}
-                <div className="editor-submit-mobile">
-                  <button className="info" onClick={this.handleSubmit}>
-                    포스트 수정 하기 !
+                <div className="admin-post-select">
+                  <button className="info" onClick={this.handleCategoryAndPostSelectShowNoneToogle}>
+                    {this.props.change.selectTitle}
                   </button>
-                </div>
-                {/* only can see mobile view */}
-                {/* */}
-              </div>
-              <div className="preview" style={rightStyle}>
-                <div className="preview-submit">
-                  <button className="info" onClick={this.handleSubmit}>
-                    포스트 수정 하기 !
-                  </button>
-                </div>
-
-                <div className="preview-inside">
-                  <h1 className="preview-title">{this.props.change.title}</h1>
-                  <h3 className="preview-sub-title">{this.props.change.subTitle}</h3>
-                  <div>
-                    <MarkdownRendererContainer type={this.state.editorType} />
-                  </div>
+                  {this.state.categoryAndPostSelectDropdown && (
+                    <div className="admin-post-select-child-container">
+                      <div className="admin-post-select-child">
+                        {this.props.change.selectTitle !== '변경할 포스트 선택' && (
+                          <button onClick={this.handlePostSelectChange} className="info">
+                            변경할 포스트 선택
+                          </button>
+                        )}
+                        {CurrentPostSelectChange(this.props.category)}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="separator" style={separatorStyle} onMouseDown={this.handleSeparatorMouseDown} />
             </div>
-          </React.Fragment>
+            {/* Edior And Preview */}
+            {editorOrPreview(this.state.editorOrPreview)}
+
+            <div className="admin-post-submit">
+              <button className="info" onClick={this.handleSubmit}>
+                포스트 수정 하기 !
+              </button>
+            </div>
+          </div>
         )}
       </div>
     )
