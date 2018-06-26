@@ -1,0 +1,10 @@
+/* post view container, this is post root */
+.post-view-container {
+  width: 100%;
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, .125);
+  border-radius: .25rem;
+  padding: 15px;
+  margin-top: 2.5%;
+}
+

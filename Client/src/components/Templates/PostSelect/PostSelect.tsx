@@ -95,7 +95,7 @@ class PostSelect extends React.Component<Props & RouteComponentProps<History>, S
       // 'admin' string is not in the url
       if (data.wrongUrl === false) {
         return (
-          <div className="post-view-container">
+          <React.Fragment>
             <div className="post-view-title-and-category">
               <h1 className="post-view-title">{title}</h1>
               <h2 className="post-view-category">{category}</h2>
@@ -105,7 +105,7 @@ class PostSelect extends React.Component<Props & RouteComponentProps<History>, S
             <div className="category-child-date">
               {date[0] + date[1] + date[2] + date[3]}년 {date[5] + date[6]}월 {date[8] + date[9]}일
             </div>
-          </div>
+          </React.Fragment>
         )
       }
       // url is not good
@@ -126,7 +126,7 @@ class PostSelect extends React.Component<Props & RouteComponentProps<History>, S
       return <LoadingCircle />
     }
 
-    return <div className="layout-container">{checkLoading(postPending)}</div>
+    return <React.Fragment>{checkLoading(postPending)}</React.Fragment>
   }
 }
 
