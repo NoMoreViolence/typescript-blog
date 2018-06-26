@@ -16,7 +16,7 @@ import CategoryAll from 'components/Pages/CategoryAll'
 import CategorySelect from 'components/Pages/CategorySelect'
 import Admin from 'components/Pages/Admin'
 import PostSelect from 'components/Pages/PostSelect'
-import NotFound from 'components/Pages/NotFound'
+import Ripple from './Pages/Ripple'
 
 import ProgressBar from 'lib/ProgressBar'
 
@@ -30,13 +30,25 @@ class App extends React.Component {
           <ToastContainer />
           <Header />
 
+          <Route exact={true} path="/" component={CategoryAll} />
+
+          <Switch>
+            <Route exact={true} path="/admin" component={Admin} />
+            <Route exact={true} path="/:category" component={CategorySelect} />
+          </Switch>
+
           <Switch>
             <Route exact={true} path="/admin/login" component={Login} />
-            <Route exact={true} path="/admin" component={Admin} />
-            <Route exact={true} path="/" component={CategoryAll} />
-            <Route exact={true} path="/:category" component={CategorySelect} />
-            <Route exact={true} path="/:category/:post" component={PostSelect} />
-            <Route path="/" component={NotFound} />
+            <Route
+              exact={true}
+              path="/:category/:post"
+              render={() => (
+                <React.Fragment>
+                  <PostSelect />
+                  <Ripple />
+                </React.Fragment>
+              )}
+            />
           </Switch>
         </div>
       </React.Fragment>
