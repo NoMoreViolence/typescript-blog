@@ -19,25 +19,23 @@ interface Props {
   LoginActions: typeof LoginActions
 }
 
-const PostChangeContainer: React.SFC<Props> = Props => {
-  return (
-    <PostChange
-      loginLogined={Props.loginLogined}
-      logout={Props.LoginActions.logout}
-      category={Props.category}
-      loadCategory={Props.CategoryActions.getCategory}
-      loadPost={Props.PostActions.getPost}
-      change={Props.change}
-      changeCategorySelect={Props.PostActions.changePutPostCategorySelectChange}
-      changeCategory={Props.PostActions.changePutPostCategoryChange}
-      changeTitleSelect={Props.PostActions.changePutPostTitleSelectChange}
-      changePost={Props.PostActions.changePutPost}
-      postDone={Props.PostActions.postDone}
-      categoryDone={Props.CategoryActions.categoryDone}
-      postError={Props.PostActions.changePutPostError}
-    />
-  )
-}
+const PostChangeContainer: React.SFC<Props> = Props => (
+  <PostChange
+    loginLogined={Props.loginLogined}
+    logout={Props.LoginActions.logout}
+    category={Props.category}
+    loadCategory={Props.CategoryActions.getCategory}
+    loadPost={Props.PostActions.getPost}
+    change={Props.change}
+    changeCategorySelect={Props.PostActions.changePutPostCategorySelectChange}
+    changeCategory={Props.PostActions.changePutPostCategoryChange}
+    changeTitleSelect={Props.PostActions.changePutPostTitleSelectChange}
+    changePost={Props.PostActions.changePutPost}
+    postDone={Props.PostActions.postDone}
+    categoryDone={Props.CategoryActions.categoryDone}
+    postError={Props.PostActions.changePutPostError}
+  />
+)
 
 export default connect(
   ({ Post, Category, Login }: StoreState) => ({

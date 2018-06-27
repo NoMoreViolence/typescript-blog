@@ -15,17 +15,13 @@ interface Props {
   loginLogined: boolean
 }
 
-class BasicContainer extends React.Component<Props> {
-  public render() {
-    return (
-      <Basic
-        loginLogined={this.props.loginLogined}
-        getLogin={this.props.LoginActions.autoLogin}
-        loadCategory={this.props.CategoryActions.getCategory}
-      />
-    )
-  }
-}
+const BasicContainer: React.SFC<Props> = Props => (
+  <Basic
+    loginLogined={Props.loginLogined}
+    getLogin={Props.LoginActions.autoLogin}
+    loadCategory={Props.CategoryActions.getCategory}
+  />
+)
 
 export default connect(
   ({ Login, Category }: StoreState) => ({

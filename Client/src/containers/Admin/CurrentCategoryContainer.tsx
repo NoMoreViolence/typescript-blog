@@ -10,11 +10,7 @@ import { StoreState } from 'store/modules'
 interface Props {
   category: [CategoryStateInside]
 }
-class CurrentCategoryContainer extends React.Component<Props> {
-  public render() {
-    return <CurrentCategory category={this.props.category} />
-  }
-}
+const CurrentCategoryContainer: React.SFC<Props> = Props => <CurrentCategory category={Props.category} />
 
 export default connect(
   ({ Category }: StoreState) => ({

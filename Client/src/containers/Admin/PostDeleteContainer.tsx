@@ -19,26 +19,24 @@ interface Props {
   LoginActions: typeof LoginActions
 }
 
-const PostChangeContainer: React.SFC<Props> = Props => {
-  return (
-    <PostDelete
-      loginLogined={Props.loginLogined}
-      logout={Props.LoginActions.logout}
-      category={Props.category}
-      deleteCategory={Props.delete.category}
-      deleteTitle={Props.delete.title}
-      deleteShowTitle={Props.delete.showTitle}
-      deleteSubTitle={Props.delete.showTitle}
-      changeCategorySelect={Props.PostActions.deleteDeleteCategorySelectChange}
-      changeTitleSelect={Props.PostActions.deleteDeletePostTitleSelectChange}
-      deletePost={Props.PostActions.deleteDeletePost}
-      loadPost={Props.PostActions.getPost}
-      categoryDone={Props.CategoryActions.categoryDone}
-      postDone={Props.PostActions.postDone}
-      loadCategory={Props.CategoryActions.getCategory}
-    />
-  )
-}
+const PostChangeContainer: React.SFC<Props> = Props => (
+  <PostDelete
+    loginLogined={Props.loginLogined}
+    logout={Props.LoginActions.logout}
+    category={Props.category}
+    deleteCategory={Props.delete.category}
+    deleteTitle={Props.delete.title}
+    deleteShowTitle={Props.delete.showTitle}
+    deleteSubTitle={Props.delete.showTitle}
+    changeCategorySelect={Props.PostActions.deleteDeleteCategorySelectChange}
+    changeTitleSelect={Props.PostActions.deleteDeletePostTitleSelectChange}
+    deletePost={Props.PostActions.deleteDeletePost}
+    loadPost={Props.PostActions.getPost}
+    categoryDone={Props.CategoryActions.categoryDone}
+    postDone={Props.PostActions.postDone}
+    loadCategory={Props.CategoryActions.getCategory}
+  />
+)
 
 export default connect(
   ({ Post, Category, Login }: StoreState) => ({

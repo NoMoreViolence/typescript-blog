@@ -14,16 +14,14 @@ interface Props {
   categoryError: boolean
 }
 
-const CategoryAllContainer: React.SFC<Props> = Props => {
-  return (
-    <CategoryAll
-      category={Props.category}
-      categoryLoaded={Props.categoryLoaded}
-      categoryPending={Props.categoryPending}
-      categoryError={Props.categoryError}
-    />
-  )
-}
+const CategoryAllContainer: React.SFC<Props> = Props => (
+  <CategoryAll
+    category={Props.category}
+    categoryLoaded={Props.categoryLoaded}
+    categoryPending={Props.categoryPending}
+    categoryError={Props.categoryError}
+  />
+)
 
 export default connect(
   ({ Category }: StoreState) => ({

@@ -20,23 +20,21 @@ interface Props {
   LoginActions: typeof LoginActions
 }
 
-const CategoryDeleteContainer = (Props: Props) => {
-  return (
-    <CategoryDelete
-      loginLogined={Props.loginLogined}
-      category={Props.category}
-      categoryLoad={Props.CategoryActions.getCategory}
-      deleteCategoryInputValue={Props.deleteCategoryInputValue}
-      deleteCategoryInputChange={Props.CategoryActions.deleteCategoryInputChange}
-      deleteCategorySelectValue={Props.deleteCategoryCategoryValue}
-      deleteCategorySelectChange={Props.CategoryActions.deleteCategoryCategoryChange}
-      deleteCategory={Props.CategoryActions.deleteCategory}
-      logout={Props.LoginActions.logout}
-      categoryDone={Props.CategoryActions.categoryDone}
-      postDone={Props.PostActions.postDone}
-    />
-  )
-}
+const CategoryDeleteContainer: React.SFC<Props> = Props => (
+  <CategoryDelete
+    loginLogined={Props.loginLogined}
+    category={Props.category}
+    categoryLoad={Props.CategoryActions.getCategory}
+    deleteCategoryInputValue={Props.deleteCategoryInputValue}
+    deleteCategoryInputChange={Props.CategoryActions.deleteCategoryInputChange}
+    deleteCategorySelectValue={Props.deleteCategoryCategoryValue}
+    deleteCategorySelectChange={Props.CategoryActions.deleteCategoryCategoryChange}
+    deleteCategory={Props.CategoryActions.deleteCategory}
+    logout={Props.LoginActions.logout}
+    categoryDone={Props.CategoryActions.categoryDone}
+    postDone={Props.PostActions.postDone}
+  />
+)
 
 export default connect(
   ({ Category, Login }: StoreState) => ({

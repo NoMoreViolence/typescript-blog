@@ -16,27 +16,22 @@ interface Props {
   categoryError: boolean
 }
 
-class CategorySelectContainer extends React.Component<Props & RouteComponentProps<any>> {
-  public render() {
-    return (
-      <CategorySelect
-        posts={this.props.Category}
-        categoryLoaded={this.props.categoryLoaded}
-        categoryPending={this.props.categoryPending}
-        categoryError={this.props.categoryError}
-      />
-    )
-  }
+const CategorySelectContainer: React.SFC<Props & RouteComponentProps<any>> = Props => {
+  return (
+    <CategorySelect
+      posts={Props.Category}
+      categoryLoaded={Props.categoryLoaded}
+      categoryPending={Props.categoryPending}
+      categoryError={Props.categoryError}
+    />
+  )
 }
 
-export default withRouter(
-  connect(
-    ({ Category }: StoreState) => ({
-      Category: Category.categoryCategory,
-      categoryLoaded: Category.categoryLoaded,
-      categoryPending: Category.categoryPending,
-      categoryError: Category.categoryError
-    }),
-    dispatch => ({})
-  )(CategorySelectContainer)
-)
+const component = connect(({ Category }: StoreState) => ({
+  Category: Category.categoryCategory,
+  categoryLoaded: Category.categoryLoaded,
+  categoryPending: Category.categoryPending,
+  categoryError: Category.categoryError
+}))(CategorySelectContainer) as React.ComponentType<any>
+
+export default withRouter(component)

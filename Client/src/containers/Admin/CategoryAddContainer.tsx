@@ -19,20 +19,18 @@ interface Props {
   LoginActions: typeof LoginActions
 }
 
-const CategoryAddContainer = (Props: Props) => {
-  return (
-    <CategoryAdd
-      loginLogined={Props.loginLogined}
-      categoryLoad={Props.CategoryActions.getCategory}
-      addCategoryInputValue={Props.addCategoryInputValue}
-      addCategoryInputChange={Props.CategoryActions.addCategoryInputChange}
-      addCategory={Props.CategoryActions.addCategory}
-      logout={Props.LoginActions.logout}
-      categoryDone={Props.CategoryActions.categoryDone}
-      postDone={Props.PostActions.postDone}
-    />
-  )
-}
+const CategoryAddContainer: React.SFC<Props> = Props => (
+  <CategoryAdd
+    loginLogined={Props.loginLogined}
+    categoryLoad={Props.CategoryActions.getCategory}
+    addCategoryInputValue={Props.addCategoryInputValue}
+    addCategoryInputChange={Props.CategoryActions.addCategoryInputChange}
+    addCategory={Props.CategoryActions.addCategory}
+    logout={Props.LoginActions.logout}
+    categoryDone={Props.CategoryActions.categoryDone}
+    postDone={Props.PostActions.postDone}
+  />
+)
 
 export default connect(
   ({ Category, Login }: StoreState) => ({

@@ -20,23 +20,21 @@ interface Props {
   LoginActions: typeof LoginActions
 }
 
-const CategoryChangeContainer = (Props: Props) => {
-  return (
-    <CategoryChange
-      loginLogined={Props.loginLogined}
-      category={Props.category}
-      categoryLoad={Props.CategoryActions.getCategory}
-      changeCategoryInputValue={Props.changeCategoryInputValue}
-      changeCategoryInputChange={Props.CategoryActions.changeCategoryInputChange}
-      changeCategorySelectValue={Props.changeCategoryCategoryValue}
-      changeCategorySelectChange={Props.CategoryActions.changeCategoryCategoryChange}
-      changeCategory={Props.CategoryActions.changeCategory}
-      logout={Props.LoginActions.logout}
-      categoryDone={Props.CategoryActions.categoryDone}
-      postDone={Props.PostActions.postDone}
-    />
-  )
-}
+const CategoryChangeContainer: React.SFC<Props> = Props => (
+  <CategoryChange
+    loginLogined={Props.loginLogined}
+    category={Props.category}
+    categoryLoad={Props.CategoryActions.getCategory}
+    changeCategoryInputValue={Props.changeCategoryInputValue}
+    changeCategoryInputChange={Props.CategoryActions.changeCategoryInputChange}
+    changeCategorySelectValue={Props.changeCategoryCategoryValue}
+    changeCategorySelectChange={Props.CategoryActions.changeCategoryCategoryChange}
+    changeCategory={Props.CategoryActions.changeCategory}
+    logout={Props.LoginActions.logout}
+    categoryDone={Props.CategoryActions.categoryDone}
+    postDone={Props.PostActions.postDone}
+  />
+)
 
 export default connect(
   ({ Category, Login }: StoreState) => ({

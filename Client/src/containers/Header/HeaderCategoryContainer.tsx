@@ -1,5 +1,5 @@
 import * as React from 'react'
-// 헤더 카테고리
+
 import HeaderCategory from 'components/Templates/Header/HeaderCategory'
 
 import { LoginActions } from 'store/modules/Login'
@@ -9,22 +9,15 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { StoreState } from 'store/modules'
 
-type Props = {
-  // 메시지
+interface Props {
   Category: CategoryStateInside[]
   loginActions: typeof LoginActions
   loginLogined: boolean
 }
 
-const HeaderCategoryContainer = (Props: Props) => {
-  return (
-    <HeaderCategory
-      Category={Props.Category}
-      Logout={Props.loginActions.logout}
-      Logined={Props.loginLogined}
-    />
-  )
-}
+const HeaderCategoryContainer: React.SFC<Props> = Props => (
+  <HeaderCategory Category={Props.Category} Logout={Props.loginActions.logout} Logined={Props.loginLogined} />
+)
 
 export default connect(
   ({ Category, Login }: StoreState) => ({
@@ -32,7 +25,6 @@ export default connect(
     Category: Category.categoryCategory
   }),
   dispatch => ({
-    // 디스패치
     loginActions: bindActionCreators(LoginActions, dispatch)
   })
 )(HeaderCategoryContainer)

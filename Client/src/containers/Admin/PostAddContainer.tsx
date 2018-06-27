@@ -19,22 +19,20 @@ interface Props {
   LoginActions: typeof LoginActions
 }
 
-const PostAddContainer: React.SFC<Props> = Props => {
-  return (
-    <PostAdd
-      loginLogined={Props.loginLogined}
-      logout={Props.LoginActions.logout}
-      category={Props.category}
-      add={Props.add}
-      changeCategory={Props.PostActions.addPostCategoryChange}
-      addPost={Props.PostActions.addPostPost}
-      postDone={Props.PostActions.postDone}
-      categoryDone={Props.CategoryActions.categoryDone}
-      loadCategory={Props.CategoryActions.getCategory}
-      postError={Props.PostActions.addPostPostError}
-    />
-  )
-}
+const PostAddContainer: React.SFC<Props> = Props => (
+  <PostAdd
+    loginLogined={Props.loginLogined}
+    logout={Props.LoginActions.logout}
+    category={Props.category}
+    add={Props.add}
+    changeCategory={Props.PostActions.addPostCategoryChange}
+    addPost={Props.PostActions.addPostPost}
+    postDone={Props.PostActions.postDone}
+    categoryDone={Props.CategoryActions.categoryDone}
+    loadCategory={Props.CategoryActions.getCategory}
+    postError={Props.PostActions.addPostPostError}
+  />
+)
 
 export default connect(
   ({ Category, Post, Login }: StoreState) => ({
