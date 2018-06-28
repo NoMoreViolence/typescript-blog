@@ -5,9 +5,9 @@ import './MarkDownEditor.css'
 import 'components/commonCSS/editor.css'
 
 interface Props {
-  title?: string
+  title: string
   changeTitle: (value: string) => void
-  subTitle?: string
+  subTitle: string
   changeSubTitle: (value: string) => void
   MainText: string
   changeMainText: (value: string) => void
@@ -36,11 +36,7 @@ class MarkDownEditor extends React.Component<Props, State> {
 
   // Title & subtitle text change
   public handleChange = (e: Target) => {
-    if (e.target.name === 'title') {
-      this.props.changeTitle(e.target.value)
-    } else if (e.target.name === 'sub-title') {
-      this.props.changeSubTitle(e.target.value)
-    }
+    this.props[e.target.name](e.target.value)
   }
 
   // Text cursor
@@ -70,7 +66,7 @@ class MarkDownEditor extends React.Component<Props, State> {
         <input
           className="editor-title"
           placeholder="제목을 입력하세요"
-          name="title"
+          name="changeTitle"
           value={this.props.title}
           onChange={this.handleChange}
           ref={ref => (this.title = ref)}
@@ -78,7 +74,7 @@ class MarkDownEditor extends React.Component<Props, State> {
         <input
           className="editor-sub-title"
           placeholder="부제목을 입력하세요"
-          name="sub-title"
+          name="changeSubTitle"
           value={this.props.subTitle}
           onChange={this.handleChange}
           ref={ref => (this.subTitle = ref)}
