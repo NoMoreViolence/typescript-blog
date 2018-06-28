@@ -8,8 +8,8 @@ import { toast } from 'react-toastify'
 import { CategoryStateInside } from 'store/modules/Category'
 import { ChangePostState, PutChangeAPIInterface, GetPostBringAPIInterface } from 'store/modules/Post'
 
-import MarkdownEditorContainer from 'containers/MarkDownEditor/MarkDownEditorContainer'
-import MarkdownRendererContainer from 'containers/MarkDownRenderer/MarkDownRendererContainer'
+import MarkdownEditorContainer from 'containers/MarkDownEditorChange/MarkDownEditorChangeContainer'
+import MarkdownRendererContainer from 'containers/MarkDownRendererChange/MarkDownRendererChangeContainer'
 
 interface Props {
   loginLogined: boolean
@@ -52,8 +52,6 @@ interface CTarget {
 class PostChange extends React.Component<Props & RouteComponentProps<History>, State> {
   public state = {
     // For mde container's type
-    editorType: 'change',
-    resource: 'Put',
     postChangeMessage: '포스트 수정 하기 !',
     showNone: false,
     editorOrPreview: true,
@@ -246,6 +244,19 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       .catch(onError)
   }
 
+  // Optimization component
+  public shouldComponentUpdate(nextProps: Props, nextState: State) {
+    if (
+      nextState !== this.state ||
+      nextProps.change.selectCategory !== this.props.change.selectCategory ||
+      nextProps.change.selectTitle !== this.props.change.selectTitle ||
+      nextProps.change.category !== this.props.change.category
+    ) {
+      return true
+    }
+    return false
+  }
+
   public render(): JSX.Element {
     // Current category select
     const currentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] | JSX.Element => {
@@ -281,7 +292,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
         return (
           <div className="admin-post-editor-container">
             <div className="admin-post-editor">
-              <MarkdownEditorContainer type={this.state.editorType} resource={this.state.resource} />
+              <MarkdownEditorContainer />
             </div>
           </div>
         )
@@ -293,7 +304,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
             <h1 className="admin-post-preview-title">{this.props.change.title}</h1>
             <h3 className="admin-post-preview-sub-title">{this.props.change.subTitle}</h3>
             <div className="admin-post-preview-main-text">
-              <MarkdownRendererContainer type={this.state.editorType} />
+              <MarkdownRendererContainer />
             </div>
           </div>
         </div>

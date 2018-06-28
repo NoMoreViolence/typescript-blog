@@ -8,8 +8,8 @@ import { toast } from 'react-toastify'
 import { AddPostState, PostAddAPIInterface } from 'store/modules/Post'
 import { CategoryStateInside } from 'store/modules/Category'
 
-import MarkdownEditorContainer from 'containers/MarkDownEditor/MarkDownEditorContainer'
-import MarkdownRendererContainer from 'containers/MarkDownRenderer/MarkDownRendererContainer'
+import MarkdownEditorAddContainer from 'containers/MarkDownEditorAdd/MarkDownEditorAddContainer'
+import MarkdownRendererAddContainer from 'containers/MarkDownRendererAdd/MarkDownRendererAddContainer'
 
 interface Props {
   loginLogined: boolean
@@ -46,9 +46,6 @@ interface CTarget {
 class PostAdd extends React.Component<Props & RouteComponentProps<History>, State> {
   // State
   public state = {
-    // For mde container's type
-    editorType: 'add',
-    resource: 'Post',
     editorOrPreview: true,
     postAddMessage: '포스트 추가 하기 !',
     showNone: false,
@@ -199,6 +196,14 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
       .catch(onError)
   }
 
+  // Optimization component
+  public shouldComponentUpdate(nextProps: Props, nextState: State) {
+    if (nextState !== this.state || nextProps.add.category !== this.props.add.category) {
+      return true
+    }
+    return false
+  }
+
   public render(): JSX.Element {
     // Show current category
     const currentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] => {
@@ -218,7 +223,7 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
         return (
           <div className="admin-post-editor-container">
             <div className="admin-post-editor">
-              <MarkdownEditorContainer type={this.state.editorType} resource={this.state.resource} />
+              <MarkdownEditorAddContainer />
             </div>
           </div>
         )
@@ -230,7 +235,7 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
             <h1 className="admin-post-preview-title">{this.props.add.title}</h1>
             <h3 className="admin-post-preview-sub-title">{this.props.add.subTitle}</h3>
             <div className="admin-post-preview-main-text">
-              <MarkdownRendererContainer type={this.state.editorType} />
+              <MarkdownRendererAddContainer />
             </div>
           </div>
         </div>

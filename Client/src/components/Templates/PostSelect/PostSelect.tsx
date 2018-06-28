@@ -9,7 +9,7 @@ import LoadingCircle from 'lib/LoadingCircle'
 
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-import MarkDownRendererContainer from 'containers/MarkDownRenderer/MarkDownRendererContainer'
+import MarkDownRendererShowContainer from 'containers/MarkDownRendererShow/MarkDownRendererShowContainer'
 import { toast } from 'react-toastify'
 
 interface Props {
@@ -101,7 +101,7 @@ class PostSelect extends React.Component<Props & RouteComponentProps<History>, S
               <h2 className="post-view-category">{category}</h2>
             </div>
             <p className="post-view-sub-title">{subTitle}</p>
-            <MarkDownRendererContainer type="show" />
+            <MarkDownRendererShowContainer />
             <div className="category-child-date">
               {date[0] + date[1] + date[2] + date[3]}년 {date[5] + date[6]}월 {date[8] + date[9]}일
             </div>

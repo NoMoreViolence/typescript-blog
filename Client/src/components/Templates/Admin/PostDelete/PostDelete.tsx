@@ -8,7 +8,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { CategoryStateInside } from 'store/modules/Category'
 import { DeleteDeleteAPIInterface } from 'store/modules/Post'
 
-import MarkdownRendererContainer from 'containers/MarkDownRenderer/MarkDownRendererContainer'
+import MarkdownRendererContainer from 'containers/MarkDownRendererDelete/MarkDownRendererDeleteContainer'
 
 interface Props {
   loginLogined: boolean
@@ -280,7 +280,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
                 <h1 className="admin-post-preview-title">{this.props.deleteShowTitle}</h1>
                 <h3 className="admin-post-preview-sub-title">{this.props.deleteSubTitle}</h3>
                 <div className="admin-post-preview-main-text">
-                  <MarkdownRendererContainer type={this.state.editorType} />
+                  <MarkdownRendererContainer />
                 </div>
               </div>
             </div>
