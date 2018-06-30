@@ -1,19 +1,20 @@
 import { combineReducers } from 'redux'
-import Category, { CategoryState } from './Category'
 import Login, { LoginState } from './Login'
+import Category, { CategoryState } from './Category'
 import Post, { PostState } from './Post'
+import Ripple, { RippleState } from './Ripple'
 
 export default combineReducers({
-  // hello
-  Category,
   Login,
-  Post
+  Category,
+  Post,
+  Ripple
 })
 
-// 스토어의 상태 타입 정의
+// store state
 export interface StoreState {
-  // it will be king
-  Category: CategoryState
   Login: LoginState
+  Category: CategoryState
   Post: PostState
+  Ripple: RippleState
 }
