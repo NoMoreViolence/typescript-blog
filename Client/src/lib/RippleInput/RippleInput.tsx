@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import './RippleInput.css'
 import { Input, Button } from 'reactstrap'
-import { PostTopRipple, PostChildRipple } from 'store/modules/Ripple'
+import { PostTopRipple, PostChildRipple, GetChildRipples, GetTopRipples } from 'store/modules/Ripple'
 
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -15,6 +15,8 @@ interface Props {
   loginLogined: boolean
   submitTopRipple: (value: PostTopRipple) => Promise<any>
   submitChildRipple: (value: PostChildRipple) => Promise<any>
+  topRippleLoad: (value: GetTopRipples) => Promise<any>
+  childRippleLoad: (value: GetChildRipples) => Promise<any>
 }
 
 interface SubmitINFO {
@@ -102,6 +104,12 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>> {
               password: '',
               writer: ''
             })
+
+            // Top Ripple reload
+            this.props.topRippleLoad({
+              category: this.props.match.url.split('/')[1],
+              title: this.props.match.url.split('/')[2]
+            })
           })
           .catch((err: any) => {
             toast(err.response.data.message)
@@ -126,6 +134,13 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>> {
               password: '',
               writer: ''
             })
+
+            // Child Ripple reload
+            this.props.childRippleLoad({
+              category: this.props.match.url.split('/')[1],
+              title: this.props.match.url.split('/')[2],
+              topID: this.props.ObjectID
+            })
           })
           .catch((err: any) => {
             toast(err.response.data.message)
@@ -145,7 +160,7 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>> {
         toast("댓글 작성자의 이름에는 '/', '?', '&' 특수기호 사용이 블가능 합니다")
       } else if (err.message === 'User_Name') {
         this.setState({
-          text: ''
+          writer: ''
         })
         this.userName.focus()
         toast('댓글 작성자의 이름을 입력해 주세요 !')
@@ -220,7 +235,7 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>> {
             <Input
               name="writer"
               type="text"
-              className="ripple-writer"
+              className="ripple-input"
               placeholder="유저 이름을 입력해 주세요"
               value={this.state.writer}
               onChange={this.handleChange}
