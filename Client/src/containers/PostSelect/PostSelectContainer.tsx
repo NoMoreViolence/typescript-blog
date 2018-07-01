@@ -1,33 +1,39 @@
 import * as React from 'react'
 import PostSelect from 'components/Templates/PostSelect'
 
-import { ShowPostState, PostActions, LoadPostState } from 'store/modules/Post'
+import { PostActions } from 'store/modules/Post'
 
 import { connect } from 'react-redux'
 import { StoreState } from 'store/modules'
 import { bindActionCreators } from 'redux'
 
 interface Props {
-  load: LoadPostState
-  show: ShowPostState
+  pending: boolean
+  category: string
+  title: string
+  subTitle: string
+  date: number
   PostActions: typeof PostActions
 }
 
 const PostSelectContainer: React.SFC<Props> = Props => (
   <PostSelect
-    postPending={Props.load.pending}
-    category={Props.show.category}
-    title={Props.show.title}
-    subTitle={Props.show.subTitle}
-    date={Props.show.date}
+    postPending={Props.pending}
+    category={Props.category}
+    title={Props.title}
+    subTitle={Props.subTitle}
+    date={Props.date}
     showPost={Props.PostActions.getPost}
   />
 )
 
 export default connect(
   ({ Post }: StoreState) => ({
-    show: Post.show,
-    load: Post.load
+    category: Post.show.category,
+    title: Post.show.title,
+    subTitle: Post.show.subTitle,
+    date: Post.show.date,
+    pending: Post.load.pending
   }),
   dispatch => ({ PostActions: bindActionCreators(PostActions, dispatch) })
 )(PostSelectContainer)
