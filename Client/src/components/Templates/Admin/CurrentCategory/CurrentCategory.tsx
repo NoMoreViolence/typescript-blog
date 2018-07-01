@@ -4,12 +4,12 @@ import { CategoryStateInside } from 'store/modules/Category'
 import { Breadcrumb, BreadcrumbItem } from 'reactstrap'
 
 interface Props {
-  category: [CategoryStateInside]
+  category: CategoryStateInside[]
 }
 
 const CurrentCategory = (Props: Props) => {
-  // 데이터 받아서 정렬
-  const loadCategory = (data: [CategoryStateInside]) => {
+  // Show category
+  const loadCategory = (data: CategoryStateInside[]) => {
     return data.map((object, i) => {
       return <BreadcrumbItem key={i}>{object.category}</BreadcrumbItem>
     })

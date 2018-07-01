@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { StoreState } from 'store/modules'
 
 interface Props {
-  category: [CategoryStateInside]
+  category: CategoryStateInside[]
 }
 const CurrentCategoryContainer: React.SFC<Props> = Props => <CurrentCategory category={Props.category} />
 
