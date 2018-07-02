@@ -38,3 +38,9 @@
   color: #007bff;
   cursor: pointer
 }
+
+.ripple-answer-show-change-delete {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
