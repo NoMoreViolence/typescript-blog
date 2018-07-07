@@ -2,13 +2,17 @@ import { handleActions, Action, createAction } from 'redux-actions'
 import axios from 'axios'
 import produce from 'immer'
 
-// login method
-function login(username: string, password: string) {
+// Login method
+export interface LoginInterface {
+  username: string
+  password: string
+}
+function login(value: LoginInterface) {
   return axios.post(
     '/api/auth/login',
     {
-      username,
-      password
+      username: value.username,
+      password: value.password
     },
     {
       headers: {
@@ -18,15 +22,18 @@ function login(username: string, password: string) {
   )
 }
 
-// auto login
-function autoLogin(token: string | null) {
+// Auto login
+export interface AutoLoginInterface {
+  token: string | null
+}
+function autoLogin(value: AutoLoginInterface) {
   return axios.post(
     '/api/auth/check',
     {},
     {
       headers: {
         'Content-Type': 'application/json',
-        'x-access-token': token
+        'x-access-token': value.token
       }
     }
   )

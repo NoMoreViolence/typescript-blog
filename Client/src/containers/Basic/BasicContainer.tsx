@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import Basic from 'components/Templates/Basic'
 
-import { LoginActions } from 'store/modules/Login'
+import { LoginActions, AutoLoginInterface } from 'store/modules/Login'
 import { CategoryActions } from 'store/modules/Category'
 
 import { connect } from 'react-redux'
@@ -10,17 +10,13 @@ import { bindActionCreators } from 'redux'
 import { StoreState } from 'store/modules'
 
 interface Props {
-  CategoryActions: typeof CategoryActions
-  LoginActions: typeof LoginActions
+  autoLogin: (value: AutoLoginInterface) => never
+  loadCategory: () => never
   loginLogined: boolean
 }
 
 const BasicContainer: React.SFC<Props> = Props => (
-  <Basic
-    loginLogined={Props.loginLogined}
-    getLogin={Props.LoginActions.autoLogin}
-    loadCategory={Props.CategoryActions.getCategory}
-  />
+  <Basic loginLogined={Props.loginLogined} getLogin={Props.autoLogin} loadCategory={Props.loadCategory} />
 )
 
 export default connect(
@@ -28,7 +24,7 @@ export default connect(
     loginLogined: Login.loginLogined
   }),
   dispatch => ({
-    LoginActions: bindActionCreators(LoginActions, dispatch),
-    CategoryActions: bindActionCreators(CategoryActions, dispatch)
+    autoLogin: bindActionCreators(LoginActions.autoLogin, dispatch),
+    loadCategory: bindActionCreators(CategoryActions.getCategory, dispatch)
   })
 )(BasicContainer)

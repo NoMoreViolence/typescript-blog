@@ -1,7 +1,11 @@
 import * as React from 'react'
+
 import { Container, Row, Col, Button, Form, Input } from 'reactstrap'
 import './Login.css'
 import { toast } from 'react-toastify'
+
+import { LoginInterface } from 'store/modules/Login'
+
 import { withRouter, RouteComponentProps } from 'react-router'
 
 // onChange Input Element
@@ -16,8 +20,8 @@ interface Props {
   loginUsername: string
   handleChangePassword: Function
   loginPassword: string
-  // 로그인 메소드
-  postLogin: Function
+  // Login method
+  postLogin: (value: LoginInterface) => Promise<object>
   // logined = true, notLogined = false
   loginStatusCode: number
   loginType: string
@@ -26,6 +30,10 @@ interface Props {
 
 const Login = withRouter<Props & RouteComponentProps<any>>(
   class Login extends React.Component<Props & RouteComponentProps<any>> {
+    // Ref
+    public ID: any = null
+    public PW: any = null
+
     // Login Submit
     public handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
       // stopping form event
@@ -33,8 +41,34 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
 
       const { loginUsername, loginPassword, postLogin, history } = this.props
 
-      if (loginUsername !== '' && loginPassword !== '') {
-        postLogin(loginUsername, loginPassword)
+      // Value check function, if the data is null or '', return 0
+      //                       if the data is exit, return 1
+      const stringNullCheck = (data: string): boolean => {
+        if (data.trim() === '') {
+          return false
+        }
+        return true
+      }
+
+      // username & password check
+      const valueCheck = (data: LoginInterface): Promise<object> => {
+        const usernameCheck = stringNullCheck(data.username)
+        const passwordCheck = stringNullCheck(data.password)
+
+        if (!usernameCheck) {
+          return Promise.reject(new Error('ID'))
+        }
+
+        if (!passwordCheck) {
+          return Promise.reject(new Error('PW'))
+        }
+
+        return Promise.resolve({ username: data.username, password: data.password })
+      }
+
+      // Request
+      const requestToServer = (data: LoginInterface): void => {
+        postLogin({ username: data.username, password: data.password })
           .then((res: any) => {
             toast('관리자님 환영합니다 !')
             sessionStorage.setItem('token', res.value.data.token)
@@ -43,22 +77,30 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
           .catch((err: any) => {
             toast(err.response.data.message)
           })
-      } else {
-        if (loginUsername === '') {
-          toast('아이디를 입력해 주세요')
-        } else if (loginPassword === '') {
-          toast('비밀번호를 입력해 주세요')
+      }
+
+      // Error handler
+      const onError = (err: Error): void => {
+        if (err.message === 'ID') {
+          toast('ID를 입력해 주세요 !')
+          this.ID.focus()
+        }
+
+        if (err.message === 'PW') {
+          toast('비밀번호를 입력해 주세요 !')
+          this.PW.focus()
         }
       }
+
+      // Promise
+      valueCheck({ username: loginUsername, password: loginPassword })
+        .then(requestToServer)
+        .catch(onError)
     }
 
-    // 글자 변경 메소드
+    // Handle change
     public handleChange = (e: InputTarget): void => {
-      if (e.target.name === 'username') {
-        this.props.handleChangeUsername(e.target.value)
-      } else if (e.target.name === 'password') {
-        this.props.handleChangePassword(e.target.value)
-      }
+      this.props['handleChange' + e.target.name](e.target.value)
     }
 
     public render(): JSX.Element {
@@ -77,16 +119,18 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
                 <Input
                   type="text"
                   placeholder="Username"
-                  name="username"
+                  name="Username"
                   value={this.props.loginUsername}
                   onChange={this.handleChange}
+                  innerRef={ref => (this.ID = ref)}
                 />
                 <Input
                   type="password"
                   placeholder="Password"
-                  name="password"
+                  name="Password"
                   value={this.props.loginPassword}
                   onChange={this.handleChange}
+                  innerRef={ref => (this.PW = ref)}
                 />
                 <Button color="primary" size="lg" block={true}>
                   Login

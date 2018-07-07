@@ -1,13 +1,16 @@
 import * as React from 'react'
+
 import { toast } from 'react-toastify'
+
+import { AutoLoginInterface } from 'store/modules/Login'
 
 interface Props {
   loginLogined: boolean
-  getLogin: (value: string | null) => any
+  getLogin: (value: AutoLoginInterface) => any
   loadCategory: () => void
 }
 
-interface AutoLoginInterface {
+interface ClientAutoLoginInterface {
   loginLogined: boolean
   token: string | null
 }
@@ -21,7 +24,7 @@ class Basic extends React.Component<Props> {
     loadCategory()
 
     // check user is logined or not
-    const checkLoginLogined = (data: AutoLoginInterface): Promise<object> => {
+    const checkLoginLogined = (data: ClientAutoLoginInterface): Promise<object> => {
       if (data.loginLogined !== true) {
         return Promise.resolve(data)
       }
@@ -29,7 +32,7 @@ class Basic extends React.Component<Props> {
     }
 
     // check token is exist or not
-    const checkTokenExist = (data: AutoLoginInterface): Promise<object> => {
+    const checkTokenExist = (data: ClientAutoLoginInterface): Promise<object> => {
       if (data.token !== null) {
         return Promise.resolve(data)
       }
@@ -37,8 +40,8 @@ class Basic extends React.Component<Props> {
     }
 
     // request auto login
-    const autoLogin = async (data: AutoLoginInterface): Promise<void> => {
-      await getLogin(data.token)
+    const autoLogin = async (data: ClientAutoLoginInterface): Promise<void> => {
+      await getLogin({ token: data.token })
         .then((res: any) => {
           toast('관리자님 환영합니다 !')
         })
@@ -60,7 +63,7 @@ class Basic extends React.Component<Props> {
       .catch(onError)
   }
   public render(): JSX.Element {
-    return <div />
+    return <React.Fragment />
   }
 }
 

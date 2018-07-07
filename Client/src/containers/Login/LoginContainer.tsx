@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Login from 'components/Templates/Login'
 
-import { LoginActions } from 'store/modules/Login'
+import { LoginActions, LoginInterface } from 'store/modules/Login'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -13,17 +13,19 @@ interface Props {
   loginLogined: boolean
   loginUsername: string
   loginPassword: string
-  LoginActions: typeof LoginActions
+  handleChangeUsername: (value: string) => never
+  handleChangePassword: (value: string) => never
+  postLogin: (value: LoginInterface) => never
 }
 
 const LoginContainer: React.SFC<Props> = Props => {
   return (
     <Login
-      handleChangeUsername={Props.LoginActions.handleChangeUsername}
+      handleChangeUsername={Props.handleChangeUsername}
       loginUsername={Props.loginUsername}
-      handleChangePassword={Props.LoginActions.handleChangePassword}
+      handleChangePassword={Props.handleChangePassword}
       loginPassword={Props.loginPassword}
-      postLogin={Props.LoginActions.login}
+      postLogin={Props.postLogin}
       loginStatusCode={Props.loginStatusCode}
       loginType={Props.loginType}
       loginLogined={Props.loginLogined}
@@ -40,7 +42,8 @@ export default connect(
     loginPassword: Login.loginPassword
   }),
   dispatch => ({
-    // 디스패치
-    LoginActions: bindActionCreators(LoginActions, dispatch)
+    handleChangeUsername: bindActionCreators(LoginActions.handleChangeUsername, dispatch),
+    handleChangePassword: bindActionCreators(LoginActions.handleChangePassword, dispatch),
+    postLogin: bindActionCreators(LoginActions.login, dispatch)
   })
 )(LoginContainer)
