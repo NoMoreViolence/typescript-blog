@@ -75,6 +75,9 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
             history.push('/')
           })
           .catch((err: any) => {
+            if (err.response.status === 500) {
+              toast('서버가 응답하지 않습니다 !')
+            }
             toast(err.response.data.message)
           })
       }
