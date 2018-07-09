@@ -51,13 +51,13 @@ Post.statics.createPost = function (category, title, subTitle, mainText) {
 // Post change
 // TODO: Change
 // category: ObjectID, oldTitle: string, title: string, subTitle: string, mainText: string
-Post.statics.changePost = function (category, oldTitle, title, subTitle, mainText) {
+Post.statics.changePost = function (category, oldTitle, newTitle, newSubTitle, newMainText) {
   return this.findOneAndUpdate(
     { title: oldTitle },
     {
-      title,
-      subTitle,
-      mainText,
+      title: newTitle,
+      subTitle: newSubTitle,
+      mainText: newMainText,
       category
     }
   ).exec()

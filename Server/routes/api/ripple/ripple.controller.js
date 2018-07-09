@@ -72,7 +72,7 @@ exports.showRipples = (req, res) => {
         topRipples.categoryID.toString() !== data.categoryID.toString() &&
         topRipples.postID.toString() !== data.postID.toString()
       ) {
-        return Promise.reject(new Error('대댓글을 달려고 하는 댓글의 카테고리와 포스트가 일치하지 않습니다 !'))
+        return Promise.reject(new Error('대댓글과 댓글의 카테고리와 포스트가 일치하지 않습니다 !'))
       }
 
       // Find Child Ripple
@@ -124,6 +124,7 @@ exports.showRipples = (req, res) => {
 
 /*
     POST /api/:category/:title/:writer/:toporchild?topID='value'
+    {}
     {
       ripple: string,
       password: string
@@ -165,13 +166,6 @@ exports.addRipple = (req, res) => {
     return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
   }
 
-  // Check params.writer.toLowerCase() is ('admin' or 'nomoreviolence) or not
-  const writerAdminCheck = data => {
-    if (data.writer.toLowerCase() !== ('admin' || 'nomoreviolence')) {
-      return Promise.resolve(data)
-    }
-    return Promise.reject(new Error('관리자 이름은 댓글 작성자 이름이 될 수 없습니다 !'))
-  }
   // Check body.ripple exist or not
   const rippleExistCheck = data => {
     // Check body.ripple exist or not
@@ -219,7 +213,7 @@ exports.addRipple = (req, res) => {
       // add ripple to title
       await Post.rippleRefPush(data.postID, addedRipple.id)
 
-      return Promise.resolve({ ...data, password: '!!!' })
+      return Promise.resolve({ ...data, addedRipple, password: '!!!' })
     }
 
     // Child class ripple
@@ -290,7 +284,6 @@ exports.addRipple = (req, res) => {
     topID
   })
     .then(categoryExistCheck)
-    .then(writerAdminCheck)
     .then(rippleExistCheck)
     .then(passwordExistCheck)
     .then(passwordEncryption)
@@ -298,3 +291,12 @@ exports.addRipple = (req, res) => {
     .then(respondToClient)
     .catch(onError)
 }
+
+/*
+    PATCH /api/:category/:title/:writer/:toporchild
+    {}
+    {
+      password: string
+    }
+*/
+exports.changeRipple = (req, res) => {}

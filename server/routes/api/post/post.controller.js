@@ -1,5 +1,6 @@
 const Post = require('./../../../models/Post')
 const Category = require('./../../../models/Category')
+const Ripple = require('./../../../models/Ripple')
 
 /*
     GET /api/:category/:title?type='value'
@@ -7,7 +8,6 @@ const Category = require('./../../../models/Category')
 */
 // Bring the data of :title
 exports.postShow = (req, res) => {
-  console.log(req.params)
   const { category, title } = req.params
   const { type } = req.query
 
@@ -239,10 +239,10 @@ exports.postChange = async (req, res) => {
 
   // Check new values is exist or not
   const bodyValueExistCheck = data => {
-    const newCategory = data.newCategory !== undefined
-    const newTitle = data.newTitle !== undefined
-    const newSubTitle = data.newSubTitle !== undefined
-    const newMainText = data.newMainText !== undefined
+    const newCategory = data.newCategory === undefined
+    const newTitle = data.newTitle === undefined
+    const newSubTitle = data.newSubTitle === undefined
+    const newMainText = data.newMainText === undefined
 
     if (newCategory && newTitle && newSubTitle && newMainText) {
       return Promise.reject(new Error('포스트 변경에 필요한 값이 불충분 합니다 !'))
@@ -257,7 +257,13 @@ exports.postChange = async (req, res) => {
       return Promise.reject(new Error('포스트 변경에 필요한 값이 불충분 합니다 !'))
     }
 
-    return Promise.resolve(data)
+    return Promise.resolve({
+      ...data,
+      newCategory: data.newCategory.trim(),
+      newTitle: data.newTitle.trim(),
+      newSubTitle: data.newSubTitle.trim(),
+      newMainText: data.newMainText.trim()
+    })
   }
 
   // Check newTitle is exist or not
@@ -317,6 +323,7 @@ exports.postChange = async (req, res) => {
     // Change post data
     // Push & Pop to category.posts []
     await Post.changePost(data.newCategoryID, data.oldTitle, data.newTitle, data.newSubTitle, data.newMainText)
+    await Ripple.categoryIdUpdate(data.oldCategoryID, data.postID, data.newCategoryID)
     await Category.PostsRefPop(data.oldCategory, data.postID)
     await Category.PostsRefPush(data.newCategory, data.postID)
 

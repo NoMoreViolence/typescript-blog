@@ -11,8 +11,7 @@ const Ripple = new Schema({
   postID: { type: Schema.Types.ObjectId, ref: 'post', required: true }, // Post ID
   top: { type: Boolean, required: true }, // Top class ripple or not
   childRipple: [{ type: Schema.Types.ObjectId, ref: 'ripple' }], // Child Ripple ID's // It's only useful when top is true
-  date: { type: Date, default: Date.now }, // Ripple date
-  admin: { type: Boolean, default: false } // Admin value
+  date: { type: Date, default: Date.now } // Ripple date
 })
 
 // Search
@@ -55,7 +54,7 @@ Ripple.statics.searchChildRipple = function (childRippleArray, passwordShow) {
   // Return founded ripple data
   return this.find({ _id: { $in: childRippleArray }, top: false })
     .select({ password: passwordShow })
-    .sort({ date: -1 })
+    .sort({ date: 1 })
     .exec()
 }
 // Search
@@ -80,7 +79,7 @@ Ripple.statics.createRipple = function (categoryID, postID, writer, text, passwo
 // Ripple change
 // TODO: Change
 //
-Ripple.statics.changeRipple = function () {}
+Ripple.statics.changeRipple = function () { }
 
 // Ripple delete
 // TODO: Delete
@@ -88,7 +87,7 @@ Ripple.statics.removeRipple = function (category) {
   return this.findOneAndRemove({ category })
 }
 // TODO: Delete
-Ripple.statics.removeRippleAdmin = function () {}
+Ripple.statics.removeRippleAdmin = function () { }
 // Ripple delete
 
 // TODO: REFs
@@ -104,6 +103,11 @@ Ripple.statics.checkObjectID = function (ObjectID) {
     return true
   }
   return false
+}
+
+// TODO: if Changed Post, the categoryID should be updated
+Ripple.statics.categoryIdUpdate = function (oldCategoryID, oldPostID, newCategoryID) {
+  return this.update({ categoryID: oldCategoryID, postID: oldPostID }, { categoryID: newCategoryID }, { multi: true }).exec()
 }
 
 module.exports = mongoose.model('ripple', Ripple)
