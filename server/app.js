@@ -28,7 +28,7 @@ app.use('/api', require('./routes/api'))
 app.use(express.static(path.join(__dirname, '../Client/build')))
 
 // mongo connect
-mongoose.set('debug', true)
+// mongoose.set('debug', true)
 mongoose.connect(config.mongodbUri)
 
 const db = mongoose.connection

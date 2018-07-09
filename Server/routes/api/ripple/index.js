@@ -1,26 +1,16 @@
 const router = require('express').Router()
 const controller = require('./ripple.controller')
-const authMiddleware = require('./../../../middlewares/auth')
 
-// Bring the ripple
-router.get('/:category/:title/:writer', controller.showRipple)
+// TODO:
+router.get('/:category/:title/ripples/:toporchild', controller.showRipples)
 
 // Add the ripple
-router.post('/:category/:title/:writer', controller.addRipple)
-// Admin add the ripple
-router.use('/:category/:title/:writer/admin', authMiddleware)
-router.post('/:category/:title/:writer/admin', controller.addAdminRipple)
+router.post('/:category/:title/:writer/:toporchild', controller.addRipple)
 
 // Change the ripple
-router.put('/:category/:title/:writer', controller.changeRipple)
-// Admin change the ripple
-router.use('/:category/:title/:writer/admin', authMiddleware)
-router.put('/:category/:title/:writer/admin', controller.changeAdminRipple)
+router.patch('/:category/:title/:writer', controller.changeRipple)
 
 // Delete the ripple
-router.delete('/:category/:title/:writer', controller.deleteRipple)
-// Admin delete the ripple
-router.use('/:category/:title/:writer/admin', authMiddleware)
-router.delete('/:category/:title/:writer/admin', controller.deleteAdminRipple)
+// router.delete('/:category/:title/:writer', controller.deleteRipple)
 
 module.exports = router
