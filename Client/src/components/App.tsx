@@ -20,40 +20,36 @@ import Ripple from './Pages/Ripple'
 
 import ProgressBar from 'lib/ProgressBar'
 
-class App extends React.Component {
-  public render() {
-    return (
-      <React.Fragment>
-        <ProgressBar />
-        <div className="main">
-          <Basic />
-          <ToastContainer />
-          <Header />
+const App: React.SFC = () => (
+  <React.Fragment>
+    <ProgressBar />
+    <div className="main">
+      <Basic />
+      <ToastContainer />
+      <Header />
 
-          <Route exact={true} path="/" component={CategoryAll} />
+      <Route exact={true} path="/" component={CategoryAll} />
 
-          <Switch>
-            <Route exact={true} path="/admin" component={Admin} />
-            <Route exact={true} path="/:category" component={CategorySelect} />
-          </Switch>
+      <Switch>
+        <Route exact={true} path="/admin" component={Admin} />
+        <Route exact={true} path="/:category" component={CategorySelect} />
+      </Switch>
 
-          <Switch>
-            <Route exact={true} path="/admin/login" component={Login} />
-            <Route
-              exact={true}
-              path="/:category/:post"
-              render={() => (
-                <React.Fragment>
-                  <PostSelect />
-                  <Ripple />
-                </React.Fragment>
-              )}
-            />
-          </Switch>
-        </div>
-      </React.Fragment>
-    )
-  }
-}
+      <Switch>
+        <Route exact={true} path="/admin/login" component={Login} />
+        <Route
+          exact={true}
+          path="/:category/:post"
+          render={() => (
+            <React.Fragment>
+              <PostSelect />
+              <Ripple />
+            </React.Fragment>
+          )}
+        />
+      </Switch>
+    </div>
+  </React.Fragment>
+)
 
 export default App
