@@ -190,6 +190,14 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
         .catch(onError)
     }
 
+    // Optimization rendering problem
+    public shouldComponentUpdate(nextProps: Props, nextState: State) {
+      if (nextProps !== this.props || nextState !== this.state) {
+        return true
+      }
+      return false
+    }
+
     public render(): JSX.Element {
       const { changeCategoryDropdown } = this.state
       const { changeCategoryInputValue, changeCategorySelectValue } = this.props

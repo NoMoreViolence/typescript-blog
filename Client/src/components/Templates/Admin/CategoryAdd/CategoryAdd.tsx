@@ -134,6 +134,14 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
       .catch(onError)
   }
 
+  // Optimization rendering problem
+  public shouldComponentUpdate(nextProps: Props) {
+    if (nextProps !== this.props) {
+      return true
+    }
+    return false
+  }
+
   public render(): JSX.Element {
     return (
       <div className="category-add-container">

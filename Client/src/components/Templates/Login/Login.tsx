@@ -106,6 +106,14 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
       this.props['handleChange' + e.target.name](e.target.value)
     }
 
+    // Optimization rendering problem
+    public shouldComponentUpdate(nextProps: Props) {
+      if (nextProps !== this.props) {
+        return true
+      }
+      return false
+    }
+
     public render(): JSX.Element {
       return (
         <Container className="login-form">
