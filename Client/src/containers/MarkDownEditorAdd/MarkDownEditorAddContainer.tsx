@@ -2,14 +2,21 @@ import * as React from 'react'
 
 import MarkDownEditor from 'lib/MarkDownEditor'
 
-import { PostActions, AddPostState } from 'store/modules/Post'
+import { PostActions } from 'store/modules/Post'
 
 import { connect } from 'react-redux'
 import { StoreState } from 'store/modules'
 import { bindActionCreators } from 'redux'
 
 interface Props {
-  add: AddPostState
+  // Values
+  title: string
+  subTitle: string
+  mainText: string
+  failedWithNoDataTitle: boolean
+  failedWithNoDataSubTitle: boolean
+  failedWithNoDataMainText: boolean
+  // Method
   addPostPostTitleChange: (value: string) => never
   addPostPostSubTitleChange: (value: string) => never
   addPostPostMainTextChange: (value: string) => never
@@ -18,21 +25,30 @@ interface Props {
 
 const MarkDownEditorAddContainer: React.SFC<Props> = Props => (
   <MarkDownEditor
-    title={Props.add.title}
+    // Value
+    title={Props.title}
+    subTitle={Props.subTitle}
+    MainText={Props.mainText}
+    titleError={Props.failedWithNoDataTitle}
+    subTitleError={Props.failedWithNoDataSubTitle}
+    mainTextError={Props.failedWithNoDataMainText}
+    // Method
     changeTitle={Props.addPostPostTitleChange}
-    subTitle={Props.add.subTitle}
     changeSubTitle={Props.addPostPostSubTitleChange}
-    MainText={Props.add.mainText}
     changeMainText={Props.addPostPostMainTextChange}
-    titleError={Props.add.failedWithNoDataTitle}
-    subTitleError={Props.add.failedWithNoDataSubTitle}
-    mainTextError={Props.add.failedWithNoDataMainText}
     errorHandler={Props.addPostPostError}
   />
 )
 
 export default connect(
-  ({ Post }: StoreState) => ({ add: Post.add }),
+  ({ Post }: StoreState) => ({
+    title: Post.add.title,
+    subTitle: Post.add.subTitle,
+    mainText: Post.add.mainText,
+    failedWithNoDataTitle: Post.add.failedWithNoDataTitle,
+    failedWithNoDataSubTitle: Post.add.failedWithNoDataSubTitle,
+    failedWithNoDataMainText: Post.add.failedWithNoDataMainText
+  }),
   dispatch => ({
     addPostPostTitleChange: bindActionCreators(PostActions.addPostPostTitleChange, dispatch),
     addPostPostSubTitleChange: bindActionCreators(PostActions.addPostPostSubTitleChange, dispatch),

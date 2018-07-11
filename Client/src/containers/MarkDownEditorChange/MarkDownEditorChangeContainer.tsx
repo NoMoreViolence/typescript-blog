@@ -2,14 +2,21 @@ import * as React from 'react'
 
 import MarkDownEditor from 'lib/MarkDownEditor'
 
-import { PostActions, ChangePostState } from 'store/modules/Post'
+import { PostActions } from 'store/modules/Post'
 
 import { connect } from 'react-redux'
 import { StoreState } from 'store/modules'
 import { bindActionCreators } from 'redux'
 
 interface Props {
-  change: ChangePostState
+  // Values
+  title: string
+  subTitle: string
+  mainText: string
+  failedWithNoDataTitle: boolean
+  failedWithNoDataSubTitle: boolean
+  failedWithNoDataMainText: boolean
+  // Method
   changePutPostTitleChange: (value: string) => never
   changePutPostSubTitleChange: (value: string) => never
   changePutPostMainTextChange: (value: string) => never
@@ -18,21 +25,30 @@ interface Props {
 
 const MarkDownEditorChangeContainer: React.SFC<Props> = Props => (
   <MarkDownEditor
-    title={Props.change.title}
+    // Value
+    title={Props.title}
+    subTitle={Props.subTitle}
+    MainText={Props.mainText}
+    titleError={Props.failedWithNoDataTitle}
+    subTitleError={Props.failedWithNoDataSubTitle}
+    mainTextError={Props.failedWithNoDataMainText}
+    // Method
     changeTitle={Props.changePutPostTitleChange}
-    subTitle={Props.change.subTitle}
     changeSubTitle={Props.changePutPostSubTitleChange}
-    MainText={Props.change.mainText}
     changeMainText={Props.changePutPostMainTextChange}
-    titleError={Props.change.failedWithNoDataTitle}
-    subTitleError={Props.change.failedWithNoDataSubTitle}
-    mainTextError={Props.change.failedWithNoDataMainText}
     errorHandler={Props.changePutPostError}
   />
 )
 
 export default connect(
-  ({ Post }: StoreState) => ({ change: Post.change }),
+  ({ Post }: StoreState) => ({
+    title: Post.change.title,
+    subTitle: Post.change.subTitle,
+    mainText: Post.change.mainText,
+    failedWithNoDataTitle: Post.change.failedWithNoDataTitle,
+    failedWithNoDataSubTitle: Post.change.failedWithNoDataSubTitle,
+    failedWithNoDataMainText: Post.change.failedWithNoDataMainText
+  }),
   dispatch => ({
     changePutPostTitleChange: bindActionCreators(PostActions.changePutPostTitleChange, dispatch),
     changePutPostSubTitleChange: bindActionCreators(PostActions.changePutPostSubTitleChange, dispatch),
