@@ -15,7 +15,7 @@ interface Props {
   category: CategoryStateInside[]
   changeCategoryPending: boolean
   changeCategoryInputValue: string
-  changeCategoryCategoryValue: string
+  changeCategorySelectValue: string
   // Method
   // Category actions
   getCategory: () => never
@@ -36,7 +36,7 @@ const CategoryChangeContainer: React.SFC<Props> = Props => (
     categoryLoad={Props.getCategory}
     changeCategoryInputValue={Props.changeCategoryInputValue}
     changeCategoryInputChange={Props.changeCategoryInputChange}
-    changeCategorySelectValue={Props.changeCategoryCategoryValue}
+    changeCategorySelectValue={Props.changeCategorySelectValue}
     changeCategorySelectChange={Props.changeCategorySelectChange}
     changeCategory={Props.changeCategory}
     categoryDone={Props.categoryDone}
@@ -52,7 +52,7 @@ export default connect(
     category: Category.categoryCategory,
     changeCategoryPending: Category.changeCategoryPending,
     changeCategoryInputValue: Category.changeCategoryInputValue,
-    changeCategoryCategoryValue: Category.changeCategoryCategoryValue
+    changeCategorySelectValue: Category.changeCategorySelectValue
   }),
   dispatch => ({
     getCategory: bindActionCreators(CategoryActions.getCategory, dispatch),

@@ -50,7 +50,7 @@ export default connect(
     loginLogined: Login.loginLogined,
     category: Category.categoryCategory,
     deleteCategoryInputValue: Category.deleteCategoryInputValue,
-    deleteCategoryCategoryValue: Category.deleteCategoryCategoryValue,
+    deleteCategoryCategoryValue: Category.deleteCategorySelectValue,
     deleteCategoryPending: Category.deleteCategoryPending
   }),
   dispatch => ({
