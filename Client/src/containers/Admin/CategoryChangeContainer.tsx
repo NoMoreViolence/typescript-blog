@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import CategoryChange from 'components/Templates/Admin/CategoryChange'
 
-import { CategoryActions, CategoryStateInside } from 'store/modules/Category'
+import { CategoryActions, CategoryStateInside, PatchCategoryChangeAPIInterface } from 'store/modules/Category'
 import { PostActions } from 'store/modules/Post'
 import { LoginActions } from 'store/modules/Login'
 
@@ -13,26 +13,36 @@ import { StoreState } from 'store/modules'
 interface Props {
   loginLogined: boolean
   category: CategoryStateInside[]
+  changeCategoryPending: boolean
   changeCategoryInputValue: string
   changeCategoryCategoryValue: string
-  CategoryActions: typeof CategoryActions
-  PostActions: typeof PostActions
-  LoginActions: typeof LoginActions
+  // Method
+  // Category actions
+  getCategory: () => never
+  changeCategoryInputChange: (value: string) => never
+  changeCategorySelectChange: (value: string) => never
+  changeCategory: (value: PatchCategoryChangeAPIInterface) => never
+  categoryDone: () => never
+  // Post actions
+  postDone: () => never
+  // Login actions
+  logout: () => never
 }
 
 const CategoryChangeContainer: React.SFC<Props> = Props => (
   <CategoryChange
     loginLogined={Props.loginLogined}
     category={Props.category}
-    categoryLoad={Props.CategoryActions.getCategory}
+    categoryLoad={Props.getCategory}
     changeCategoryInputValue={Props.changeCategoryInputValue}
-    changeCategoryInputChange={Props.CategoryActions.changeCategoryInputChange}
+    changeCategoryInputChange={Props.changeCategoryInputChange}
     changeCategorySelectValue={Props.changeCategoryCategoryValue}
-    changeCategorySelectChange={Props.CategoryActions.changeCategoryCategoryChange}
-    changeCategory={Props.CategoryActions.changeCategory}
-    logout={Props.LoginActions.logout}
-    categoryDone={Props.CategoryActions.categoryDone}
-    postDone={Props.PostActions.postDone}
+    changeCategorySelectChange={Props.changeCategorySelectChange}
+    changeCategory={Props.changeCategory}
+    categoryDone={Props.categoryDone}
+    postDone={Props.postDone}
+    logout={Props.logout}
+    pending={Props.changeCategoryPending}
   />
 )
 
@@ -40,12 +50,17 @@ export default connect(
   ({ Category, Login }: StoreState) => ({
     loginLogined: Login.loginLogined,
     category: Category.categoryCategory,
+    changeCategoryPending: Category.changeCategoryPending,
     changeCategoryInputValue: Category.changeCategoryInputValue,
     changeCategoryCategoryValue: Category.changeCategoryCategoryValue
   }),
   dispatch => ({
-    CategoryActions: bindActionCreators(CategoryActions, dispatch),
-    PostActions: bindActionCreators(PostActions, dispatch),
-    LoginActions: bindActionCreators(LoginActions, dispatch)
+    getCategory: bindActionCreators(CategoryActions.getCategory, dispatch),
+    changeCategoryInputChange: bindActionCreators(CategoryActions.changeCategoryInputChange, dispatch),
+    changeCategorySelectChange: bindActionCreators(CategoryActions.changeCategorySelectChange, dispatch),
+    changeCategory: bindActionCreators(CategoryActions.changeCategory, dispatch),
+    categoryDone: bindActionCreators(CategoryActions.categoryDone, dispatch),
+    postDone: bindActionCreators(PostActions.postDone, dispatch),
+    logout: bindActionCreators(LoginActions.logout, dispatch)
   })
 )(CategoryChangeContainer)

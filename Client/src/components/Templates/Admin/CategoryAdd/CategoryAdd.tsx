@@ -1,24 +1,28 @@
 import * as React from 'react'
+
 import './CategoryAdd.css'
 import { Form, InputGroup, Input, Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
+import RegExp from 'lib/RegExp'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 interface Props {
   loginLogined: boolean
-  categoryLoad: () => void
   addCategoryInputValue: string
+  pending: boolean
+  categoryLoad: () => void
   addCategoryInputChange: (value: string) => void
   addCategory: (value: string) => any
-  logout: () => void
   categoryDone: () => void
   postDone: () => void
+  logout: () => void
 }
 
 interface CategoryAddMethodInterface {
   loginLogined: boolean
   addCategoryInputValue: string
+  pending: boolean
 }
 
 interface Target {
@@ -49,8 +53,18 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
       logout,
       categoryDone,
       postDone,
-      history
+      history,
+      pending
     } = this.props
+
+    // Check the request is still in process
+    const pendingCheck = (data: CategoryAddMethodInterface): Promise<object> => {
+      if (data.pending === true) {
+        return Promise.reject(new Error('Still_Loading'))
+      }
+
+      return Promise.resolve(data)
+    }
 
     // check user is logined or not
     const userAdminCheck = (data: CategoryAddMethodInterface): Promise<object> => {
@@ -61,8 +75,19 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
       return Promise.reject(new Error('Not_Admin_User'))
     }
 
+    const inputValueSpecialSymbolsCheck = (data: CategoryAddMethodInterface): Promise<object> => {
+      // the regexp value
+      const regExpTest = RegExp.test(data.addCategoryInputValue)
+
+      if (regExpTest === true) {
+        return Promise.reject(new Error('/_?_&_#'))
+      }
+
+      return Promise.resolve(data)
+    }
+
     // check the input value is '' or not
-    const inputValueCheck = (data: CategoryAddMethodInterface): Promise<object> => {
+    const inputValueNullCheck = (data: CategoryAddMethodInterface): Promise<object> => {
       // compare the value exist or not
       if (data.addCategoryInputValue !== '') {
         return Promise.resolve(data)
@@ -113,6 +138,10 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
         addCategoryInputChange('')
         logout()
         history.push('/')
+      } else if (err.message === '/_?_&_#') {
+        toast(`'${err.message}' 기호는 카테고리에 추가할 수 없습니다 !`)
+        addCategoryInputChange('')
+        this.addCategoryInput.focus()
       } else if (err.message === 'No_Input') {
         // no input
         toast('추가할 카테고리를 입력해 주세요 !')
@@ -127,8 +156,10 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     }
 
     // Promise
-    userAdminCheck({ loginLogined, addCategoryInputValue: addCategoryInputValue.trim() })
-      .then(inputValueCheck)
+    pendingCheck({ loginLogined, addCategoryInputValue: addCategoryInputValue.trim(), pending })
+      .then(userAdminCheck)
+      .then(inputValueSpecialSymbolsCheck)
+      .then(inputValueNullCheck)
       .then(inputValueAdminCheck)
       .then(requestToServer)
       .catch(onError)

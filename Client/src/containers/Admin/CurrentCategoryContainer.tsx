@@ -12,9 +12,6 @@ interface Props {
 }
 const CurrentCategoryContainer: React.SFC<Props> = Props => <CurrentCategory category={Props.category} />
 
-export default connect(
-  ({ Category }: StoreState) => ({
-    category: Category.categoryCategory
-  }),
-  dispatch => ({})
-)(CurrentCategoryContainer)
+export default connect(({ Category }: StoreState) => ({
+  category: Category.categoryCategory
+}))(CurrentCategoryContainer)

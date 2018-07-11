@@ -21,11 +21,15 @@ function postCategoryAddAPI(newCategory: string) {
   )
 }
 
+export interface PatchCategoryChangeAPIInterface {
+  oldCategory: string
+  newCategory: string
+}
 // change category api
-function patchCategoryChangeAPI(oldCategory: string, newCategory: string) {
+function patchCategoryChangeAPI(value: PatchCategoryChangeAPIInterface) {
   return axios.patch(
-    `/api/${oldCategory}`,
-    { changeCategory: newCategory },
+    `/api/${value.oldCategory}`,
+    { changeCategory: value.newCategory },
     {
       headers: {
         'Content-Type': 'application/json',
@@ -35,9 +39,13 @@ function patchCategoryChangeAPI(oldCategory: string, newCategory: string) {
   )
 }
 
+export interface DeleteCategoryDeleteAPIInterface {
+  category: string
+  doubleCheck: string
+}
 // delete category api
-function deleteCategoryDeleteAPI(Category: string, doubleCheck: string) {
-  return axios.delete(`/api/${Category}?doubleCheck=${doubleCheck}`, {
+function deleteCategoryDeleteAPI(value: DeleteCategoryDeleteAPIInterface) {
+  return axios.delete(`/api/${value.category}?doubleCheck=${value.doubleCheck}`, {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': sessionStorage.getItem('token')
@@ -58,14 +66,14 @@ const POST_ADD_CATEGORY_SUCCESS = 'POST_ADD_CATEGORY_SUCCESS'
 const POST_ADD_CATEGORY_FAILURE = 'POST_ADD_CATEGORY_FAILURE'
 // change category
 const PATCH_CHANGE_CATEGORY_INPUT_CHANGE = 'PATCH_CHANGE_CATEGORY_INPUT_CHANGE'
-const PATCH_CHANGE_CATEGORY_CATEGORY_CHANGE = 'PATCH_CHANGE_CATEGORY_CATEGORY_CHANGE'
+const PATCH_CHANGE_CATEGORY_SELECT_CHANGE = 'PATCH_CHANGE_CATEGORY_SELECT_CHANGE'
 const PATCH_CHANGE_CATEGORY = 'PATCH_CHANGE_CATEGORY'
 const PATCH_CHANGE_CATEGORY_PENDING = 'PATCH_CHANGE_CATEGORY_PENDING'
 const PATCH_CHANGE_CATEGORY_SUCCESS = 'PATCH_CHANGE_CATEGORY_SUCCESS'
 const PATCH_CHANGE_CATEGORY_FAILURE = 'PATCH_CHANGE_CATEGORY_FAILURE'
 // delete category
 const DELETE_DELETE_CATEGORY_INPUT_CHANGE = 'DELETE_DELETE_CATEGORY_INPUT_CHANGE'
-const DELETE_DELETE_CATEGORY_CATEGORY_CHANGE = 'DELETE_DELETE_CATEGORY-CATEGORY_CHANGE'
+const DELETE_DELETE_CATEGORY_SELECT_CHANGE = 'DELETE_DELETE_CATEGORY_SELECT_CHANGE'
 const DELETE_DELETE_CATEGORY = 'DELETE_DELETE_CATEGORY'
 const DELETE_DELETE_CATEGORY_PENDING = 'DELETE_DELETE_CATEGORY_PENDING'
 const DELETE_DELETE_CATEGORY_SUCCESS = 'DELETE_DELETE_CATEGORY_SUCCESS'
@@ -86,14 +94,14 @@ export const CategoryActions = {
 
   // category Change
   changeCategoryInputChange: createAction<string, string>(PATCH_CHANGE_CATEGORY_INPUT_CHANGE, text => text),
-  changeCategoryCategoryChange: createAction<string, string>(PATCH_CHANGE_CATEGORY_CATEGORY_CHANGE, value => value),
-  changeCategory: createAction<any, string, string>(PATCH_CHANGE_CATEGORY, patchCategoryChangeAPI),
+  changeCategorySelectChange: createAction<string, string>(PATCH_CHANGE_CATEGORY_SELECT_CHANGE, value => value),
+  changeCategory: createAction<any, PatchCategoryChangeAPIInterface>(PATCH_CHANGE_CATEGORY, patchCategoryChangeAPI),
   // category Change
 
   // category Delete
   deleteCategoryInputChange: createAction<string, string>(DELETE_DELETE_CATEGORY_INPUT_CHANGE, text => text),
-  deleteCategoryCategoryChange: createAction<string, string>(DELETE_DELETE_CATEGORY_CATEGORY_CHANGE, value => value),
-  deleteCategory: createAction<any, string, string>(DELETE_DELETE_CATEGORY, deleteCategoryDeleteAPI),
+  deleteCategorySelectChange: createAction<string, string>(DELETE_DELETE_CATEGORY_SELECT_CHANGE, value => value),
+  deleteCategory: createAction<any, DeleteCategoryDeleteAPIInterface>(DELETE_DELETE_CATEGORY, deleteCategoryDeleteAPI),
   // category Delete
 
   // EveryThing is Gone
@@ -123,11 +131,11 @@ export interface CategoryState {
   addCategoryInputValue?: string
 
   changeCategoryPending: boolean
-  changeCategoryCategoryValue?: string
+  changeCategorySelectValue?: string
   changeCategoryInputValue?: string
 
   deleteCategoryPending: boolean
-  deleteCategoryCategoryValue?: string
+  deleteCategorySelectValue?: string
   deleteCategoryInputValue?: string
 }
 // origin state
@@ -141,11 +149,11 @@ const initialState: CategoryState = {
   addCategoryInputValue: '',
 
   changeCategoryPending: false,
-  changeCategoryCategoryValue: '변경할 카테고리 선택',
+  changeCategorySelectValue: '변경할 카테고리 선택',
   changeCategoryInputValue: '',
 
   deleteCategoryPending: false,
-  deleteCategoryCategoryValue: '삭제할 카테고리 선택',
+  deleteCategorySelectValue: '삭제할 카테고리 선택',
   deleteCategoryInputValue: ''
 }
 
@@ -157,10 +165,10 @@ const initialState: CategoryState = {
 type AddInputPayloadAction = ReturnType<typeof CategoryActions.addCategoryInputChange>
 // acton: Action<CategoryPayload> to action: ChangeInputPayloadAction
 type ChangeInputPayloadAction = ReturnType<typeof CategoryActions.changeCategoryInputChange>
-type ChangeCategoryCategoryPayloadAction = ReturnType<typeof CategoryActions.changeCategoryCategoryChange>
+type ChangeCategoryCategoryPayloadAction = ReturnType<typeof CategoryActions.changeCategorySelectChange>
 // acton: Action<CategoryPayload> to action: DeleteInputPayloadAction
 type DeleteInputPayloadAction = ReturnType<typeof CategoryActions.deleteCategoryInputChange>
-type DeleteCategoryCategoryPayloadAction = ReturnType<typeof CategoryActions.deleteCategoryCategoryChange>
+type DeleteCategoryCategoryPayloadAction = ReturnType<typeof CategoryActions.deleteCategorySelectChange>
 
 // reducer
 const reducer = handleActions<CategoryState, any>(
@@ -215,9 +223,9 @@ const reducer = handleActions<CategoryState, any>(
         draft.changeCategoryInputValue = action.payload
       }),
     // change change category select
-    [PATCH_CHANGE_CATEGORY_CATEGORY_CHANGE]: (state, action: ChangeCategoryCategoryPayloadAction) =>
+    [PATCH_CHANGE_CATEGORY_SELECT_CHANGE]: (state, action: ChangeCategoryCategoryPayloadAction) =>
       produce(state, draft => {
-        draft.changeCategoryCategoryValue = action.payload
+        draft.changeCategorySelectValue = action.payload
       }),
     // change category pending
     [PATCH_CHANGE_CATEGORY_PENDING]: state =>
@@ -241,9 +249,9 @@ const reducer = handleActions<CategoryState, any>(
         draft.deleteCategoryInputValue = action.payload
       }),
     // change delete category select
-    [DELETE_DELETE_CATEGORY_CATEGORY_CHANGE]: (state, action: DeleteCategoryCategoryPayloadAction) =>
+    [DELETE_DELETE_CATEGORY_SELECT_CHANGE]: (state, action: DeleteCategoryCategoryPayloadAction) =>
       produce(state, draft => {
-        draft.deleteCategoryCategoryValue = action.payload
+        draft.deleteCategorySelectValue = action.payload
       }),
     // delete categoru pending
     [DELETE_DELETE_CATEGORY_PENDING]: state =>
@@ -267,8 +275,8 @@ const reducer = handleActions<CategoryState, any>(
         draft.addCategoryInputValue = ''
         draft.changeCategoryInputValue = ''
         draft.deleteCategoryInputValue = ''
-        draft.changeCategoryCategoryValue = '변경할 카테고리 선택'
-        draft.deleteCategoryCategoryValue = '삭제할 카테고리 선택'
+        draft.changeCategorySelectValue = '변경할 카테고리 선택'
+        draft.deleteCategorySelectValue = '삭제할 카테고리 선택'
       })
   },
   initialState

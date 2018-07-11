@@ -14,32 +14,44 @@ import { StoreState } from 'store/modules'
 interface Props {
   loginLogined: boolean
   addCategoryInputValue: string
-  CategoryActions: typeof CategoryActions
-  PostActions: typeof PostActions
-  LoginActions: typeof LoginActions
+  addCategoryPending: boolean
+  // Category Actions
+  getCategory: () => never
+  addCategoryInputChange: (value: string) => never
+  addCategory: (value: string) => never
+  categoryDone: () => never
+  // Post Actions
+  postDone: () => never
+  // Login Actions
+  logout: () => never
 }
 
 const CategoryAddContainer: React.SFC<Props> = Props => (
   <CategoryAdd
     loginLogined={Props.loginLogined}
-    categoryLoad={Props.CategoryActions.getCategory}
+    categoryLoad={Props.getCategory}
     addCategoryInputValue={Props.addCategoryInputValue}
-    addCategoryInputChange={Props.CategoryActions.addCategoryInputChange}
-    addCategory={Props.CategoryActions.addCategory}
-    logout={Props.LoginActions.logout}
-    categoryDone={Props.CategoryActions.categoryDone}
-    postDone={Props.PostActions.postDone}
+    addCategoryInputChange={Props.addCategoryInputChange}
+    addCategory={Props.addCategory}
+    logout={Props.logout}
+    categoryDone={Props.categoryDone}
+    postDone={Props.postDone}
+    pending={Props.addCategoryPending}
   />
 )
 
 export default connect(
   ({ Category, Login }: StoreState) => ({
     loginLogined: Login.loginLogined,
-    addCategoryInputValue: Category.addCategoryInputValue
+    addCategoryInputValue: Category.addCategoryInputValue,
+    addCategoryPending: Category.addCategoryPending
   }),
   dispatch => ({
-    CategoryActions: bindActionCreators(CategoryActions, dispatch),
-    LoginActions: bindActionCreators(LoginActions, dispatch),
-    PostActions: bindActionCreators(PostActions, dispatch)
+    getCategory: bindActionCreators(CategoryActions.getCategory, dispatch),
+    addCategoryInputChange: bindActionCreators(CategoryActions.addCategoryInputChange, dispatch),
+    addCategory: bindActionCreators(CategoryActions.addCategory, dispatch),
+    categoryDone: bindActionCreators(CategoryActions.categoryDone, dispatch),
+    postDone: bindActionCreators(PostActions.postDone, dispatch),
+    logout: bindActionCreators(LoginActions.logout, dispatch)
   })
 )(CategoryAddContainer)

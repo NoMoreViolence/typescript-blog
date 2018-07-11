@@ -1,15 +1,17 @@
 import * as React from 'react'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { CategoryStateInside } from 'store/modules/Category'
 
 import './CategoryChange.css'
-
 import { Form, InputGroup, Dropdown, DropdownToggle, DropdownItem, DropdownMenu, Input, Button } from 'reactstrap'
 import { toast } from 'react-toastify'
+
+import RegExp from 'lib/RegExp'
+import { CategoryStateInside, PatchCategoryChangeAPIInterface } from 'store/modules/Category'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 interface Props {
   loginLogined: boolean
   category: CategoryStateInside[]
+  pending: boolean
 
   changeCategoryInputValue: string
   changeCategoryInputChange: (value: string) => void
@@ -17,7 +19,7 @@ interface Props {
   changeCategorySelectChange: (value: string) => void
 
   categoryLoad: () => void
-  changeCategory: (oldCategory: string, newCategory: string) => any
+  changeCategory: (value: PatchCategoryChangeAPIInterface) => any
   logout: () => void
   categoryDone: () => void
   postDone: () => void
@@ -30,6 +32,7 @@ interface CategoryChangeMethodInterface {
   loginLogined: boolean
   changeCategorySelect: string
   changeCategoryInput: string
+  pending: boolean
 }
 
 interface Target {
@@ -80,9 +83,18 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
         logout,
         categoryDone,
         postDone,
-
-        history
+        history,
+        pending
       } = this.props
+
+      // Check the request is still in process
+      const pendingCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
+        if (data.pending === true) {
+          return Promise.reject(new Error('Still_Loading'))
+        }
+
+        return Promise.resolve(data)
+      }
 
       // check user is logined or not
       const userAdminCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
@@ -93,15 +105,26 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       }
 
       // check the category select button is selected or not
-      const checkCategorySelect = (data: CategoryChangeMethodInterface): Promise<object> => {
+      const categorySelectCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
         if (data.changeCategorySelect !== '변경할 카테고리 선택') {
           return Promise.resolve(data)
         }
         return Promise.reject(new Error('No_Data_Category_Select'))
       }
 
+      const categoryInputSymbolsCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
+        // the regexp value
+        const regExpTest = RegExp.test(data.changeCategoryInput)
+
+        if (regExpTest === true) {
+          return Promise.reject(new Error('/_?_&_#'))
+        }
+
+        return Promise.resolve(data)
+      }
+
       // check the category input value is '' or not
-      const nullCheckCategoryInput = (data: CategoryChangeMethodInterface): Promise<object> => {
+      const categoryInputNullCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
         if (data.changeCategoryInput !== '') {
           return Promise.resolve(data)
         }
@@ -109,7 +132,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       }
 
       // check the category input value.toLowerCase() is 'admin' or not
-      const checkCategoryInputIsNotAdmin = (data: CategoryChangeMethodInterface): Promise<object> => {
+      const categoryInputAdminCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
         if (data.changeCategoryInput.toLowerCase() !== 'admin') {
           return Promise.resolve(data)
         }
@@ -117,7 +140,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       }
 
       // check same between the category select value and category input value
-      const checkValueSame = (data: CategoryChangeMethodInterface): Promise<object> => {
+      const valueSameCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
         if (data.changeCategorySelect !== data.changeCategoryInput) {
           return Promise.resolve(data)
         }
@@ -126,7 +149,7 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
 
       // change category
       const requestToServer = async (data: CategoryChangeMethodInterface): Promise<void> => {
-        await changeCategory(data.changeCategorySelect, data.changeCategoryInput)
+        await changeCategory({ oldCategory: data.changeCategorySelect, newCategory: data.changeCategoryInput })
           // succeed change category
           .then((res: any) => {
             toast(res.action.payload.data.message)
@@ -160,14 +183,21 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
         } else if (err.message === 'No_Data_Category_Select') {
           // none selected category select
           toast('변경할 카테고리를 선택해 주세요 !')
+        } else if (err.message === '/_?_&_#') {
+          this.props.changeCategoryInputChange('')
+          this.changeCategoryInput.focus()
+          // Use invalid symbol
+          toast('변경할 카테고리 이름에 특수문자를 넣지 말아 주세요 !')
         } else if (err.message === 'No_Data_Category_Input') {
+          this.props.changeCategoryInputChange('')
+          this.changeCategoryInput.focus()
           // none category input data
           toast('변경하고 싶은 카테고리 이름을 입력해 주세요 !')
-          this.changeCategoryInput.focus()
         } else if (err.message === 'Can_Not_Be_A_Admin') {
+          this.props.changeCategoryInputChange('')
+          this.changeCategoryInput.focus()
           // category input can't be a 'admin'
           toast("변경될 카테고리 이름은 'admin'이 될 수 없습니다")
-          this.changeCategoryInput.focus()
         } else if (err.message === 'Can_Not_Match_Select_And_Input') {
           // category select === category input => don't need to change
           toast('같은 값으로의 변경은 불필요 합니다 !')
@@ -177,15 +207,18 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       }
 
       // Promise
-      userAdminCheck({
+      pendingCheck({
         loginLogined,
         changeCategorySelect: changeCategorySelectValue.trim(),
-        changeCategoryInput: changeCategoryInputValue.trim()
+        changeCategoryInput: changeCategoryInputValue.trim(),
+        pending
       })
-        .then(checkCategorySelect)
-        .then(nullCheckCategoryInput)
-        .then(checkCategoryInputIsNotAdmin)
-        .then(checkValueSame)
+        .then(userAdminCheck)
+        .then(categorySelectCheck)
+        .then(categoryInputSymbolsCheck)
+        .then(categoryInputNullCheck)
+        .then(categoryInputAdminCheck)
+        .then(valueSameCheck)
         .then(requestToServer)
         .catch(onError)
     }

@@ -1,25 +1,30 @@
 import * as React from 'react'
 
-import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { CategoryStateInside } from 'store/modules/Category'
-
 import './CategoryDelete.css'
-
 import { Form, InputGroup, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
+import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { CategoryStateInside, DeleteCategoryDeleteAPIInterface } from 'store/modules/Category'
+
 interface Props {
+  // Value
   loginLogined: boolean
   category: CategoryStateInside[]
-  categoryLoad: () => void
+  deleteCategoryPending: boolean
   deleteCategoryInputValue: string
-  deleteCategoryInputChange: (value: string) => void
   deleteCategorySelectValue: string
+  // Change text
+  deleteCategoryInputChange: (value: string) => void
   deleteCategorySelectChange: (value: string) => void
-  deleteCategory: (category: string, doubleCheck: string) => any
-  logout: () => void
+  // Loading category
+  categoryLoad: () => void
+  // Delete category
+  deleteCategory: (value: DeleteCategoryDeleteAPIInterface) => any
+  // Ending method
   categoryDone: () => void
   postDone: () => void
+  logout: () => void
 }
 
 interface State {
@@ -30,6 +35,7 @@ interface CategoryDeleteMethodInterface {
   loginLogined: boolean
   deleteCategorySelect: string
   deleteCategoryInput: string
+  deleteCategoryPending: boolean
 }
 
 interface Target {
@@ -37,34 +43,34 @@ interface Target {
 }
 
 class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, State> {
-  // to use focus()
+  // To use focus()
   public deleteCategoryInput: any
 
-  // dropdown State
+  // Dropdown State
   public state = {
     deleteCategoryDropdown: false
   }
 
-  // dropdown toogle
+  // Dropdown toogle
   public handleToogle = (): void => {
     this.setState({
       deleteCategoryDropdown: !this.state.deleteCategoryDropdown
     })
   }
 
-  // change category select value
+  // Change category select value
   public handleSelect = (e: React.MouseEvent<any>): void => {
     this.props.deleteCategorySelectChange(e.currentTarget.innerText)
   }
 
-  // change category input change
+  // Change category input change
   public handleChange = (e: Target): void => {
     this.props.deleteCategoryInputChange(e.target.value)
   }
 
-  // category delete method
+  // Category delete method
   public handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-    // stop basic stuff
+    // Stop basic stuff
     e.preventDefault()
 
     const {
@@ -73,113 +79,139 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
       deleteCategoryInputChange,
       deleteCategorySelectValue,
       deleteCategorySelectChange,
-
+      deleteCategoryPending,
       categoryLoad,
       deleteCategory,
       logout,
       categoryDone,
       postDone,
-
       history
     } = this.props
 
-    // check user is logined or not
+    // Pending check
+    const pendingCheck = (data: CategoryDeleteMethodInterface): Promise<object> => {
+      if (data.deleteCategoryPending === true) {
+        return Promise.reject(new Error(''))
+      }
+      return Promise.resolve(data)
+    }
+
+    // Check user is logined or not
     const userAdminCheck = (data: CategoryDeleteMethodInterface): Promise<object> => {
-      if (data.loginLogined) {
-        return Promise.resolve(data)
+      if (data.loginLogined === false) {
+        return Promise.reject(new Error('Not_Admin_User'))
       }
-      return Promise.reject(new Error('Not_Admin_User'))
+      return Promise.resolve(data)
     }
 
-    // check the category select button is selected or not
-    const checkCategorySelect = (data: CategoryDeleteMethodInterface): Promise<object> => {
-      if (data.deleteCategorySelect !== '삭제할 카테고리 선택') {
-        return Promise.resolve(data)
+    // Check the category select button is selected or not
+    const categorySelectCheck = (data: CategoryDeleteMethodInterface): Promise<object> => {
+      if (data.deleteCategorySelect === '삭제할 카테고리 선택') {
+        return Promise.reject(new Error('No_Data_Category_Select'))
       }
-      return Promise.reject(new Error('No_Data_Category_Select'))
+      return Promise.resolve(data)
     }
 
-    // check the category input value is '' or not
-    const nullCheckCategoryInput = (data: CategoryDeleteMethodInterface): Promise<object> => {
-      if (data.deleteCategoryInput !== '') {
-        return Promise.resolve(data)
+    // Check the category input value is '' or not
+    const categoryInputNullCheck = (data: CategoryDeleteMethodInterface): Promise<object> => {
+      if (data.deleteCategoryInput === '') {
+        return Promise.reject(new Error('No_Data_Category_Input'))
       }
-      return Promise.reject(new Error('No_Data_Category_Input'))
+      return Promise.resolve(data)
     }
 
-    // check same between the category select value and category input value
-    const checkValueSame = (data: CategoryDeleteMethodInterface): Promise<object> => {
-      if (data.deleteCategorySelect === data.deleteCategoryInput) {
-        return Promise.resolve(data)
+    // Check same between the category select value and category input value
+    const valueSameCheck = (data: CategoryDeleteMethodInterface): Promise<object> => {
+      if (data.deleteCategorySelect !== data.deleteCategoryInput) {
+        return Promise.reject(new Error('Not_Match_Select_And_Input'))
       }
-      return Promise.reject(new Error('Not_Match_Select_And_Input'))
+      return Promise.resolve(data)
     }
 
-    // delete category
+    // Delete category
     const respondToServer = async (data: CategoryDeleteMethodInterface): Promise<void> => {
-      await deleteCategory(data.deleteCategorySelect, data.deleteCategoryInput)
-        // succeed delete category
+      await deleteCategory({ category: data.deleteCategorySelect, doubleCheck: data.deleteCategoryInput })
+        // Succeed delete category
         .then((res: any) => {
           toast(res.action.payload.data.message)
         })
-        // error
+        // Error
         .catch((err: any) => {
           this.deleteCategoryInput.focus()
           toast(err.response.data.message)
 
-          // if the requester has no admin token
+          // If the requester has no admin token
           if (err.response.data.type) {
             toast('서비스를 이용하시려면 로그인 해 주세요 !')
             logout()
             history.push('/')
           }
         })
-      // this clean method will execute when all task processed
+      // This clean method will execute when all task processed
       categoryDone()
       postDone()
       categoryLoad()
     }
 
-    // error handler
+    // Error handler
     const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
-        // none admin user
+        // None admin user
         toast('관리자만 이용 가능합니다 !')
         deleteCategorySelectChange('삭제할 카테고리 선택')
         logout()
         history.push('/')
       } else if (err.message === 'No_Data_Category_Select') {
-        // no data selected
+        // No data selected
         toast('삭제할 카테고리를 선택해 주세요 !')
+      } else if (err.message === '/_?_&_#') {
+        this.props.deleteCategoryInputChange('')
+        this.deleteCategoryInput.focus()
+        // Use invalid symbol
+        toast('삭제할 카테고리 이름에 특수문자를 넣지 말아 주세요 !')
       } else if (err.message === 'No_Data_Category_Input') {
-        // no data in deleteCategoryInput
-        toast('삭제할 카테고리의 중복확인을 해 주세요 !')
+        this.props.deleteCategoryInputChange('')
+        this.deleteCategoryInput.focus()
+        // No data in deleteCategoryInput
+        toast('삭제할 카테고리 중복확인 칸을 입력해 주세요 !')
       } else if (err.message === 'Not_Match_Select_And_Input') {
-        // not match in select & input
+        this.props.deleteCategoryInputChange('')
+        this.deleteCategoryInput.focus()
+        // Not match in select & input
         toast('카테고리 중복확인이 잘못되었습니다 !')
       }
-      // this clean method will excute when all task processed
+      // This clean method will excute when all task processed
       deleteCategoryInputChange('')
     }
 
     // Promise
-    userAdminCheck({
+    pendingCheck({
       loginLogined,
       deleteCategoryInput: deleteCategoryInputValue.trim(),
-      deleteCategorySelect: deleteCategorySelectValue.trim()
+      deleteCategorySelect: deleteCategorySelectValue.trim(),
+      deleteCategoryPending
     })
-      .then(checkCategorySelect)
-      .then(nullCheckCategoryInput)
-      .then(checkValueSame)
+      .then(userAdminCheck)
+      .then(categorySelectCheck)
+      .then(categoryInputNullCheck)
+      .then(valueSameCheck)
       .then(respondToServer)
       .catch(onError)
+  }
+
+  // Optimization
+  public shouldComponentUpdate(nextProps: Props, nextState: State) {
+    if (nextProps !== this.props || nextState !== this.state) {
+      return true
+    }
+    return false
   }
 
   public render(): JSX.Element {
     const { deleteCategoryDropdown } = this.state
     const { deleteCategoryInputValue, deleteCategorySelectValue } = this.props
 
-    // show current categories
+    // Show current categories
     const CurrentCategoryChangeBar = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         return (
