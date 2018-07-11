@@ -6,25 +6,40 @@ import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
 import { CategoryStateInside } from 'store/modules/Category'
-import { ChangePostState, PutChangeAPIInterface, GetPostBringAPIInterface } from 'store/modules/Post'
+import { PutChangeAPIInterface, GetPostBringAPIInterface } from 'store/modules/Post'
 
-import MarkdownEditorContainer from 'containers/MarkDownEditorChange/MarkDownEditorChangeContainer'
-import MarkdownRendererContainer from 'containers/MarkDownRendererChange/MarkDownRendererChangeContainer'
+import MarkdownEditorChangeContainer from 'containers/MarkDownEditorChange/MarkDownEditorChangeContainer'
+import MarkdownRendererChangeContainer from 'containers/MarkDownRendererChange/MarkDownRendererChangeContainer'
+import regExp from 'lib/RegExp'
 
 interface Props {
+  // Login
   loginLogined: boolean
-  logout: () => void
+  // Category
   category: CategoryStateInside[]
-  change: ChangePostState
+  // Post state
+  selectCategory: string
+  newCategory: string
+  selectTitle: string
+  newTitle: string
+  subTitle: string
+  mainText: string
+  loadingPending: boolean
+  changePending: boolean
+  // Method
+  // Loading method
   loadCategory: () => any
   loadPost: (value: GetPostBringAPIInterface) => any
-  changeCategorySelect: (value: string) => any
-  changeTitleSelect: (value: string) => any
-  changeCategory: (value: string) => any
+  // Change post method
+  changeSelectCategory: (value: string) => void
+  changeCategory: (value: string) => void
+  changeSelectTitle: (value: string) => void
   changePost: (changePost: PutChangeAPIInterface) => any
+  changePostError: (value: string) => void
+  // Ending method
+  logout: () => void
   postDone: () => void
   categoryDone: () => void
-  postError: (value: string) => void
 }
 
 interface State {
@@ -37,12 +52,13 @@ interface State {
 
 interface PutChangeMethodInterface {
   loginLogined: boolean
-  oldCategory?: string
-  oldTitle?: string
-  newCategory?: string
-  newTitle?: string
-  newSubTitle?: string
-  newMainText?: string
+  oldCategory: string
+  oldTitle: string
+  newCategory: string
+  newTitle: string
+  newSubTitle: string
+  newMainText: string
+  changePending: boolean
 }
 
 interface CTarget {
@@ -90,7 +106,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
 
   // Change category select value
   public handleCategorySelectChange = (e: CTarget) => {
-    this.props.changeCategorySelect(e.currentTarget.innerText)
+    this.props.changeSelectCategory(e.currentTarget.innerText)
   }
 
   // Change post select value
@@ -99,11 +115,19 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       categoryAndPostSelectDropdown: !this.state.categoryAndPostSelectDropdown
     })
 
-    this.props.changeTitleSelect(e.currentTarget.innerText)
+    this.props.changeSelectTitle(e.currentTarget.innerText)
 
     if (e.currentTarget.innerText !== '변경할 포스트 선택') {
-      this.props.loadPost({ category: this.props.change.selectCategory, title: e.currentTarget.innerText, type: 1 })
+      this.props.loadPost({ category: this.props.selectCategory, title: e.currentTarget.innerText, type: 1 })
     }
+  }
+
+  // Change category value
+  public handleCategoryChange = (e: CTarget) => {
+    this.setState({
+      categoryDropdown: !this.state.categoryDropdown
+    })
+    this.props.changeCategory(e.currentTarget.innerText)
   }
 
   // Category select dropdown
@@ -115,63 +139,127 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
 
   // submit => post change
   public handleSubmit = (): void => {
-    const { selectCategory, category, selectTitle, title, subTitle, mainText } = this.props.change
-    const { loginLogined, categoryDone, postDone, loadCategory, logout, history, changePost, postError } = this.props
+    // State
+    const {
+      loginLogined,
+      categoryDone,
+      postDone,
+      loadCategory,
+      logout,
+      history,
+      changePost,
+      changePostError,
+      selectCategory,
+      newCategory,
+      selectTitle,
+      newTitle,
+      subTitle,
+      mainText,
+      changePending
+    } = this.props
+
+    // Pending check, if pending is true, return reject
+    const pendingCheck = (data: PutChangeMethodInterface): Promise<object> => {
+      if (data.changePending === true) {
+        return Promise.reject(new Error(''))
+      }
+      return Promise.resolve(data)
+    }
 
     // check user is logined or not
     const userAdminCheck = (data: PutChangeMethodInterface): Promise<object> => {
-      if (data.loginLogined !== false) {
-        return Promise.resolve(data)
+      if (data.loginLogined !== true) {
+        return Promise.reject(new Error('Not_Admin_User'))
       }
-      return Promise.reject(new Error('Not_Admin_User'))
+      return Promise.resolve(data)
     }
 
     // check selectCategory selected or not
-    const oldCategoryCheck = (post: PutChangeMethodInterface): Promise<object> => {
-      if (post.oldCategory !== '카테고리 선택') {
-        return Promise.resolve(post)
+    const oldCategoryCheckedCheck = (post: PutChangeMethodInterface): Promise<object> => {
+      if (post.oldCategory === '카테고리 선택') {
+        return Promise.reject(new Error('No_Data_Category_Select_Select'))
       }
-      return Promise.reject(new Error('No_Data_Category_Select_Select'))
+      return Promise.resolve(post)
+    }
+
+    const oldCategoryRegExpCheck = (post: PutChangeMethodInterface): Promise<object> => {
+      // RegExp Test
+      const oldCategoryTested = regExp.test(post.oldCategory)
+      // If the data is not right
+      if (oldCategoryTested === true) {
+        return Promise.reject(new Error('Old_Category_/_?_&_#'))
+      }
+      return Promise.resolve(post)
     }
 
     // check selectTitle selected or not
-    const oldTitleCheck = (post: PutChangeMethodInterface): Promise<object> => {
-      if (post.oldTitle !== '변경할 포스트 선택') {
-        return Promise.resolve(post)
+    const oldTitleCheckedCheck = (post: PutChangeMethodInterface): Promise<object> => {
+      if (post.oldTitle === '변경할 포스트 선택') {
+        return Promise.reject(new Error('No_Data_Post_Select_Title'))
       }
-      return Promise.reject(new Error('No_Data_Post_Select_Title'))
+      return Promise.resolve(post)
+    }
+
+    const oldTitleRegExpCheck = (post: PutChangeMethodInterface): Promise<object> => {
+      // RegExp Test
+      const oldTitleTested = regExp.test(post.oldTitle)
+      // If the data is not right
+      if (oldTitleTested === true) {
+        return Promise.reject(new Error('Old_Title_/_?_&_#'))
+      }
+      return Promise.resolve(post)
     }
 
     // check category selected or not
-    const categoryCheck = (post: PutChangeMethodInterface): Promise<object> => {
-      if (post.newCategory !== '카테고리 선택') {
-        return Promise.resolve(post)
+    const newCategoryCheckedCheck = (post: PutChangeMethodInterface): Promise<object> => {
+      if (post.newCategory === '카테고리 선택') {
+        return Promise.reject(new Error('No_Data_Category_Select'))
       }
-      return Promise.reject(new Error('No_Data_Category_Select'))
+      return Promise.resolve(post)
+    }
+
+    const newCategoryRegExpCheck = (post: PutChangeMethodInterface): Promise<object> => {
+      // RegExp Test
+      const newCategoryTested = regExp.test(post.newCategory)
+      // If the data is not right
+      if (newCategoryTested === true) {
+        return Promise.reject(new Error('New_Category_/_?_&_#'))
+      }
+      return Promise.resolve(post)
     }
 
     // check title is '' or not
-    const titleCheck = (post: PutChangeMethodInterface): Promise<object> => {
-      if (post.newTitle !== '') {
-        return Promise.resolve(post)
+    const newTitleNullCheck = (post: PutChangeMethodInterface): Promise<object> => {
+      if (post.newTitle === '') {
+        return Promise.reject(new Error('No_Data_Post_Title'))
       }
-      return Promise.reject(new Error('No_Data_Post_Title'))
+      return Promise.resolve(post)
+    }
+
+    const newTitleRegExpCheck = (post: PutChangeMethodInterface): Promise<object> => {
+      // RegExp Test
+      const newTitleTested = regExp.test(post.newTitle)
+      // If the data is not right
+      if (newTitleTested === true) {
+        return Promise.reject(new Error('New_Title_/_?_&_#'))
+      }
+      return Promise.resolve(post)
     }
 
     // check subTitle is  '' or not
-    const subTitleCheck = (post: PutChangeMethodInterface): Promise<object> => {
-      if (post.newSubTitle !== '') {
-        return Promise.resolve(post)
+    const newSubTitleCheck = (post: PutChangeMethodInterface): Promise<object> => {
+      if (post.newSubTitle === '') {
+        return Promise.reject(new Error('No_Data_Post_Sub_Title'))
       }
-      return Promise.reject(new Error('No_Data_Post_Sub_Title'))
+      return Promise.resolve(post)
     }
 
     // check mainText is '' or not
-    const mainTextCheck = (post: PutChangeMethodInterface): Promise<object> => {
-      if (post.newMainText !== '') {
-        return Promise.resolve(post)
+    const newMainTextCheck = (post: PutChangeMethodInterface): Promise<object> => {
+      if (post.newMainText === '') {
+        return Promise.reject(new Error('No_Data_Post_Main_Text'))
       }
-      return Promise.reject(new Error('No_Data_Post_Main_Text'))
+      return Promise.resolve(post)
     }
 
     // request
@@ -208,38 +296,53 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
         history.push('/')
       } else if (err.message === 'No_Data_Category_Select_Select') {
         toast('변경할 포스트의 카테고리를 선택해 주세요 !')
+      } else if (err.message === 'Old_Category_/_?_&_#') {
+        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !")
       } else if (err.message === 'No_Data_Post_Select_Title') {
         toast('변경할 포스트를 선택해 주세요 !')
+      } else if (err.message === 'Old_Title_/_?_&_#') {
+        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !")
       } else if (err.message === 'No_Data_Category_Select') {
         toast('변경할 포스트의 카테고리를 선택해 주세요 !')
+      } else if (err.message === 'New_Category_/_?_&_#') {
+        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !")
       } else if (err.message === 'No_Data_Post_Title') {
         toast('변경할 포스트의 제목을 입력해 주세요 !')
-        postError('title')
+        changePostError('title')
+      } else if (err.message === 'New_Title_/_?_&_#') {
+        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !")
+        changePostError('title')
       } else if (err.message === 'No_Data_Post_Sub_Title') {
         toast('변경할 포스트의 부제목을 입력해 주세요 !')
-        postError('subTitle')
+        changePostError('subTitle')
       } else if (err.message === 'No_Data_Post_Main_Text') {
         toast('변경할 포스트의 내용을 입력해 주세요 !')
-        postError('mainText')
+        changePostError('mainText')
       }
     }
 
     // Promise
-    userAdminCheck({
+    pendingCheck({
       loginLogined,
       oldCategory: selectCategory.trim(),
-      newCategory: category.trim(),
+      newCategory: newCategory.trim(),
       oldTitle: selectTitle.trim(),
-      newTitle: title.trim(),
+      newTitle: newTitle.trim(),
       newSubTitle: subTitle.trim(),
-      newMainText: mainText.trim()
+      newMainText: mainText.trim(),
+      changePending
     })
-      .then(oldCategoryCheck)
-      .then(oldTitleCheck)
-      .then(categoryCheck)
-      .then(titleCheck)
-      .then(subTitleCheck)
-      .then(mainTextCheck)
+      .then(userAdminCheck)
+      .then(oldCategoryCheckedCheck)
+      .then(oldCategoryRegExpCheck)
+      .then(oldTitleCheckedCheck)
+      .then(oldTitleRegExpCheck)
+      .then(newCategoryCheckedCheck)
+      .then(newCategoryRegExpCheck)
+      .then(newTitleNullCheck)
+      .then(newTitleRegExpCheck)
+      .then(newSubTitleCheck)
+      .then(newMainTextCheck)
       .then(requestToServer)
       .catch(onError)
   }
@@ -248,9 +351,9 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
   public shouldComponentUpdate(nextProps: Props, nextState: State) {
     if (
       nextState !== this.state ||
-      nextProps.change.selectCategory !== this.props.change.selectCategory ||
-      nextProps.change.selectTitle !== this.props.change.selectTitle ||
-      nextProps.change.category !== this.props.change.category
+      nextProps.selectCategory !== this.props.selectCategory ||
+      nextProps.selectTitle !== this.props.selectTitle ||
+      nextProps.newCategory !== this.props.newCategory
     ) {
       return true
     }
@@ -259,7 +362,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
 
   public render(): JSX.Element {
     // Current category select
-    const currentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] | JSX.Element => {
+    const currentCategorySelectChange = (data: CategoryStateInside[]): JSX.Element[] | JSX.Element => {
       return data.map((object, i) => {
         return (
           <button key={i} onClick={this.handleCategorySelectChange} className="info">
@@ -269,9 +372,20 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       })
     }
 
+    // Category change
+    const currentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] | JSX.Element => {
+      return data.map((object, i) => {
+        return (
+          <button key={i} onClick={this.handleCategoryChange} className="info">
+            {object.category}
+          </button>
+        )
+      })
+    }
+
     // Current category select's posts
     const CurrentPostSelectChange = (data: CategoryStateInside[]): JSX.Element[] | JSX.Element => {
-      const SelectedPosts = data.filter(value => value.category === this.props.change.selectCategory)
+      const SelectedPosts = data.filter(value => value.category === this.props.selectCategory)
 
       if (SelectedPosts.length !== 0) {
         return SelectedPosts[0].posts.map((object, i) => {
@@ -292,7 +406,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
         return (
           <div className="admin-post-editor-container">
             <div className="admin-post-editor">
-              <MarkdownEditorContainer />
+              <MarkdownEditorChangeContainer />
             </div>
           </div>
         )
@@ -301,10 +415,11 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       return (
         <div className="admin-post-preview-container">
           <div className="admin-post-preview">
-            <h1 className="admin-post-preview-title">{this.props.change.title}</h1>
-            <h3 className="admin-post-preview-sub-title">{this.props.change.subTitle}</h3>
+            <h1 className="admin-post-preview-title">{this.props.newTitle}</h1>
+            <h3 className="admin-post-preview-sub-title">{this.props.subTitle}</h3>
             <div className="admin-post-preview-main-text">
-              <MarkdownRendererContainer />
+              <MarkdownRendererChangeContainer />
+              {}
             </div>
           </div>
         </div>
@@ -327,31 +442,31 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
 
             <div className="admin-post-select-container">
               <div className="admin-post-select-category-and-post">
-                <div className="admin-post-select">
+                <div className="admin-category-select">
                   <button className="info" onClick={this.handleCategoryAndPostSelectShowNoneToogle}>
-                    {this.props.change.selectCategory}
+                    {this.props.selectCategory}
                   </button>
                   {this.state.categoryAndPostSelectDropdown && (
                     <div className="admin-post-select-child-container">
                       <div className="admin-post-select-child">
-                        {this.props.change.selectCategory !== '카테고리 선택' && (
+                        {this.props.selectCategory !== '카테고리 선택' && (
                           <button onClick={this.handleCategorySelectChange} className="info">
                             카테고리 선택
                           </button>
                         )}
-                        {currentCategoryChange(this.props.category)}
+                        {currentCategorySelectChange(this.props.category)}
                       </div>
                     </div>
                   )}
                 </div>
                 <div className="admin-post-select">
                   <button className="info" onClick={this.handleCategoryAndPostSelectShowNoneToogle}>
-                    {this.props.change.selectTitle}
+                    {this.props.selectTitle}
                   </button>
                   {this.state.categoryAndPostSelectDropdown && (
                     <div className="admin-post-select-child-container">
                       <div className="admin-post-select-child">
-                        {this.props.change.selectTitle !== '변경할 포스트 선택' && (
+                        {this.props.selectTitle !== '변경할 포스트 선택' && (
                           <button onClick={this.handlePostSelectChange} className="info">
                             변경할 포스트 선택
                           </button>
@@ -361,6 +476,23 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
                     </div>
                   )}
                 </div>
+              </div>
+              <div className="admin-category-select">
+                <button className="info" onClick={this.handleCategoryShowNoneToogle}>
+                  {this.props.newCategory}
+                </button>
+                {this.state.categoryDropdown && (
+                  <div className="admin-post-select-child-container">
+                    <div className="admin-post-select-child">
+                      {this.props.selectCategory !== '카테고리 선택' && (
+                        <button onClick={this.handleCategoryShowNoneToogle} className="info">
+                          카테고리 선택
+                        </button>
+                      )}
+                      {currentCategoryChange(this.props.category)}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             {/* Edior And Preview */}
