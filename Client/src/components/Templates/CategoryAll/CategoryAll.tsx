@@ -278,7 +278,7 @@ class CategoryAll extends React.Component<Props, State> {
       <div className="layout-container category-all">
         <div className="welcome-message">환영합니다 !</div>
 
-        {this.props.categoryPending ? (
+        {this.props.categoryPending && this.props.category.length === 0 ? (
           <div className="category-all-loading-circle">
             <LoadingCircle />
           </div>
