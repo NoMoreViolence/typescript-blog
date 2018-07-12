@@ -69,10 +69,10 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     // check user is logined or not
     const userAdminCheck = (data: CategoryAddMethodInterface): Promise<object> => {
       // compare logined or not
-      if (data.loginLogined) {
-        return Promise.resolve(data)
+      if (data.loginLogined !== true) {
+        return Promise.reject(new Error('Not_Admin_User'))
       }
-      return Promise.reject(new Error('Not_Admin_User'))
+      return Promise.resolve(data)
     }
 
     const inputValueSpecialSymbolsCheck = (data: CategoryAddMethodInterface): Promise<object> => {
@@ -89,19 +89,19 @@ class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> 
     // check the input value is '' or not
     const inputValueNullCheck = (data: CategoryAddMethodInterface): Promise<object> => {
       // compare the value exist or not
-      if (data.addCategoryInputValue !== '') {
-        return Promise.resolve(data)
+      if (data.addCategoryInputValue === '') {
+        return Promise.reject(new Error('No_Input'))
       }
-      return Promise.reject(new Error('No_Input'))
+      return Promise.resolve(data)
     }
 
     // check the input value.toUpperCase() is 'admin' or not
     const inputValueAdminCheck = (data: CategoryAddMethodInterface): Promise<object> => {
       // compare the value is 'admin' or not
-      if (data.addCategoryInputValue.toLowerCase() !== 'admin') {
-        return Promise.resolve(data)
+      if (data.addCategoryInputValue.toLowerCase() === 'admin') {
+        return Promise.reject(new Error('Cannot_Category_Name_To_Be_Admin'))
       }
-      return Promise.reject(new Error('Cannot_Category_Name_To_Be_Admin'))
+      return Promise.resolve(data)
     }
 
     // create category

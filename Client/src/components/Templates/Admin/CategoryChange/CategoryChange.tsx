@@ -98,18 +98,18 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
 
       // check user is logined or not
       const userAdminCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
-        if (data.loginLogined) {
-          return Promise.resolve(data)
+        if (data.loginLogined !== true) {
+          return Promise.reject(new Error('Not_Admin_User'))
         }
-        return Promise.reject(new Error('Not_Admin_User'))
+        return Promise.resolve(data)
       }
 
       // check the category select button is selected or not
       const categorySelectCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
-        if (data.changeCategorySelect !== '변경할 카테고리 선택') {
-          return Promise.resolve(data)
+        if (data.changeCategorySelect === '변경할 카테고리 선택') {
+          return Promise.reject(new Error('No_Data_Category_Select'))
         }
-        return Promise.reject(new Error('No_Data_Category_Select'))
+        return Promise.resolve(data)
       }
 
       const categoryInputSymbolsCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
@@ -125,26 +125,26 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
 
       // check the category input value is '' or not
       const categoryInputNullCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
-        if (data.changeCategoryInput !== '') {
-          return Promise.resolve(data)
+        if (data.changeCategoryInput === '') {
+          return Promise.reject(new Error('No_Data_Category_Input'))
         }
-        return Promise.reject(new Error('No_Data_Category_Input'))
+        return Promise.resolve(data)
       }
 
       // check the category input value.toLowerCase() is 'admin' or not
       const categoryInputAdminCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
-        if (data.changeCategoryInput.toLowerCase() !== 'admin') {
-          return Promise.resolve(data)
+        if (data.changeCategoryInput.toLowerCase() === 'admin') {
+          return Promise.reject(new Error('Can_Not_Be_A_Admin'))
         }
-        return Promise.reject(new Error('Can_Not_Be_A_Admin'))
+        return Promise.resolve(data)
       }
 
       // check same between the category select value and category input value
       const valueSameCheck = (data: CategoryChangeMethodInterface): Promise<object> => {
-        if (data.changeCategorySelect !== data.changeCategoryInput) {
-          return Promise.resolve(data)
+        if (data.changeCategorySelect === data.changeCategoryInput) {
+          return Promise.reject(new Error('Can_Not_Match_Select_And_Input'))
         }
-        return Promise.reject(new Error('Can_Not_Match_Select_And_Input'))
+        return Promise.resolve(data)
       }
 
       // change category

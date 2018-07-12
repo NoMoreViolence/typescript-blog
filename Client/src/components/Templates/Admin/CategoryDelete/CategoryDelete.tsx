@@ -98,7 +98,7 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
 
     // Check user is logined or not
     const userAdminCheck = (data: CategoryDeleteMethodInterface): Promise<object> => {
-      if (data.loginLogined === false) {
+      if (data.loginLogined !== true) {
         return Promise.reject(new Error('Not_Admin_User'))
       }
       return Promise.resolve(data)
