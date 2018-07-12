@@ -39,6 +39,9 @@ interface Props {
   changeChildChangeMode: (value: ChangeChildMode) => never
   changeChildDeleteMode: (value: ChangeChildMode) => never
   changeChildMoreViewMode: (value: ChangeChildMode) => never
+  // submit ripple state
+  addRippleStatePending: boolean
+  submitChildRipple: (value: PostChildRipple) => never
 }
 
 const RippleContainer: React.SFC<Props> = Props => (
@@ -60,6 +63,8 @@ const RippleContainer: React.SFC<Props> = Props => (
     changeChildChangeMode={Props.changeChildChangeMode}
     changeChildDeleteMode={Props.changeChildDeleteMode}
     changeChildMoreViewMode={Props.changeChildMoreViewMode}
+    submitChildRipple={Props.submitChildRipple}
+    addRippleStatePending={Props.addRippleStatePending}
   />
 )
 
@@ -68,7 +73,8 @@ export default connect(
     topRipple: Ripple.topRipple,
     topLoadState: Ripple.topLoad,
     childRipple: Ripple.childRipple,
-    childLoadState: Ripple.childLoad
+    childLoadState: Ripple.childLoad,
+    addRippleStatePending: Ripple.addRippleState.pending
   }),
   dispatch => ({
     rippleClear: bindActionCreators(RippleActions.rippleClear, dispatch),
@@ -83,6 +89,7 @@ export default connect(
     changeTopMoreViewMode: bindActionCreators(RippleActions.changeTopMoreShowMode, dispatch),
     changeChildChangeMode: bindActionCreators(RippleActions.changeChildChangeMode, dispatch),
     changeChildDeleteMode: bindActionCreators(RippleActions.changeChildDeleteMode, dispatch),
-    changeChildMoreViewMode: bindActionCreators(RippleActions.changeChildMoreShowMode, dispatch)
+    changeChildMoreViewMode: bindActionCreators(RippleActions.changeChildMoreShowMode, dispatch),
+    submitChildRipple: bindActionCreators(RippleActions.postChildRipple, dispatch)
   })
 )(RippleContainer)
