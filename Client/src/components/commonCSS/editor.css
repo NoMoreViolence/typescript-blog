@@ -25,6 +25,14 @@
   display: flex;
 }
 
+.admin-category-select {
+  flex: 1;
+}
+
+.admin-category-select > button {
+  width: 100%;
+}
+
 .admin-post-select {
   flex: 1;
 }
