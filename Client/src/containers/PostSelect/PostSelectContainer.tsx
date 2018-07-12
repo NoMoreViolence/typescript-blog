@@ -33,7 +33,7 @@ export default connect(
     title: Post.show.title,
     subTitle: Post.show.subTitle,
     date: Post.show.date,
-    pending: Post.load.pending
+    pending: Post.load.loadingPending
   }),
   dispatch => ({ PostActions: bindActionCreators(PostActions, dispatch) })
 )(PostSelectContainer)
