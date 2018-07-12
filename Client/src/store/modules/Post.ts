@@ -157,8 +157,8 @@ export const PostActions = {
 
 // state of handle loading
 export interface LoadPostState {
-  pending: boolean
-  error: boolean
+  loadingPending: boolean
+  loadingError: boolean
 }
 // state of show Post
 export interface ShowPostState {
@@ -172,8 +172,8 @@ export interface ShowPostState {
 }
 // state of add Post
 export interface AddPostState {
-  pending: boolean
-  error: boolean
+  addPending: boolean
+  addError: boolean
   category: string
   title: string
   subTitle: string
@@ -185,8 +185,8 @@ export interface AddPostState {
 }
 // state of change Post
 export interface ChangePostState {
-  pending: boolean
-  error: boolean
+  changePending: boolean
+  changeError: boolean
   selectCategory: string
   selectTitle: string
   category: string
@@ -200,8 +200,8 @@ export interface ChangePostState {
 }
 // state of delete Post
 export interface DeletePostState {
-  pending: boolean
-  error: boolean
+  deletePending: boolean
+  deleteError: boolean
   category: string
   title: string
   showTitle: string
@@ -218,11 +218,11 @@ export interface PostState {
   delete: DeletePostState
 }
 const initialState: PostState = {
-  load: { pending: false, error: false },
+  load: { loadingPending: false, loadingError: false },
   show: { category: '', title: '', subTitle: '', mainText: '', date: 0, postID: '', categoryID: '' },
   add: {
-    pending: false,
-    error: false,
+    addPending: false,
+    addError: false,
     category: '카테고리 선택',
     title: '',
     subTitle: '',
@@ -233,8 +233,8 @@ const initialState: PostState = {
     failedWithNoDataMainText: false
   },
   change: {
-    pending: false,
-    error: false,
+    changePending: false,
+    changeError: false,
     selectCategory: '카테고리 선택',
     selectTitle: '변경할 포스트 선택',
     category: '카테고리 선택',
@@ -247,8 +247,8 @@ const initialState: PostState = {
     failedWithNoDataMainText: false
   },
   delete: {
-    pending: false,
-    error: false,
+    deletePending: false,
+    deleteError: false,
     category: '카테고리 선택',
     title: '삭제할 포스트 선택',
     showTitle: '',
@@ -258,8 +258,8 @@ const initialState: PostState = {
   }
 }
 
-// return Types
-// add
+// Return Types
+// Add
 type AddPostCategoryPayload = ReturnType<typeof PostActions.addPostCategoryChange>
 type AddPostPostTitlePayload = ReturnType<typeof PostActions.addPostPostTitleChange>
 type AddPostPostSubTitlePayload = ReturnType<typeof PostActions.addPostPostSubTitleChange>
@@ -268,7 +268,7 @@ type AddPostPostError = ReturnType<typeof PostActions.addPostPostError>
 // change
 // select category, post
 type ChangePutCategorySelectPayload = ReturnType<typeof PostActions.changePutPostCategorySelectChange>
-type ChangePutCategoryPayload = ReturnType<typeof PostActions.changePutPostCategoryChange>
+type ChangePutCategoryInputPayload = ReturnType<typeof PostActions.changePutPostCategoryChange>
 // real change return type
 type ChangePutPostSelectPayload = ReturnType<typeof PostActions.changePutPostTitleSelectChange>
 type ChangePutPostTitlePayload = ReturnType<typeof PostActions.changePutPostTitleChange>
@@ -285,8 +285,8 @@ const reducer = handleActions<PostState, any>(
     // call certain post's all Information
     [GET_BRING_POST_INFO_PENDING]: state =>
       produce(state, draft => {
-        draft.load.pending = true
-        draft.load.error = false
+        draft.load.loadingPending = true
+        draft.load.loadingError = false
 
         // clean post show data
         draft.show.category = ''
@@ -299,8 +299,8 @@ const reducer = handleActions<PostState, any>(
       if (action.payload.data.value.type * 1 === 0) {
         // call info for show Post
         return produce(state, draft => {
-          draft.load.pending = false
-          draft.load.error = false
+          draft.load.loadingPending = false
+          draft.load.loadingError = false
           // post show data
           draft.show.category = action.payload.data.value.post.category.category
           draft.show.title = action.payload.data.value.post.title
@@ -313,8 +313,8 @@ const reducer = handleActions<PostState, any>(
       } else if (action.payload.data.value.type * 1 === 1) {
         // call info for change Post
         return produce(state, draft => {
-          draft.load.pending = false
-          draft.load.error = false
+          draft.load.loadingPending = false
+          draft.load.loadingError = false
           // post change data
           draft.change.category = action.payload.data.value.post.category.category
           draft.change.title = action.payload.data.value.post.title
@@ -325,8 +325,8 @@ const reducer = handleActions<PostState, any>(
       } else if (action.payload.data.value.type * 1 === 2) {
         // call info for delete post
         return produce(state, draft => {
-          draft.load.pending = false
-          draft.load.error = false
+          draft.load.loadingPending = false
+          draft.load.loadingError = false
           // post delete data
           draft.delete.category = action.payload.data.value.post.category.category
           draft.delete.showTitle = action.payload.data.value.post.title
@@ -337,21 +337,24 @@ const reducer = handleActions<PostState, any>(
       }
       return produce(state, draft => {
         // no! there is no way to run this part, because
-        draft.load.pending = false
-        draft.load.error = false
+        draft.load.loadingPending = false
+        draft.load.loadingError = false
       })
     },
     [GET_BRING_POST_INFO_FAILURE]: state =>
       produce(state, draft => {
-        draft.load.pending = false
-        draft.load.error = true
+        draft.load.loadingPending = false
+        draft.load.loadingError = true
       }),
 
     // Post Add Action
-    [POST_ADD_POST_CATEGORY_CHANGE]: (state, action: AddPostCategoryPayload) =>
-      produce(state, draft => {
+    [POST_ADD_POST_CATEGORY_CHANGE]: (state, action: AddPostCategoryPayload) => {
+      // tslint:disable-next-line:no-console
+      console.log(action)
+      return produce(state, draft => {
         draft.add.category = action.payload || ''
-      }),
+      })
+    },
     [POST_ADD_POST_TITLE_CHANGE]: (state, action: AddPostPostTitlePayload) =>
       produce(state, draft => {
         draft.add.title = action.payload || ''
@@ -391,18 +394,18 @@ const reducer = handleActions<PostState, any>(
     // post add api action
     [POST_ADD_POST_PENDING]: (state, action) =>
       produce(state, draft => {
-        draft.add.pending = true
-        draft.add.error = false
+        draft.add.addPending = true
+        draft.add.addError = false
       }),
     [POST_ADD_POST_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        draft.add.pending = false
-        draft.add.error = false
+        draft.add.addPending = false
+        draft.add.addError = false
       }),
     [POST_ADD_POST_FAILURE]: (state, action) =>
       produce(state, draft => {
-        draft.add.pending = false
-        draft.add.error = true
+        draft.add.addPending = false
+        draft.add.addError = true
       }),
 
     // CHANGE
@@ -416,7 +419,7 @@ const reducer = handleActions<PostState, any>(
         draft.change.mainText = ''
         draft.change.date = 1111111111
       }),
-    [PUT_CHANGE_POST_CATEGORY_CHANGE]: (state, action: ChangePutCategoryPayload) =>
+    [PUT_CHANGE_POST_CATEGORY_CHANGE]: (state, action: ChangePutCategoryInputPayload) =>
       produce(state, draft => {
         draft.change.category = action.payload || ''
       }),
@@ -463,18 +466,18 @@ const reducer = handleActions<PostState, any>(
     // post change event handler
     [PUT_CHANGE_POST_PENDING]: state =>
       produce(state, draft => {
-        draft.change.pending = true
-        draft.change.error = false
+        draft.change.changePending = true
+        draft.change.changeError = false
       }),
     [PUT_CHANGE_POST_SUCCESS]: state =>
       produce(state, draft => {
-        draft.change.pending = false
-        draft.change.error = false
+        draft.change.changePending = false
+        draft.change.changeError = false
       }),
     [PUT_CHANGE_POST_FAILURE]: state =>
       produce(state, draft => {
-        draft.change.pending = false
-        draft.change.error = true
+        draft.change.changePending = false
+        draft.change.changeError = true
       }),
 
     // DELETE
@@ -492,25 +495,25 @@ const reducer = handleActions<PostState, any>(
       }),
     [DELETE_DELETE_POST_PENDING]: (state, action) =>
       produce(state, draft => {
-        draft.delete.pending = true
-        draft.delete.error = false
+        draft.delete.deletePending = true
+        draft.delete.deleteError = false
       }),
     [DELETE_DELETE_POST_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        draft.delete.pending = false
-        draft.delete.error = false
+        draft.delete.deletePending = false
+        draft.delete.deleteError = false
       }),
     [DELETE_DELETE_POST_FAILURE]: (state, action) =>
       produce(state, draft => {
-        draft.delete.pending = false
-        draft.delete.error = true
+        draft.delete.deletePending = false
+        draft.delete.deleteError = true
       }),
 
     // when the task is done, this is will be excute
     [POST_DONE]: state =>
       produce(state, draft => {
-        draft.load.pending = false
-        draft.load.error = false
+        draft.load.loadingPending = false
+        draft.load.loadingError = false
 
         draft.show.category = ''
         draft.show.title = ''
