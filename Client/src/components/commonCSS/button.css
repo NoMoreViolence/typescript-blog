@@ -27,6 +27,35 @@
   outline: none;
 }
 
+.primary-half {
+  height: 2rem;
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: #007bff;
+  border-color: #007bff;
+  background: white;
+  outline: none;
+}
+
+.primary-half:hover {
+  cursor: pointer;
+  color: white;
+  border-color: #007bff;
+  background: #007bff;
+}
+
+.primary-half:active {
+  border: none;
+  color: white;
+  border-color: #007bff;
+  background: #007bff;
+}
+
+.primary-half:focus {
+  outline: none;
+}
+
 .outline-primary {
   height: 4rem;
   font-size: 1rem;
@@ -85,6 +114,35 @@
   outline: none;
 }
 
+.info-half {
+  height: 2rem;
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: #17a2b8;
+  border-color: #17a2b8;
+  background: white;
+  outline: none;
+}
+
+.info-half:hover {
+  cursor: pointer;
+  color: white;
+  border-color: #17a2b8;
+  background: #17a2b8;
+}
+
+.info-half:active {
+  border: none;
+  color: white;
+  border-color: #17a2b8;
+  background: #17a2b8;
+}
+
+.info-half:focus {
+  outline: none;
+}
+
 .outline-info {
   height: 4rem;
   font-size: 1rem;
@@ -140,6 +198,35 @@
 }
 
 .danger:focus {
+  outline: none;
+}
+
+.danger-half {
+  height: 2rem;
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  color: #dc3545;
+  border-color: #dc3545;
+  background: white;
+  outline: none;
+}
+
+.danger-half:hover {
+  cursor: pointer;
+  color: white;
+  border-color: #dc3545;
+  background: #dc3545;
+}
+
+.danger-half:active {
+  border: none;
+  color: white;
+  border-color: #dc3545;
+  background: #dc3545;
+}
+
+.danger-half:focus {
   outline: none;
 }
 
