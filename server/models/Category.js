@@ -89,8 +89,8 @@ Category.statics.PostsRefPush = function (category, postID) {
 
 // $category$ ref pop
 // category: string,  postID: ObjectID
-Category.statics.PostsRefPop = function (category, postID) {
-  return this.findOneAndUpdate({ category }, { $pop: { posts: postID } })
+Category.statics.PostsRefPull = function (category, postID) {
+  return this.findOneAndUpdate({ category }, { $pull: { posts: postID } })
 }
 
 // $post$ show

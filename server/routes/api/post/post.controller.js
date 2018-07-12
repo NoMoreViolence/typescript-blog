@@ -321,10 +321,10 @@ exports.postChange = async (req, res) => {
   // Change post info
   const postChange = async data => {
     // Change post data
-    // Push & Pop to category.posts []
+    // Push & Pull to category.posts []
     await Post.changePost(data.newCategoryID, data.oldTitle, data.newTitle, data.newSubTitle, data.newMainText)
     await Ripple.categoryIdUpdate(data.oldCategoryID, data.postID, data.newCategoryID)
-    await Category.PostsRefPop(data.oldCategory, data.postID)
+    await Category.PostsRefPull(data.oldCategory, data.postID)
     await Category.PostsRefPush(data.newCategory, data.postID)
 
     return Promise.resolve(data)
@@ -416,7 +416,7 @@ exports.postDelete = (req, res) => {
   // Delete Post
   const postDelete = async data => {
     await Post.deletePost(data.title)
-    await Category.PostsRefPop(data.category, data.postID)
+    await Category.PostsRefPull(data.category, data.postID)
 
     return Promise.resolve(data)
   }
