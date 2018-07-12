@@ -8,7 +8,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { CategoryStateInside } from 'store/modules/Category'
 import { DeleteDeleteAPIInterface } from 'store/modules/Post'
 
-import MarkdownRendererContainer from 'containers/MarkDownRendererDelete/MarkDownRendererDeleteContainer'
+import MarkdownRendererDeleteContainer from 'containers/MarkDownRendererDelete/MarkDownRendererDeleteContainer'
 
 interface Props {
   loginLogined: boolean
@@ -18,6 +18,7 @@ interface Props {
   deleteTitle: string
   deleteShowTitle: string
   deleteSubTitle: string
+  deletePending: boolean
   changeCategorySelect: (value: string) => void
   changeTitleSelect: (value: string) => void
   deletePost: (value: DeleteDeleteAPIInterface) => any
@@ -132,26 +133,26 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
 
     // Check user is logined or not
     const userAdminCheck = (data: DeleteDeleteMethodInterface): Promise<object> => {
-      if (data.loginLogined === true) {
-        return Promise.resolve(data)
+      if (data.loginLogined !== true) {
+        return Promise.reject(new Error('Not_Admin_User'))
       }
-      return Promise.reject(new Error('Not_Admin_User'))
+      return Promise.resolve(data)
     }
 
     // Check category is empty or not
     const categoryCheck = (data: DeleteDeleteMethodInterface): Promise<object> => {
-      if (data.category !== '카테고리 선택') {
-        return Promise.resolve(data)
+      if (data.category === '카테고리 선택') {
+        return Promise.reject(new Error('No_Data_Category_Select'))
       }
-      return Promise.reject(new Error('No_Data_Category_Select'))
+      return Promise.resolve(data)
     }
 
     // Check title is empty or not
     const titleCheck = (data: DeleteDeleteMethodInterface): Promise<object> => {
-      if (data.title !== '삭제할 포스트 선택') {
-        return Promise.resolve(data)
+      if (data.title === '삭제할 포스트 선택') {
+        return Promise.reject(new Error('No_Data_Title_Select'))
       }
-      return Promise.reject(new Error('No_Data_Title_Select'))
+      return Promise.resolve(data)
     }
 
     // Request
@@ -280,7 +281,7 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
                 <h1 className="admin-post-preview-title">{this.props.deleteShowTitle}</h1>
                 <h3 className="admin-post-preview-sub-title">{this.props.deleteSubTitle}</h3>
                 <div className="admin-post-preview-main-text">
-                  <MarkdownRendererContainer />
+                  <MarkdownRendererDeleteContainer />
                 </div>
               </div>
             </div>
