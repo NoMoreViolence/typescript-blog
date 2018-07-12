@@ -85,6 +85,14 @@ class PostSelect extends React.Component<Props & RouteComponentProps<History>, S
       .catch(onError)
   }
 
+  // Optimization rendering problem
+  public shouldComponentUpdate(nextProps: Props, nextState: State) {
+    if (nextProps !== this.props || nextState !== this.state) {
+      return true
+    }
+    return false
+  }
+
   public render(): JSX.Element {
     const { postPending, title, category, subTitle, date } = this.props
 
