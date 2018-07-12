@@ -1,3 +1,3 @@
-const regExp = new RegExp('[/|&|?]')
+const regExp = new RegExp('[/|&|?|#]')
 
 export default regExp
