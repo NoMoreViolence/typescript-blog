@@ -1,0 +1,124 @@
+/*
+
+    Name:       seti
+    Author:     Michael Kaminsky (http://github.com/mkaminsky11)
+
+    Original seti color scheme by Jesse Weed (https://github.com/jesseweed/seti-syntax)
+
+*/
+
+
+.CodeMirror {
+  background-color: #151718 !important;
+  color: #cfd2d1 !important;
+  border: none;
+}
+
+ .CodeMirror-gutters {
+  color: #404b53;
+  background-color: #0e1112;
+  border: none;
+}
+
+ .CodeMirror-cursor {
+  border-left: solid thin #f8f8f0;
+}
+
+ .CodeMirror-linenumber {
+  color: #6d8a88;
+}
+
+.CodeMirror-focused div.CodeMirror-selected {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+ .CodeMirror-line::selection,
+ .CodeMirror-line span > ::selection,
+ .CodeMirror-line span > span > ::selection {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+ .CodeMirror-line::-moz-selection,
+ .CodeMirror-line span > ::-moz-selection,
+ .CodeMirror-line span > span > ::-moz-selection {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+ .cm-comment {
+  color: #41535b;
+}
+
+ .cm-string,
+ .cm-string-2 {
+  color: #55b5db;
+}
+
+ .cm-number {
+  color: #cd3f45;
+}
+
+ .cm-variable {
+  color: #55b5db;
+}
+
+ .cm-variable-2 {
+  color: #a074c4;
+}
+
+ .cm-def {
+  color: #55b5db;
+}
+
+ .cm-keyword {
+  color: #ff79c6;
+}
+
+ .cm-operator {
+  color: #9fca56;
+}
+
+ .cm-keyword {
+  color: #e6cd69;
+}
+
+ .cm-atom {
+  color: #cd3f45;
+}
+
+ .cm-meta {
+  color: #55b5db;
+}
+
+ .cm-tag {
+  color: #55b5db;
+}
+
+ .cm-attribute {
+  color: #9fca56;
+}
+
+ .cm-qualifier {
+  color: #9fca56;
+}
+
+ .cm-property {
+  color: #a074c4;
+}
+
+ .cm-variable-3,
+ .cm-type {
+  color: #9fca56;
+}
+
+ .cm-builtin {
+  color: #9fca56;
+}
+
+ .CodeMirror-activeline-background {
+  background: #101213;
+}
+
+ .CodeMirror-matchingbracket {
+  text-decoration: underline;
+  color: white !important;
+}

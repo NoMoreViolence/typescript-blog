@@ -35,7 +35,7 @@ import 'codemirror/mode/css/css'
 import 'codemirror/mode/shell/shell'
 // CodeMirror Css Style
 import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/monokai.css'
+import 'components/commonCSS/editorTheme-seti.css'
 
 const Admin: React.SFC = () => {
   return (
