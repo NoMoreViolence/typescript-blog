@@ -79,7 +79,7 @@ Ripple.statics.createRipple = function (categoryID, postID, writer, text, passwo
 // Ripple change
 // TODO: Change
 //
-Ripple.statics.changeRipple = function () { }
+Ripple.statics.changeRipple = function () {}
 
 // Ripple delete
 // TODO: Delete
@@ -87,7 +87,7 @@ Ripple.statics.removeRipple = function (category) {
   return this.findOneAndRemove({ category })
 }
 // TODO: Delete
-Ripple.statics.removeRippleAdmin = function () { }
+Ripple.statics.removeRippleAdmin = function () {}
 // Ripple delete
 
 // TODO: REFs
@@ -105,9 +105,16 @@ Ripple.statics.checkObjectID = function (ObjectID) {
   return false
 }
 
+// Post, Category Actions
 // TODO: if Changed Post, the categoryID should be updated
 Ripple.statics.categoryIdUpdate = function (oldCategoryID, oldPostID, newCategoryID) {
   return this.update({ categoryID: oldCategoryID, postID: oldPostID }, { categoryID: newCategoryID }, { multi: true }).exec()
+}
+Ripple.statics.deleteAllByCategoryIDAndPostID = function (categoryID, postID) {
+  return this.remove({ categoryID, postID })
+}
+Ripple.statics.deleteAllByCategoryID = function (categoryID) {
+  return this.remove({ categoryID })
 }
 
 module.exports = mongoose.model('ripple', Ripple)

@@ -400,7 +400,7 @@ exports.postDelete = (req, res) => {
   const categoryExistCheck = async data => {
     // if category has post
     if (data.post.category !== null) {
-      return Promise.resolve(data)
+      return Promise.resolve({ ...data, categoryID: data.post.category.id })
     }
 
     // Check paramsCategory is exist or not
@@ -415,8 +415,12 @@ exports.postDelete = (req, res) => {
 
   // Delete Post
   const postDelete = async data => {
+    // Delete Post
     await Post.deletePost(data.title)
+    // Category ref cleaning
     await Category.PostsRefPull(data.category, data.postID)
+    // Ripple delete
+    await Ripple.deleteAllByCategoryIDAndPostID(data.categoryID, data.postID)
 
     return Promise.resolve(data)
   }
@@ -440,7 +444,12 @@ exports.postDelete = (req, res) => {
   }
 
   // Promise
-  postExistCheck({ category: category.trim(), title: title.trim(), postID: null })
+  postExistCheck({
+    category: category.trim(),
+    title: title.trim(),
+    categoryID: null,
+    postID: null
+  })
     .then(categoryExistCheck)
     .then(postDelete)
     .then(respondToClient)

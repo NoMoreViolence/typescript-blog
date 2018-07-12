@@ -1,5 +1,6 @@
 const Category = require('./../../../models/Category')
 const Post = require('./../../../models/Post')
+const Ripple = require('./../../../models/Ripple')
 
 /*
     public
@@ -13,11 +14,11 @@ exports.showTitleAndSubTitle = (req, res) => {
   // Category Check, if data is 'admin' throw error, because 'admin' is can't be a category Name
   const categoryNameAdminCheck = data => {
     // Right value
-    if (data.requestCategory.toLowerCase() !== 'admin') {
-      return Promise.resolve(data)
+    if (data.requestCategory.toLowerCase() === 'admin') {
+      // 'admin' throw error
+      return Promise.reject(new Error(`'${data.requestCategory}' 는 관리자 이름의 카테고리라 존재할 수 없습니다 !`))
     }
-    // 'admin' throw error
-    return Promise.reject(new Error(`'${data.requestCategory}' 는 관리자 이름의 카테고리라 존재할 수 없습니다 !`))
+    return Promise.resolve(data)
   }
 
   // Find Category
@@ -93,20 +94,20 @@ exports.categoryCreate = (req, res) => {
   // Category name admin check
   const categoryNameAdminCheck = data => {
     // Right value
-    if (data.category.toLowerCase() !== 'admin') {
-      return Promise.resolve(data)
+    if (data.category.toLowerCase() === 'admin') {
+      // 'admin' throw error
+      return Promise.reject(new Error(`'${data.category}' 이름의 카테고리는 생성이 불가능 합니다 !`))
     }
-    // 'admin' throw error
-    return Promise.reject(new Error(`'${data.category}' 이름의 카테고리는 생성이 불가능 합니다 !`))
+    return Promise.resolve(data)
   }
 
   // Category same name check
   const categoryNameSameCheck = async data => {
     // If same category name exists, throw error
-    if ((await Category.findSameCategoryRegex(data.category)) === null) {
-      return Promise.resolve(data)
+    if ((await Category.findSameCategoryRegex(data.category)) !== null) {
+      return Promise.reject(new Error(`'${data.category}' 이름의 카테고리가 이미 존재합니다 !`))
     }
-    return Promise.reject(new Error(`'${data.category}' 이름의 카테고리가 이미 존재합니다 !`))
+    return Promise.resolve(data)
   }
 
   // Create category
@@ -166,10 +167,10 @@ exports.categoryChange = (req, res) => {
     // Find category
     const dataCategory = await Category.findSameCategory(data.category)
     // Check data is exist or not
-    if (dataCategory !== null) {
-      return Promise.resolve(data)
+    if (dataCategory === null) {
+      return Promise.reject(new Error('변경할 카테고리가 존재하지 않습니다 !'))
     }
-    return Promise.reject(new Error('변경할 카테고리가 존재하지 않습니다 !'))
+    return Promise.resolve(data)
   }
 
   // Check data.chnageCategory is not null
@@ -185,18 +186,18 @@ exports.categoryChange = (req, res) => {
 
   // Check data.changeCategory.toLowerCase() is not 'admin'
   const newCategoryAdminCheck = data => {
-    if (data.changeCategory.toLowerCase() !== 'admin') {
-      return Promise.resolve(data)
+    if (data.changeCategory.toLowerCase() === 'admin') {
+      return Promise.reject(new Error('관리자 이름으로의 카테고리 변경은 불가능 합니다 !'))
     }
-    return Promise.reject(new Error('관리자 이름으로의 카테고리 변경은 불가능 합니다 !'))
+    return Promise.resolve(data)
   }
 
   // Check between oldCategory and changeCategory
   const bothCategorySameCheck = data => {
-    if (data.category !== data.changeCategory) {
-      return Promise.resolve(data)
+    if (data.category === data.changeCategory) {
+      return Promise.reject(new Error('같은 이름으로의 카테고리 변경은 필요 없습니다 !'))
     }
-    return Promise.reject(new Error('같은 이름으로의 카테고리 변경은 필요 없습니다 !'))
+    return Promise.resolve(data)
   }
 
   // Check new category is real new Category
@@ -206,12 +207,12 @@ exports.categoryChange = (req, res) => {
     // Because data.changeCategory is already Verified in past function =>
     // => data.category is not same with data.changeCategory
     if (
-      (await Category.findSameCategoryRegex(data.changeCategory)) === null ||
-      data.category.toLowerCase() === data.changeCategory.toLowerCase()
+      (await Category.findSameCategoryRegex(data.changeCategory)) !== null &&
+      data.category.toLowerCase() !== data.changeCategory.toLowerCase()
     ) {
-      return Promise.resolve(data)
+      return Promise.reject(new Error('새로운 카테고리의 이름이 기존 다른 카테고리와 중복됩니다 !'))
     }
-    return Promise.reject(new Error('새로운 카테고리의 이름이 기존 다른 카테고리와 중복됩니다 !'))
+    return Promise.resolve(data)
   }
 
   // Category chagne using mongo db
@@ -270,26 +271,29 @@ exports.categoryDelete = (req, res) => {
     const dataCategory = await Category.findSameCategory(data.category)
 
     // Check req.params.category is exist or not
-    if (dataCategory !== null) {
-      return Promise.resolve(data)
+    if (dataCategory === null) {
+      return Promise.reject(new Error('삭제할 카테고리가 존재하지 않습니다 !'))
     }
-    return Promise.reject(new Error('삭제할 카테고리가 존재하지 않습니다 !'))
+    return Promise.resolve({ ...data, categoryData: dataCategory })
   }
 
   // Compare between data.category and data.doubleCheck
   const categoryDoubleCheck = data => {
-    if (data.category === data.doubleCheck) {
-      return Promise.resolve(data)
+    if (data.category !== data.doubleCheck) {
+      return Promise.reject(new Error('카테고리 중복 확인 실패 !'))
     }
-    return Promise.reject(new Error('카테고리 중복 확인 실패 !'))
+    return Promise.resolve(data)
   }
 
   // Category delete using mongo db
   const categoryDelete = async data => {
     // TODO: ReadME
-    // First, delete Category, and delete Posts that has deleted categorys ID
+    // First, delete Category, and delete posts of categorys
+    // Last, delete Ripple that has deleted categoryID
     await Post.deletePostsOfDeletedCategory(await Category.deleteCategory(data.category))
-    return Promise.resolve(data)
+    await Ripple.deleteAllByCategoryID(data.categoryData.id)
+
+    Promise.resolve(data)
   }
 
   // Response to client
@@ -311,7 +315,7 @@ exports.categoryDelete = (req, res) => {
   }
 
   // Promise
-  categoryExistCheck({ category: category.trim(), doubleCheck: doubleCheck.trim() })
+  categoryExistCheck({ category: category.trim(), doubleCheck: doubleCheck.trim(), categoryData: null })
     .then(categoryDoubleCheck)
     .then(categoryDelete)
     .then(respondToClient)

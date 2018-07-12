@@ -13,6 +13,7 @@ const Category = new Schema({
 // All categories data
 Category.statics.findAllCategoriesTitleAndSubTitle = function () {
   return this.find({}, { category: 1 })
+    .sort({ category: 1 })
     .populate({
       path: 'posts',
       select: 'title subTitle date',
@@ -24,6 +25,7 @@ Category.statics.findAllCategoriesTitleAndSubTitle = function () {
 // Some categorys data
 Category.statics.findSomeCategorysTitleAndSubTitle = function (category) {
   return this.findOne({ category })
+    .sort({ category: 1 })
     .populate({
       path: 'posts',
       select: 'title subTitle, date',
