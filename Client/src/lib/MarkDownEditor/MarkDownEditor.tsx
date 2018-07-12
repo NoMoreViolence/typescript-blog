@@ -6,14 +6,14 @@ import 'components/commonCSS/editor.css'
 
 interface Props {
   title: string
-  changeTitle: (value: string) => void
   subTitle: string
-  changeSubTitle: (value: string) => void
   MainText: string
-  changeMainText: (value: string) => void
   titleError: boolean
   subTitleError: boolean
   mainTextError: boolean
+  changeTitle: (value: string) => void
+  changeSubTitle: (value: string) => void
+  changeMainText: (value: string) => void
   errorHandler: (value: string) => void
 }
 
@@ -40,7 +40,7 @@ class MarkDownEditor extends React.Component<Props, State> {
   }
 
   // Text cursor
-  public componentDidUpdate(prevProps: Props) {
+  public componentDidUpdate() {
     // Error handler
     if (this.props.titleError === true) {
       this.title.focus()
@@ -55,6 +55,7 @@ class MarkDownEditor extends React.Component<Props, State> {
     }
   }
 
+  // Unmount, clear ref
   public componentWillUnmount() {
     this.title = null
     this.subTitle = null
