@@ -8,7 +8,8 @@ import {
   GetTopRipples,
   GetChildRipples,
   PostTopRipple,
-  PostChildRipple
+  PostChildRipple,
+  ChangeChildMode
 } from 'store/modules/Ripple'
 
 import RippleTopInput from 'lib/RippleTopInput'
@@ -19,7 +20,6 @@ import { toast } from 'react-toastify'
 
 interface Props {
   // Ripple data
-  showRipple: TopOrChildRippleState[]
   topRipple: TopOrChildRippleState[]
   topLoadState: TopLoadState
   childRipple: TopOrChildRippleState[]
@@ -30,15 +30,26 @@ interface Props {
   childRippleLoad: (value: GetChildRipples) => Promise<object>
   postTopRipple: (value: PostTopRipple) => Promise<object>
   postChildRipple: (value: PostChildRipple) => Promise<object>
-  // Ripple state fun
+  // Ripple state fun: top
   changeTopAddMode: (value: number) => Promise<object>
-  changeTopMoreMode: (value: number) => Promise<object>
+  changeTopShowChildMode: (value: number) => Promise<object>
   changeTopChangeMode: (value: number) => Promise<object>
   changeTopDeleteMode: (value: number) => Promise<object>
   changeTopMoreViewMode: (value: number) => Promise<object>
+  // Ripple staet fun: child
+  changeChildChangeMode: (value: ChangeChildMode) => Promise<object>
+  changeChildDeleteMode: (value: ChangeChildMode) => Promise<object>
+  changeChildMoreViewMode: (value: ChangeChildMode) => Promise<object>
+  // Submit ripple state
+  addRippleStatePending: boolean
+  submitChildRipple: (value: PostChildRipple) => Promise<object>
 }
 
-class Ripple extends React.Component<Props & RouteComponentProps<any>> {
+interface State {
+  topRippleLoaded: object
+}
+
+class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
   public state = {
     topRippleLoaded: {}
   }
@@ -59,6 +70,14 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>> {
     })
   }
 
+  // Optimization rendering problem
+  public shouldComponentUpdate(nextProps: Props, nextState: State) {
+    if (nextProps !== this.props || nextState !== this.state) {
+      return true
+    }
+    return false
+  }
+
   public render(): JSX.Element {
     // Show Top Ripple
     const showTopRipple = (data: TopOrChildRippleState[]) => {
@@ -72,6 +91,7 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>> {
               text={object.text}
               date={object.date}
               topID={object._id}
+              childRippleLoaded={object.childRippleLoaded}
               childRipple={object.childRipple}
               // Ripple Loading
               topRippleLoad={this.props.topRippleLoad}
@@ -83,16 +103,22 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>> {
               number={i}
               // Ripple state
               topAddMode={object.addMode}
-              topMoreMode={object.moreMode}
+              topShowChildMode={object.showChildMode}
               topChangeMode={object.changeMode}
               topDeleteMode={object.deleteMode}
               topMoreRippleView={object.moreRippleView}
               // Ripple state change
-              changeAddMode={this.props.changeTopAddMode}
-              changeMoreMode={this.props.changeTopMoreMode}
-              changeChangeMode={this.props.changeTopChangeMode}
-              changeDeleteMode={this.props.changeTopDeleteMode}
-              changeMoreViewMode={this.props.changeTopMoreViewMode}
+              changeTopAddMode={this.props.changeTopAddMode}
+              changeTopShowChildMode={this.props.changeTopShowChildMode}
+              changeTopChangeMode={this.props.changeTopChangeMode}
+              changeTopDeleteMode={this.props.changeTopDeleteMode}
+              changeTopMoreViewMode={this.props.changeTopMoreViewMode}
+              // Ripple state change
+              changeChildChangeMode={this.props.changeChildChangeMode}
+              changeChildDeleteMode={this.props.changeChildDeleteMode}
+              changeChildMoreViewMode={this.props.changeChildMoreViewMode}
+              // Submit child ripple
+              submitChildRipple={this.props.submitChildRipple}
             />
           </React.Fragment>
         )
@@ -102,11 +128,9 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>> {
       <React.Fragment>
         <RippleTopInput
           submitTopRipple={this.props.postTopRipple}
-          submitChildRipple={this.props.postChildRipple}
-          topRippleLoad={this.props.topRippleLoad}
-          childRippleLoad={this.props.childRippleLoad}
+          addRippleStatePending={this.props.addRippleStatePending}
         />
-        <div className="ripple-unit-container">{showTopRipple(this.props.showRipple)}</div>
+        <div className="ripple-unit-container">{showTopRipple(this.props.topRipple)}</div>
       </React.Fragment>
     )
   }
