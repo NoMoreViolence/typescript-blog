@@ -1,0 +1,43 @@
+.ripple-unit {
+  width: 100%;
+  background-color: transparent;
+  border: 3px solid rgba(0, 0, 0, .125);
+  border-radius: .25rem;
+  padding: 15px;
+  margin-top: 2.5%;
+}
+
+.ripple-writer-and-date {
+  width: 100%;
+  padding-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+  white-space: normal;
+  white-space: nowrap; 
+}
+
+.ripple-text {
+
+}
+
+.ripple-password-confirm {
+  margin-top: 1rem;
+}
+
+.ripple-more-view {
+  cursor: pointer;
+  color: #007bff;
+}
+
+.ripple-action-buttons {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+
+.ripple-flex {
+  display: flex;
+  flex-direction: column;
+}
