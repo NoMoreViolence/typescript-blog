@@ -19,26 +19,27 @@ exports.showRipples = (req, res) => {
     const post = await Post.findPost(data.category, data.title)
 
     // Check post is exist or not
-    if (post !== null) {
-      return Promise.resolve({ ...data, post, postID: post.id })
+    if (post === null) {
+      return Promise.reject(new Error(`${data.title} 포스트가 존재하지 않습니다 !`))
     }
-    return Promise.reject(new Error(`${data.title} 포스트가 존재하지 않습니다 !`))
+
+    return Promise.resolve({ ...data, post, postID: post.id })
   }
 
   // Check category exist or not
   const postCategoryExistCheck = async data => {
     // Check post has category or not
-    if (data.post.category !== null) {
-      return Promise.resolve({ ...data, categoryID: data.post.category.id })
+    if (data.post.category === null) {
+      // Check paramsCategory is exist or not
+      const paramsCategory = await Category.findSameCategory(data.category)
+      if (paramsCategory !== null) {
+        return Promise.reject(new Error(`'${data.title}'포스트는 '${data.category}' 카테고리가 아닙니다 !`))
+      }
+
+      return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
     }
 
-    // Check paramsCategory is exist or not
-    const paramsCategory = await Category.findSameCategory(data.category)
-    if (paramsCategory !== null) {
-      return Promise.reject(new Error(`'${data.title}'포스트는 '${data.category}' 카테고리가 아닙니다 !`))
-    }
-
-    return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
+    return Promise.resolve({ ...data, categoryID: data.post.category.id })
   }
 
   // Find Ripple
@@ -140,27 +141,27 @@ exports.addRipple = (req, res) => {
     // Find
     const postData = await Post.findPost(data.category, data.title)
     // Cehck postData is exist or not
-    if (postData !== null) {
-      return Promise.resolve({ ...data, postData, postID: postData.id })
+    if (postData === null) {
+      // Throw error
+      return Promise.reject(new Error(`'${data.title}' 포스트는 존재하지 않습니다 !`))
     }
 
-    // Throw error
-    return Promise.reject(new Error(`'${data.title}' 포스트는 존재하지 않습니다 !`))
+    return Promise.resolve({ ...data, postData, postID: postData.id })
   }
   // Check data.post.category is exist or not
   const categoryExistCheck = async data => {
     // Check data.post.category
-    if (data.postData.category !== null) {
-      return Promise.resolve({ ...data, categoryID: data.postData.category.id })
+    if (data.postData.category === null) {
+      // Check data.category is exist or not
+      const categoryData = await Category.findSameCategory(data.category)
+      if (categoryData !== null) {
+        return Promise.reject(new Error(`'${data.title}'포스트는 '${data.category}' 카테고리가 아닙니다 !`))
+      }
+      // Throw error
+      return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
     }
 
-    // Check data.category is exist or not
-    const categoryData = await Category.findSameCategory(data.category)
-    if (categoryData !== null) {
-      return Promise.reject(new Error(`'${data.title}'포스트는 '${data.category}' 카테고리가 아닙니다 !`))
-    }
-    // Throw error
-    return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
+    return Promise.resolve({ ...data, categoryID: data.postData.category.id })
   }
 
   // Check body.ripple exist or not
@@ -320,14 +321,16 @@ exports.addRipple = (req, res) => {
 }
 
 /*
-    PATCH /api/:category/:title/:writer/:toporchild
+   PATCH /api/:category/:title/:writer/:toporchild
     {}
     {
       password: string
     }
 */
 exports.changeRipple = (req, res) => {
-  const { category, title, writer } = req.params
+  const {
+    category, title, writer, toporchild
+  } = req.params
   const { text, rippleID } = req.body
 
   // Check data.title is exist or not
@@ -335,38 +338,84 @@ exports.changeRipple = (req, res) => {
     // Find
     const postData = await Post.findPost(data.category, data.title)
     // Cehck postData is exist or not
-    if (postData !== null) {
-      return Promise.resolve({ ...data, postData, postID: postData.id })
+    if (postData === null) {
+      // Throw error
+      return Promise.reject(new Error(`'${data.title}' 포스트는 존재하지 않습니다 !`))
     }
 
-    // Throw error
-    return Promise.reject(new Error(`'${data.title}' 포스트는 존재하지 않습니다 !`))
+    return Promise.resolve({ ...data, postData, postID: postData.id })
   }
   // Check data.post.category is exist or not
   const categoryExistCheck = async data => {
     // Check data.post.category
-    if (data.postData.category !== null) {
-      return Promise.resolve({ ...data, categoryData: data.postData.category, categoryID: data.postData.category.id })
+    if (data.postData.category === null) {
+      // Check data.category is exist or not
+      const categoryData = await Category.findSameCategory(data.category)
+      if (categoryData !== null) {
+        return Promise.reject(new Error(`'${data.title}'포스트는 '${data.category}' 카테고리가 아닙니다 !`))
+      }
+      // Throw error
+      return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
     }
 
-    // Check data.category is exist or not
-    const categoryData = await Category.findSameCategory(data.category)
-    if (categoryData !== null) {
-      return Promise.reject(new Error(`'${data.title}'포스트는 '${data.category}' 카테고리가 아닙니다 !`))
-    }
-    // Throw error
-    return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
+    return Promise.resolve({ ...data, categoryData: data.postData.category, categoryID: data.postData.category.id })
   }
 
   // Check objectID
-  const rippleIDObjectCheck = async data => {
+  const rippleObjectIdCheck = async data => {
     // Check ripple ID
-    const rippleIDchecked = Ripple.checkObjectID(data.rippleID)
+    const rippleIDchecked = await Ripple.checkObjectID(data.rippleID)
 
     if (rippleIDchecked !== true) {
-      return Promise.reject(new Error('댓글이 존재하지 않습니다 !'))
+      return Promise.reject(new Error('잘못된 요청입니다 !'))
     }
+
     return Promise.resolve(data)
+  }
+
+  // Find ripple by obj ID
+  const rippleFindToChange = async data => {
+    // Find ripple
+    const ripple = await Ripple.searchOneRippleByID(data.rippleID, 0)
+
+    if (ripple === null) {
+      return Promise.reject(new Error('변경하고자 하는 댓글이 존재하지 않습니다 !'))
+    }
+
+    return Promise.resolve({ ...data, ripple })
+  }
+
+  // Check ripple data
+  const checkRippleData = data => {
+    if (data.ripple.categoryID !== data.categoryID) {
+      return Promise.reject(new Error('댓글의 카테고리가 일치하지 않습니다 !'))
+    }
+
+    if (data.ripple.postID !== data.postID) {
+      return Promise.reject(new Error('댓글의 포스트가 일치하지 않습니다 !'))
+    }
+
+    return Promise.resolve(data)
+  }
+
+  // Change ripple
+  const changeRipple = data => {
+    if (data.toporchild === 'top') {
+      //
+    }
+    if (data.toporchild === 'child') {
+      //
+    }
+
+    return Promise.reject(new Error('잘못된 요청입니다 !'))
+  }
+
+  // Respond
+  const respondToClient = data => {
+    res.json({
+      success: true,
+      message: `'${data.writer}' 의 댓글 변경 성공 !`
+    })
   }
 
   // Error handler
@@ -383,9 +432,14 @@ exports.changeRipple = (req, res) => {
     title,
     writer,
     text,
-    rippleID
+    rippleID,
+    toporchild
   })
     .then(categoryExistCheck)
-    .then(rippleIDObjectCheck)
+    .then(rippleObjectIdCheck)
+    .then(rippleFindToChange)
+    .then(checkRippleData)
+    .then(changeRipple)
+    .then(respondToClient)
     .catch(onError)
 }
