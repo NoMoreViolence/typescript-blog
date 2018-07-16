@@ -436,8 +436,9 @@ const reducer = handleActions<RippleState, any>(
 
       // Show ripple state merge
       const childRipple: TopOrChildRippleState[] = Array.prototype.concat(
+        state.topRipple[addedRipple.topNumber || 0].childRipple,
         {
-          ...action.payload.data.value.addedRipple,
+          ...addedRipple,
           childRippleLoaded: false,
           changeMode: false,
           changePending: false,
@@ -445,8 +446,7 @@ const reducer = handleActions<RippleState, any>(
           deletePending: false,
           moreRippleView: false,
           moreRippleViewMessage: '더 보기'
-        },
-        state.topRipple[addedRipple.topNumber || 0].childRipple
+        }
       )
 
       return produce(state, draft => {
