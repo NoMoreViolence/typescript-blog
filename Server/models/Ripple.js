@@ -18,42 +18,72 @@ const Ripple = new Schema({
 // TODO: Search
 // rippleID: ObjectID
 Ripple.statics.searchOneRippleByID = function (rippleID, passwordShow) {
-  // return founded
-  return this.findOne({ _id: rippleID })
-    .select({ password: passwordShow })
-    .exec()
+  if (passwordShow === 0) {
+    // return founded
+    return this.findOne({ _id: rippleID })
+      .select({ password: passwordShow })
+      .exec()
+  }
+
+  return this.findOne({ _id: rippleID }).exec()
 }
 // category: string, title: string, writer: string, passwordShow: number
 Ripple.statics.searchOneRipple = function (category, title, writer, passwordShow) {
-  // return founded post data
+  if (passwordShow === 0) {
+    // return founded post data
+    return this.findOne({ writer })
+      .populate({ path: 'category', match: { category } })
+      .populate({ path: 'posts', match: { title } })
+      .select({ password: passwordShow })
+      .exec()
+  }
+
   return this.findOne({ writer })
     .populate({ path: 'category', match: { category } })
     .populate({ path: 'posts', match: { title } })
-    .select({ password: passwordShow })
     .exec()
 }
 // category: string, title: string, writer: string, passwordShow: number
 Ripple.statics.searchRipple = function (category, title, writer, passwordShow) {
-  // return founded post data
+  if (passwordShow === 0) {
+    // return founded post data
+    return this.find({ writer })
+      .populate({ path: 'category', match: { category } })
+      .populate({ path: 'posts', match: { title } })
+      .select({ password: passwordShow })
+      .exec()
+  }
+
   return this.find({ writer })
     .populate({ path: 'category', match: { category } })
     .populate({ path: 'posts', match: { title } })
-    .select({ password: passwordShow })
     .exec()
 }
 // categoryID: ObjectID, postID: ObjectID, passwordShow: number
 Ripple.statics.searchTopRipple = function (categoryID, postID, passwordShow) {
-  // return founded ripple data
+  if (passwordShow === 0) {
+    // return founded ripple data
+    return this.find({ categoryID, postID, top: true })
+      .select({ password: passwordShow })
+      .sort({ date: -1 })
+      .exec()
+  }
+
   return this.find({ categoryID, postID, top: true })
-    .select({ password: passwordShow })
     .sort({ date: -1 })
     .exec()
 }
 // childRippleArray: string[]
 Ripple.statics.searchChildRipple = function (childRippleArray, passwordShow) {
-  // Return founded ripple data
+  if (passwordShow === 0) {
+    // Return founded ripple data
+    return this.find({ _id: { $in: childRippleArray }, top: false })
+      .select({ password: passwordShow })
+      .sort({ date: 1 })
+      .exec()
+  }
+
   return this.find({ _id: { $in: childRippleArray }, top: false })
-    .select({ password: passwordShow })
     .sort({ date: 1 })
     .exec()
 }
@@ -88,12 +118,9 @@ Ripple.statics.changeRipple = function (rippleID, text) {
 Ripple.statics.removeRipple = function (category) {
   return this.findOneAndRemove({ category })
 }
-// TODO: Delete
-Ripple.statics.removeRippleAdmin = function () {}
-// Ripple delete
 
-// TODO: REFs
 // Add ref in top class
+// TODO: ref
 Ripple.statics.rippleRefPush = function (parentID, childRippleID) {
   return this.findByIdAndUpdate(parentID, { $push: { childRipple: childRippleID } }).exec()
 }
