@@ -322,8 +322,11 @@ exports.addRipple = (req, res) => {
 
 /*
    PATCH /api/:category/:title/:writer/:toporchild
-    {}
     {
+      text: string
+      rippleID: objectID
+      topNumber: number
+      childNumber: number
       password: string
     }
 */
@@ -331,7 +334,9 @@ exports.changeRipple = (req, res) => {
   const {
     category, title, writer, toporchild
   } = req.params
-  const { text, rippleID } = req.body
+  const {
+    text, rippleID, topNumber, childNumber, password
+  } = req.body
 
   // Check data.title is exist or not
   const postExistCheck = async data => {
@@ -395,26 +400,82 @@ exports.changeRipple = (req, res) => {
       return Promise.reject(new Error('댓글의 포스트가 일치하지 않습니다 !'))
     }
 
-    return Promise.resolve(data)
-  }
-
-  // Change ripple
-  const changeRipple = data => {
-    if (data.toporchild === 'top') {
-      //
+    if (data.ripple.top === true && data.toporchild === 'top') {
+      return Promise.resolve(data)
     }
-    if (data.toporchild === 'child') {
-      //
+
+    if (data.ripple.top === false && data.toporchild === 'child') {
+      return Promise.resolve(data)
     }
 
     return Promise.reject(new Error('잘못된 요청입니다 !'))
+  }
+
+  // Change ripple
+  const changeRipple = async data => {
+    if (data.toporchild === 'top') {
+      if (typeof (data.topNumber * 1) !== 'number') {
+        return Promise.reject(new Error('댓글 번호가 존재하지 않습니다 !'))
+      }
+
+      // Change ripple
+      const changedRipple = await Ripple.changeRipple(data.rippleID, data.text)
+
+      // sort
+      const changedRippleSorted = {
+        text: changedRipple.text,
+        writer: changedRipple.writer,
+        password: '!!!',
+        categoryID: changedRipple.categoryID,
+        postID: changedRipple.postID,
+        top: changedRipple.top,
+        childRipple: [],
+        date: changedRipple.date,
+        topNumber: data.topNumber
+      }
+
+      return Promise.resolve({ ...data, changedRipple: changedRippleSorted })
+    }
+    if (data.toporchild === 'child') {
+      if (typeof (data.topNumber * 1) !== 'number' || typeof (data.childNumber * 1) !== 'number') {
+        return Promise.reject(new Error('댓글 번호가 존재하지 않습니다 !'))
+      }
+
+      // Change ripple
+      const changedRipple = await Ripple.changeRipple(data.rippleID, data.text)
+
+      // sort
+      const changedRippleSorted = {
+        text: changedRipple.text,
+        writer: changedRipple.writer,
+        password: '!!!',
+        categoryID: changedRipple.categoryID,
+        postID: changedRipple.postID,
+        top: changedRipple.top,
+        childRipple: [],
+        date: changedRipple.date,
+        topNumber: data.topNumber,
+        childNumber: data.childNumber
+      }
+
+      return Promise.resolve({ ...data, changedRipple: changedRippleSorted })
+    }
+
+    return Promise.reject(new Error('잘못된 요청입니다 !'))
+  }
+
+  const dataCleaning = data => {
+    const cleaningData = { ...data, password: '!!!' }
+
+    return Promise.resolve(cleaningData)
   }
 
   // Respond
   const respondToClient = data => {
     res.json({
       success: true,
-      message: `'${data.writer}' 의 댓글 변경 성공 !`
+      message: `'${data.writer}' 의 댓글 변경 성공 !`,
+      value: data
     })
   }
 
@@ -432,14 +493,18 @@ exports.changeRipple = (req, res) => {
     title,
     writer,
     text,
+    password,
     rippleID,
-    toporchild
+    toporchild,
+    topNumber,
+    childNumber
   })
     .then(categoryExistCheck)
     .then(rippleObjectIdCheck)
     .then(rippleFindToChange)
     .then(checkRippleData)
     .then(changeRipple)
+    .then(dataCleaning)
     .then(respondToClient)
     .catch(onError)
 }

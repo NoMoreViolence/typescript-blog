@@ -79,7 +79,9 @@ Ripple.statics.createRipple = function (categoryID, postID, writer, text, passwo
 // Ripple change
 // TODO: Change
 //
-Ripple.statics.changeRipple = function () {}
+Ripple.statics.changeRipple = function (rippleID, text) {
+  return this.findOneAndUpdate({ _id: rippleID }, { $set: { text } }, { returnNewDocument: true }).exec()
+}
 
 // Ripple delete
 // TODO: Delete
