@@ -380,8 +380,8 @@ exports.changeRipple = (req, res) => {
 
   // Find ripple by obj ID
   const rippleFindToChange = async data => {
-    // Find ripple
-    const ripple = await Ripple.searchOneRippleByID(data.rippleID, 0)
+    // Find rippl
+    const ripple = await Ripple.searchOneRippleByID(data.rippleID, 1)
 
     if (ripple === null) {
       return Promise.reject(new Error('변경하고자 하는 댓글이 존재하지 않습니다 !'))
@@ -405,10 +405,26 @@ exports.changeRipple = (req, res) => {
     }
 
     if (data.ripple.top === false && data.toporchild === 'child') {
-      return Promise.resolve(data)
+      if (data.ripple.topID === data.topID) {
+        return Promise.resolve(data)
+      }
     }
 
     return Promise.reject(new Error('잘못된 요청입니다 !'))
+  }
+
+  const passwordCheck = async data => {
+    // Encryption
+    const encryptedPassword = await crypto
+      .createHash('sha512')
+      .update(req.body.password)
+      .digest('base64')
+
+    if (encryptedPassword !== data.ripple.password) {
+      return Promise.reject(new Error('비밀번호가 일치하지 않습니다 !'))
+    }
+
+    return Promise.resolve(data)
   }
 
   // Change ripple
@@ -503,6 +519,7 @@ exports.changeRipple = (req, res) => {
     .then(rippleObjectIdCheck)
     .then(rippleFindToChange)
     .then(checkRippleData)
+    .then(passwordCheck)
     .then(changeRipple)
     .then(dataCleaning)
     .then(respondToClient)
