@@ -45,11 +45,12 @@ interface Props {
   // Mode change
   changeChildChangeMode: (value: ChildMode) => any
   changeChildRipple: (value: PatchChildRipple) => Promise<any>
+  changeRippleStatePending: boolean
   changeChildDeleteMode: (value: ChildMode) => any
   changeChildMoreViewMode: (value: ChildMode) => any
   // PostChildRipple
   postChildRipple: (value: PostChildRipple) => Promise<any>
-  changeRippleStatePending: boolean
+  addRippleStatePending: boolean
 }
 
 interface State {
@@ -217,7 +218,7 @@ class RippleTopRipple extends React.Component<Props, State> {
         </button>
       )
     }
-    const rippleChildInput = (topAddMode: boolean): JSX.Element | null => {
+    const rippleAddModeShow = (topAddMode: boolean): JSX.Element | null => {
       if (topAddMode) {
         return (
           <RippleChildInput
@@ -225,7 +226,7 @@ class RippleTopRipple extends React.Component<Props, State> {
             title={this.props.title}
             topID={this.props.rippleID}
             postChildRipple={this.props.postChildRipple}
-            topNumber={this.props.topNumber}
+            addRippleStatePending={this.props.addRippleStatePending}
           />
         )
       }
@@ -337,7 +338,7 @@ class RippleTopRipple extends React.Component<Props, State> {
           <div className="ripple-date">{date.toString().slice(0, 10)}</div>
         </div>
         <div className="ripple-text">{printTextOrTextArea(topChangeMode, topMoreRippleView, text)}</div>
-        <div className="ripple-child-input">{rippleChildInput(topAddMode)}</div>
+        <div className="ripple-child-input">{rippleAddModeShow(topAddMode)}</div>
         <div className="ripple-action-buttons">
           {rippleAddMode(topAddMode)}
           {rippleShowChildMode({ topShowChildMode, childRipple })}

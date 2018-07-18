@@ -13,7 +13,7 @@ interface Props {
   title: string
   topID: string
   postChildRipple: (value: PostChildRipple) => Promise<any>
-  topNumber: number
+  addRippleStatePending: boolean
 }
 
 interface State {
@@ -29,6 +29,7 @@ interface SubmitINFO {
   text: string
   password: string
   topID: string
+  pending: boolean
 }
 
 class RippleChildInput extends React.Component<Props, State> {
@@ -53,7 +54,7 @@ class RippleChildInput extends React.Component<Props, State> {
   public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const { category, title, topID } = this.props
+    const { category, title, topID, addRippleStatePending } = this.props
     const { writer, text, password } = this.state
 
     // Value check function, if the data is null or '', return 0
@@ -73,6 +74,15 @@ class RippleChildInput extends React.Component<Props, State> {
         return { result: false, ECode }
       }
       return { result: true, ECode }
+    }
+
+    // Check the child ripple add process is already pending
+    const pendingCheck = (data: SubmitINFO): Promise<object> => {
+      if (data.pending === true) {
+        return Promise.reject(new Error('Pending'))
+      }
+
+      return Promise.resolve(data)
     }
 
     // Writer name check
@@ -134,6 +144,8 @@ class RippleChildInput extends React.Component<Props, State> {
     const onError = (err: Error): void => {
       if (err.message === 'Undefined') {
         toast('알 수 없는 에러 입니다 !')
+      } else if (err.message === 'Pending') {
+        toast('댓글 추가 작업이 이미 진행 중에 있습니다. 잠시 후에 다시 시도해 주세요 !')
       } else if (err.message === '/_?_&_#') {
         this.setState({
           writer: ''
@@ -162,14 +174,16 @@ class RippleChildInput extends React.Component<Props, State> {
     }
 
     // Promise
-    valueCheck({
+    pendingCheck({
       category,
       title,
       writer,
       text,
       password,
-      topID
+      topID,
+      pending: addRippleStatePending
     })
+      .then(valueCheck)
       .then(requestToServer)
       .catch(onError)
   }

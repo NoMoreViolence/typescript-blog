@@ -118,11 +118,12 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
               // Ripple state change
               changeChildChangeMode={this.props.changeChildChangeMode}
               changeChildRipple={this.props.changeChildRipple}
+              changeRippleStatePending={this.props.changeRippleStatePending}
               changeChildDeleteMode={this.props.changeChildDeleteMode}
               changeChildMoreViewMode={this.props.changeChildMoreViewMode}
               // Submit child ripple
               postChildRipple={this.props.postChildRipple}
-              changeRippleStatePending={this.props.changeRippleStatePending}
+              addRippleStatePending={this.props.addRippleStatePending}
             />
           </React.Fragment>
         )
