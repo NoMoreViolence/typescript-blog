@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'
 import regExp from 'lib/RegExp'
 
 interface Props {
-  postTopRipple: (value: PostTopRipple) => Promise<any>
+  postTopRipple: (value: PostTopRipple) => Promise<object>
   addRippleStatePending: boolean
 }
 

@@ -32,16 +32,16 @@ interface Props {
   postTopRipple: (value: PostTopRipple) => Promise<object>
   postChildRipple: (value: PostChildRipple) => Promise<object>
   // Ripple state fun: top
-  changeTopAddMode: (value: number) => Promise<object>
-  changeTopShowChildMode: (value: number) => Promise<object>
-  changeTopChangeMode: (value: number) => Promise<object>
-  changeTopDeleteMode: (value: number) => Promise<object>
-  changeTopMoreViewMode: (value: number) => Promise<object>
+  changeTopAddMode: (value: number) => boolean
+  changeTopShowChildMode: (value: number) => boolean
+  changeTopChangeMode: (value: number) => boolean
+  changeTopDeleteMode: (value: number) => boolean
+  changeTopMoreViewMode: (value: number) => boolean
   // Ripple staet fun: child
-  changeChildChangeMode: (value: ChildMode) => Promise<object>
+  changeChildChangeMode: (value: ChildMode) => boolean
   changeChildRipple: (value: PatchChildRipple) => Promise<object>
-  changeChildDeleteMode: (value: ChildMode) => Promise<object>
-  changeChildMoreViewMode: (value: ChildMode) => Promise<object>
+  changeChildDeleteMode: (value: ChildMode) => boolean
+  changeChildMoreViewMode: (value: ChildMode) => boolean
   // Submit ripple state
   addRippleStatePending: boolean
   changeRippleStatePending: boolean

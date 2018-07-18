@@ -12,7 +12,7 @@ interface Props {
   category: string
   title: string
   topID: string
-  postChildRipple: (value: PostChildRipple) => Promise<any>
+  postChildRipple: (value: PostChildRipple) => Promise<object>
   addRippleStatePending: boolean
 }
 

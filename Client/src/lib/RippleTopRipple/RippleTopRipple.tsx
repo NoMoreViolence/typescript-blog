@@ -25,8 +25,8 @@ interface Props {
   childRippleLoaded: boolean
   childRipple: TopOrChildRippleState[]
   // Get category & child data
-  topRippleLoad: (value: GetTopRipples) => any
-  childRippleLoad: (value: GetChildRipples) => any
+  topRippleLoad: (value: GetTopRipples) => Promise<object>
+  childRippleLoad: (value: GetChildRipples) => Promise<object>
   // URL
   category: string
   title: string
@@ -38,17 +38,17 @@ interface Props {
   topMoreRippleView: boolean
   topMoreRippleViewMessage: string
   // Mode change
-  changeTopAddMode: (value: number) => any
-  changeTopShowChildMode: (value: number) => any
-  changeTopChangeMode: (value: number) => any
-  changeTopDeleteMode: (value: number) => any
-  changeTopMoreViewMode: (value: number) => any
+  changeTopAddMode: (value: number) => boolean
+  changeTopShowChildMode: (value: number) => boolean
+  changeTopChangeMode: (value: number) => boolean
+  changeTopDeleteMode: (value: number) => boolean
+  changeTopMoreViewMode: (value: number) => boolean
   // Mode change
-  changeChildChangeMode: (value: ChildMode) => any
+  changeChildChangeMode: (value: ChildMode) => boolean
   changeChildRipple: (value: PatchChildRipple) => Promise<any>
   changeRippleStatePending: boolean
-  changeChildDeleteMode: (value: ChildMode) => any
-  changeChildMoreViewMode: (value: ChildMode) => any
+  changeChildDeleteMode: (value: ChildMode) => boolean
+  changeChildMoreViewMode: (value: ChildMode) => boolean
   // PostChildRipple
   postChildRipple: (value: PostChildRipple) => Promise<any>
   addRippleStatePending: boolean

@@ -26,10 +26,10 @@ interface Props {
   childMoreRippleView: boolean
   childMoreRippleViewMessage: string
   // Mode change
-  changeChildChangeMode: (value: ChildMode) => any
+  changeChildChangeMode: (value: ChildMode) => boolean
   changeChildRipple: (value: PatchChildRipple) => Promise<any>
-  changeChildDeleteMode: (value: ChildMode) => any
-  changeChildMoreViewMode: (value: ChildMode) => any
+  changeChildDeleteMode: (value: ChildMode) => boolean
+  changeChildMoreViewMode: (value: ChildMode) => boolean
 }
 
 interface State {
