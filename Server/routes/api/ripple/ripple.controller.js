@@ -133,8 +133,7 @@ exports.addRipple = (req, res) => {
   const {
     category, title, writer, toporchild
   } = req.params
-  const { topID } = req.query
-  const { ripple, password, topNumber } = req.body
+  const { ripple, password, topID } = req.body
 
   // Check data.title is exist or not
   const postExistCheck = async data => {
@@ -206,12 +205,22 @@ exports.addRipple = (req, res) => {
     // Top class ripple
     if (data.topOrChild === 'top') {
       // Create ripple
-      const addedRipple = await Ripple.createRipple(data.categoryID, data.postID, data.writer, data.ripple, data.password, true)
+      const addedRipple = await Ripple.createRipple(
+        data.categoryID,
+        data.postID,
+        data.writer,
+        data.ripple,
+        data.password,
+        true,
+        data.topID
+      )
       // add ripple to title
       await Post.rippleRefPush(data.postID, addedRipple.id)
 
       // Data sort
       const AddedRipple = {
+        _id: addedRipple.id,
+        topID: addedRipple.id,
         text: addedRipple.text,
         writer: addedRipple.writer,
         password: '!!!',
@@ -251,11 +260,21 @@ exports.addRipple = (req, res) => {
       }
 
       // Create Ripple
-      const addedRipple = await Ripple.createRipple(data.categoryID, data.postID, data.writer, data.ripple, data.password, false)
+      const addedRipple = await Ripple.createRipple(
+        data.categoryID,
+        data.postID,
+        data.writer,
+        data.ripple,
+        data.password,
+        false,
+        data.topID
+      )
       await Ripple.rippleRefPush(data.topID, addedRipple.id)
 
       // Data sort
       const AddedRipple = {
+        _id: addedRipple.id,
+        topID: data.topID,
         text: addedRipple.text,
         writer: addedRipple.writer,
         password: '!!!',
@@ -263,8 +282,7 @@ exports.addRipple = (req, res) => {
         postID: addedRipple.postID,
         top: addedRipple.top,
         childRipple: [],
-        date: addedRipple.date,
-        topNumber: data.topNumber
+        date: addedRipple.date
       }
 
       return Promise.resolve({
@@ -308,8 +326,7 @@ exports.addRipple = (req, res) => {
     categoryID: null,
     topOrChild: toporchild,
     topData: null,
-    topID,
-    topNumber
+    topID
   })
     .then(categoryExistCheck)
     .then(rippleExistCheck)
@@ -324,18 +341,18 @@ exports.addRipple = (req, res) => {
    PATCH /api/:category/:title/:writer/:toporchild
     {
       text: string
+      topID: string
       rippleID: objectID
-      topNumber: number
-      childNumber: number
       password: string
     }
 */
 exports.changeRipple = (req, res) => {
+  // Data
   const {
     category, title, writer, toporchild
   } = req.params
   const {
-    text, rippleID, topNumber, childNumber, password
+    text, topID, rippleID, password
   } = req.body
 
   // Check data.title is exist or not
@@ -379,7 +396,7 @@ exports.changeRipple = (req, res) => {
   }
 
   // Find ripple by obj ID
-  const rippleFindToChange = async data => {
+  const rippleExistCheck = async data => {
     // Find rippl
     const ripple = await Ripple.searchOneRippleByID(data.rippleID, 1)
 
@@ -391,12 +408,12 @@ exports.changeRipple = (req, res) => {
   }
 
   // Check ripple data
-  const checkRippleData = data => {
-    if (data.ripple.categoryID !== data.categoryID) {
+  const rippleDataCheck = data => {
+    if (data.ripple.categoryID.toString() !== data.categoryID.toString()) {
       return Promise.reject(new Error('댓글의 카테고리가 일치하지 않습니다 !'))
     }
 
-    if (data.ripple.postID !== data.postID) {
+    if (data.ripple.postID.toString() !== data.postID.toString()) {
       return Promise.reject(new Error('댓글의 포스트가 일치하지 않습니다 !'))
     }
 
@@ -413,6 +430,7 @@ exports.changeRipple = (req, res) => {
     return Promise.reject(new Error('잘못된 요청입니다 !'))
   }
 
+  // Check req.body.password === data.ripple.password
   const passwordCheck = async data => {
     // Encryption
     const encryptedPassword = await crypto
@@ -428,56 +446,14 @@ exports.changeRipple = (req, res) => {
   }
 
   // Change ripple
-  const changeRipple = async data => {
-    if (data.toporchild === 'top') {
-      if (typeof (data.topNumber * 1) !== 'number') {
-        return Promise.reject(new Error('댓글 번호가 존재하지 않습니다 !'))
-      }
-
-      // Change ripple
-      const changedRipple = await Ripple.changeRipple(data.rippleID, data.text)
-
-      // sort
-      const changedRippleSorted = {
-        text: changedRipple.text,
-        writer: changedRipple.writer,
-        password: '!!!',
-        categoryID: changedRipple.categoryID,
-        postID: changedRipple.postID,
-        top: changedRipple.top,
-        childRipple: [],
-        date: changedRipple.date,
-        topNumber: data.topNumber
-      }
-
-      return Promise.resolve({ ...data, changedRipple: changedRippleSorted })
-    }
-    if (data.toporchild === 'child') {
-      if (typeof (data.topNumber * 1) !== 'number' || typeof (data.childNumber * 1) !== 'number') {
-        return Promise.reject(new Error('댓글 번호가 존재하지 않습니다 !'))
-      }
-
-      // Change ripple
-      const changedRipple = await Ripple.changeRipple(data.rippleID, data.text)
-
-      // sort
-      const changedRippleSorted = {
-        text: changedRipple.text,
-        writer: changedRipple.writer,
-        password: '!!!',
-        categoryID: changedRipple.categoryID,
-        postID: changedRipple.postID,
-        top: changedRipple.top,
-        childRipple: [],
-        date: changedRipple.date,
-        topNumber: data.topNumber,
-        childNumber: data.childNumber
-      }
-
-      return Promise.resolve({ ...data, changedRipple: changedRippleSorted })
+  const rippleChange = async data => {
+    if (data.toporchild !== 'top' && data.toporchild !== 'child') {
+      return Promise.reject(new Error('잘못된 요청입니다 !'))
     }
 
-    return Promise.reject(new Error('잘못된 요청입니다 !'))
+    const changeRipple = await Ripple.changeRipple(data.rippleID, data.text, 0)
+
+    return Promise.resolve({ ...data, changedRipple: changeRipple })
   }
 
   const dataCleaning = data => {
@@ -510,17 +486,16 @@ exports.changeRipple = (req, res) => {
     writer,
     text,
     password,
+    topID,
     rippleID,
-    toporchild,
-    topNumber,
-    childNumber
+    toporchild
   })
     .then(categoryExistCheck)
     .then(rippleObjectIdCheck)
-    .then(rippleFindToChange)
-    .then(checkRippleData)
+    .then(rippleExistCheck)
+    .then(rippleDataCheck)
     .then(passwordCheck)
-    .then(changeRipple)
+    .then(rippleChange)
     .then(dataCleaning)
     .then(respondToClient)
     .catch(onError)

@@ -10,6 +10,7 @@ const Ripple = new Schema({
   categoryID: { type: Schema.Types.ObjectId, ref: 'category', required: true }, // Category ID
   postID: { type: Schema.Types.ObjectId, ref: 'post', required: true }, // Post ID
   top: { type: Boolean, required: true }, // Top class ripple or not
+  topID: { type: String, default: '' },
   childRipple: [{ type: Schema.Types.ObjectId, ref: 'ripple' }], // Child Ripple ID's // It's only useful when top is true
   date: { type: Date, default: Date.now } // Ripple date
 })
@@ -92,14 +93,15 @@ Ripple.statics.searchChildRipple = function (childRippleArray, passwordShow) {
 // Ripple create
 // TODO: Create
 // text: string, writer: string, password: string, categoryID: ObjectID, postID: ObjectID
-Ripple.statics.createRipple = function (categoryID, postID, writer, text, password, top) {
+Ripple.statics.createRipple = function (categoryID, postID, writer, text, password, top, topID) {
   const Cart = new this({
     text,
     writer,
     password,
     categoryID,
     postID,
-    top
+    top,
+    topID
   })
 
   return Cart.save()
@@ -109,8 +111,14 @@ Ripple.statics.createRipple = function (categoryID, postID, writer, text, passwo
 // Ripple change
 // TODO: Change
 //
-Ripple.statics.changeRipple = function (rippleID, text) {
-  return this.findOneAndUpdate({ _id: rippleID }, { $set: { text } }, { returnNewDocument: true }).exec()
+Ripple.statics.changeRipple = function (rippleID, text, passwordShow) {
+  if (passwordShow === 0) {
+    return this.findOneAndUpdate({ _id: rippleID }, { $set: { text } }, { new: true })
+      .select({ password: passwordShow })
+      .exec()
+  }
+
+  return this.findOneAndUpdate({ _id: rippleID }, { $set: { text } }, { new: true }).exec()
 }
 
 // Ripple delete

@@ -8,7 +8,7 @@ router.get('/:category/:title/ripples/:toporchild', controller.showRipples)
 router.post('/:category/:title/:writer/:toporchild', controller.addRipple)
 
 // Change the ripple
-router.patch('/:category/:title/:writer', controller.changeRipple)
+router.patch('/:category/:title/:writer/:toporchild', controller.changeRipple)
 
 // Delete the ripple
 // router.delete('/:category/:title/:writer', controller.deleteRipple)
