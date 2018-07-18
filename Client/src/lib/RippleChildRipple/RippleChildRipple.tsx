@@ -128,7 +128,8 @@ class RippleChildRipple extends React.Component<Props, State> {
             </button>
           </React.Fragment>
         )
-      } // If more ripple view mode is not activated
+      }
+      // If more ripple view mode is not activated
       if (moreView === true && enterConfigedData.length > 15) {
         return (
           <React.Fragment>

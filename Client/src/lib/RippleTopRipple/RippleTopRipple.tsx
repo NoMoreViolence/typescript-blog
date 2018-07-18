@@ -36,6 +36,7 @@ interface Props {
   topChangeMode: boolean
   topDeleteMode: boolean
   topMoreRippleView: boolean
+  topMoreRippleViewMessage: string
   // Mode change
   changeTopAddMode: (value: number) => any
   changeTopShowChildMode: (value: number) => any
@@ -86,7 +87,7 @@ class RippleTopRipple extends React.Component<Props, State> {
   }
 
   // Handle show more view
-  public handleShowMoreView = () => {
+  public handleRippleShowMoreView = () => {
     this.props.changeTopMoreViewMode(this.props.topNumber)
   }
 
@@ -96,7 +97,7 @@ class RippleTopRipple extends React.Component<Props, State> {
   }
 
   // Handle more mode
-  public handleShowChildRipple = () => {
+  public handleRippleShowChildMode = () => {
     if (this.props.topShowChildMode === false) {
       this.props.childRippleLoad({ category: this.props.category, title: this.props.title, topID: this.props.rippleID })
     }
@@ -111,6 +112,10 @@ class RippleTopRipple extends React.Component<Props, State> {
   // Handle delete mode
   public handleRippleDeleteMode = () => {
     this.props.changeTopDeleteMode(this.props.topNumber)
+  }
+
+  public handleButtonActionChange = (e: { currentTarget: HTMLButtonElement }) => {
+    this.props[e.currentTarget.name](this.props.topNumber)
   }
 
   // Optimization rendering problem
@@ -163,9 +168,32 @@ class RippleTopRipple extends React.Component<Props, State> {
               return <React.Fragment key={i}>{object}</React.Fragment>
             })}
             <br />
-            <span className="ripple-more-view" onClick={this.handleShowMoreView}>
-              더 보기
-            </span>
+            <button
+              className="ripple-more-view primary-half"
+              name="changeTopMoreViewMode"
+              onClick={this.handleButtonActionChange}
+            >
+              {this.props.topMoreRippleViewMessage}
+            </button>
+          </React.Fragment>
+        )
+      }
+
+      // If more ripple view mode is not activated
+      if (moreView === true && enterConfigedData.length > 15) {
+        return (
+          <React.Fragment>
+            {enterConfigedData.map((object: JSX.Element, i: number) => {
+              return <React.Fragment key={i}>{object}</React.Fragment>
+            })}
+            <br />
+            <button
+              className="ripple-more-view primary-half"
+              name="changeTopMoreViewMode"
+              onClick={this.handleButtonActionChange}
+            >
+              {this.props.topMoreRippleViewMessage}
+            </button>
           </React.Fragment>
         )
       }
@@ -208,14 +236,14 @@ class RippleTopRipple extends React.Component<Props, State> {
       if (topAddMode) {
         return (
           <React.Fragment>
-            <button onClick={this.handleRippleAddMode} className="primary">
+            <button className="primary" onClick={this.handleRippleAddMode}>
               답글 취소
             </button>
           </React.Fragment>
         )
       }
       return (
-        <button onClick={this.handleRippleAddMode} className="primary">
+        <button className="primary" onClick={this.handleRippleAddMode}>
           답글 달기
         </button>
       )
@@ -242,13 +270,13 @@ class RippleTopRipple extends React.Component<Props, State> {
 
       if (value.topShowChildMode) {
         return (
-          <button onClick={this.handleShowChildRipple} className="primary">
+          <button className="primary" onClick={this.handleRippleShowChildMode}>
             답글 접기
           </button>
         )
       }
       return (
-        <button onClick={this.handleShowChildRipple} className="primary">
+        <button className="primary" onClick={this.handleRippleShowChildMode}>
           답글 보기
         </button>
       )
@@ -296,10 +324,10 @@ class RippleTopRipple extends React.Component<Props, State> {
       if (topChangeMode) {
         return (
           <div className="ripple-flex">
-            <button onClick={this.handleRippleChangeMode} className="info-half">
+            <button className="info-half" onClick={this.handleRippleChangeMode}>
               수정 취소
             </button>
-            <button onClick={this.handleRippleChangeMode} className="info-half">
+            <button className="info-half" onClick={this.handleRippleChangeMode}>
               수정 확인
             </button>
           </div>
@@ -307,7 +335,7 @@ class RippleTopRipple extends React.Component<Props, State> {
       }
 
       return (
-        <button onClick={this.handleRippleChangeMode} className="info">
+        <button className="info" onClick={this.handleRippleChangeMode}>
           댓글 수정
         </button>
       )
@@ -317,17 +345,17 @@ class RippleTopRipple extends React.Component<Props, State> {
       if (topDeleteMode) {
         return (
           <div className="ripple-flex">
-            <button onClick={this.handleRippleDeleteMode} className="danger-half">
+            <button className="danger-half" onClick={this.handleRippleDeleteMode}>
               삭제 취소
             </button>
-            <button onClick={this.handleRippleDeleteMode} className="danger-half">
+            <button className="danger-half" onClick={this.handleRippleDeleteMode}>
               삭제 확인
             </button>
           </div>
         )
       }
       return (
-        <button onClick={this.handleRippleDeleteMode} className="danger">
+        <button className="danger" name="" onClick={this.handleRippleDeleteMode}>
           삭제 하기
         </button>
       )

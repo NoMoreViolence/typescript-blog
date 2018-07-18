@@ -298,10 +298,22 @@ const reducer = handleActions<RippleState, any>(
         draft.topRipple[action.payload || 0].deleteMode = false
       })
     },
-    [CHANGE_TOP_MORE_SHOW_MODE]: (state, action: TopMoreShowPayload) =>
-      produce(state, draft => {
-        draft.topRipple[action.payload || 0].moreRippleView = !draft.topRipple[action.payload || 0].moreRippleView
-      }),
+    [CHANGE_TOP_MORE_SHOW_MODE]: (state, action: TopMoreShowPayload) => {
+      const currentMessage = state.topRipple[action.payload || 0].moreRippleViewMessage
+
+      if (currentMessage === '더 보기') {
+        return produce(state, draft => {
+          draft.topRipple[action.payload || 0].moreRippleView = !draft.topRipple[action.payload || 0].moreRippleView
+          draft.topRipple[action.payload || 0].moreRippleViewMessage = '접기'
+        })
+      }
+      return produce(state, draft => {
+        return produce(state, draft => {
+          draft.topRipple[action.payload || 0].moreRippleView = !draft.topRipple[action.payload || 0].moreRippleView
+          draft.topRipple[action.payload || 0].moreRippleViewMessage = '더 보기'
+        })
+      })
+    },
     // Change one of child ripples action state
     [CHANGE_CHILD_CHANGE_MODE]: (state, action: Action<any>) => {
       const { top, child } = action.payload

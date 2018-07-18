@@ -109,6 +109,7 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
               topChangeMode={object.changeMode}
               topDeleteMode={object.deleteMode}
               topMoreRippleView={object.moreRippleView}
+              topMoreRippleViewMessage={object.moreRippleViewMessage}
               // Ripple state change
               changeTopAddMode={this.props.changeTopAddMode}
               changeTopShowChildMode={this.props.changeTopShowChildMode}
