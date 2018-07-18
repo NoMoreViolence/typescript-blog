@@ -9,7 +9,8 @@ import {
   GetChildRipples,
   PostTopRipple,
   PostChildRipple,
-  ChangeChildMode
+  PatchChildRipple,
+  ChildMode
 } from 'store/modules/Ripple'
 
 import RippleTopInput from 'lib/RippleTopInput'
@@ -37,12 +38,13 @@ interface Props {
   changeTopDeleteMode: (value: number) => Promise<object>
   changeTopMoreViewMode: (value: number) => Promise<object>
   // Ripple staet fun: child
-  changeChildChangeMode: (value: ChangeChildMode) => Promise<object>
-  changeChildDeleteMode: (value: ChangeChildMode) => Promise<object>
-  changeChildMoreViewMode: (value: ChangeChildMode) => Promise<object>
+  changeChildChangeMode: (value: ChildMode) => Promise<object>
+  changeChildRipple: (value: PatchChildRipple) => Promise<object>
+  changeChildDeleteMode: (value: ChildMode) => Promise<object>
+  changeChildMoreViewMode: (value: ChildMode) => Promise<object>
   // Submit ripple state
   addRippleStatePending: boolean
-  submitChildRipple: (value: PostChildRipple) => Promise<object>
+  changeRippleStatePending: boolean
 }
 
 interface State {
@@ -90,7 +92,9 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
               writer={object.writer}
               text={object.text}
               date={object.date}
-              topID={object._id}
+              // Top ripple number
+              topNumber={i}
+              rippleID={object._id}
               childRippleLoaded={object.childRippleLoaded}
               childRipple={object.childRipple}
               // Ripple Loading
@@ -99,8 +103,6 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
               // URL
               category={this.props.match.url.split('/')[1]}
               title={this.props.match.url.split('/')[2]}
-              // Ripple number
-              number={i}
               // Ripple state
               topAddMode={object.addMode}
               topShowChildMode={object.showChildMode}
@@ -115,10 +117,12 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
               changeTopMoreViewMode={this.props.changeTopMoreViewMode}
               // Ripple state change
               changeChildChangeMode={this.props.changeChildChangeMode}
+              changeChildRipple={this.props.changeChildRipple}
               changeChildDeleteMode={this.props.changeChildDeleteMode}
               changeChildMoreViewMode={this.props.changeChildMoreViewMode}
               // Submit child ripple
-              submitChildRipple={this.props.submitChildRipple}
+              postChildRipple={this.props.postChildRipple}
+              changeRippleStatePending={this.props.changeRippleStatePending}
             />
           </React.Fragment>
         )
@@ -127,7 +131,7 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
     return (
       <React.Fragment>
         <RippleTopInput
-          submitTopRipple={this.props.postTopRipple}
+          postTopRipple={this.props.postTopRipple}
           addRippleStatePending={this.props.addRippleStatePending}
         />
         <div className="ripple-unit-container">{showTopRipple(this.props.topRipple)}</div>

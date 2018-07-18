@@ -7,8 +7,9 @@ import {
   TopOrChildRippleState,
   GetTopRipples,
   GetChildRipples,
-  ChangeChildMode,
-  PostChildRipple
+  PostChildRipple,
+  PatchChildRipple,
+  ChildMode
 } from 'store/modules/Ripple'
 import RippleChildRipple from 'lib/RippleChildRipple'
 import RippleChildInput from 'lib/RippleChildInput'
@@ -18,7 +19,8 @@ interface Props {
   writer: string
   text: string
   date: number
-  topID: string
+  topNumber: number
+  rippleID: string
   // Child Ripple data
   childRippleLoaded: boolean
   childRipple: TopOrChildRippleState[]
@@ -28,8 +30,6 @@ interface Props {
   // URL
   category: string
   title: string
-  // ripple mode key & child Ripples number
-  number: number
   // Ripple mode
   topAddMode: boolean
   topShowChildMode: boolean
@@ -43,11 +43,13 @@ interface Props {
   changeTopDeleteMode: (value: number) => any
   changeTopMoreViewMode: (value: number) => any
   // Mode change
-  changeChildChangeMode: (value: ChangeChildMode) => any
-  changeChildDeleteMode: (value: ChangeChildMode) => any
-  changeChildMoreViewMode: (value: ChangeChildMode) => any
-  // Submit child ripple
-  submitChildRipple: (value: PostChildRipple) => any
+  changeChildChangeMode: (value: ChildMode) => any
+  changeChildRipple: (value: PatchChildRipple) => Promise<any>
+  changeChildDeleteMode: (value: ChildMode) => any
+  changeChildMoreViewMode: (value: ChildMode) => any
+  // PostChildRipple
+  postChildRipple: (value: PostChildRipple) => Promise<any>
+  changeRippleStatePending: boolean
 }
 
 interface State {
@@ -82,30 +84,30 @@ class RippleTopRipple extends React.Component<Props, State> {
 
   // Handle show more view
   public handleShowMoreView = () => {
-    this.props.changeTopMoreViewMode(this.props.number)
+    this.props.changeTopMoreViewMode(this.props.topNumber)
   }
 
   // Handle add mode
   public handleRippleAddMode = () => {
-    this.props.changeTopAddMode(this.props.number)
+    this.props.changeTopAddMode(this.props.topNumber)
   }
 
   // Handle more mode
   public handleShowChildRipple = () => {
     if (this.props.topShowChildMode === false) {
-      this.props.childRippleLoad({ category: this.props.category, title: this.props.title, topID: this.props.topID })
+      this.props.childRippleLoad({ category: this.props.category, title: this.props.title, topID: this.props.rippleID })
     }
-    this.props.changeTopShowChildMode(this.props.number)
+    this.props.changeTopShowChildMode(this.props.topNumber)
   }
 
   // Handle change mode
   public handleRippleChangeMode = () => {
-    this.props.changeTopChangeMode(this.props.number)
+    this.props.changeTopChangeMode(this.props.topNumber)
   }
 
   // Handle delete mode
   public handleRippleDeleteMode = () => {
-    this.props.changeTopDeleteMode(this.props.number)
+    this.props.changeTopDeleteMode(this.props.topNumber)
   }
 
   // Optimization rendering problem
@@ -129,7 +131,7 @@ class RippleTopRipple extends React.Component<Props, State> {
       topShowChildMode,
       childRipple,
       topDeleteMode,
-      topID,
+      rippleID,
       category,
       title,
       changeChildChangeMode,
@@ -221,9 +223,9 @@ class RippleTopRipple extends React.Component<Props, State> {
           <RippleChildInput
             category={this.props.category}
             title={this.props.title}
-            topID={this.props.topID}
-            submitChildRipple={this.props.submitChildRipple}
-            topNumber={this.props.number}
+            topID={this.props.rippleID}
+            postChildRipple={this.props.postChildRipple}
+            topNumber={this.props.topNumber}
           />
         )
       }
@@ -266,12 +268,15 @@ class RippleTopRipple extends React.Component<Props, State> {
               writer={object.writer}
               text={object.text}
               date={object.date}
-              topID={topID}
+              topNumber={this.props.topNumber}
+              childNumber={i}
+              topID={rippleID}
+              rippleID={object._id}
               category={category}
               title={title}
-              topNumber={this.props.number}
-              childNumber={i}
+              changeRippleStatePending={this.props.changeRippleStatePending}
               childChangeMode={object.changeMode}
+              changeChildRipple={this.props.changeChildRipple}
               childDeleteMode={object.deleteMode}
               childMoreRippleView={object.moreRippleView}
               childMoreRippleViewMessage={object.moreRippleViewMessage}

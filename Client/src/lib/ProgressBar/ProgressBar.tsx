@@ -17,6 +17,7 @@ interface Props {
   topRipplePending: boolean
   childRipplePending: boolean
   addRipplePending: boolean
+  changeRipplePending: boolean
 }
 
 interface ProgressBarMainProps {
@@ -31,6 +32,7 @@ interface ProgressBarMainProps {
   topRipplePending: boolean
   childRipplePending: boolean
   addRipplePending: boolean
+  changeRipplePending: boolean
 }
 
 // real
@@ -48,7 +50,8 @@ class ProgressBar extends React.Component<ProgressBarMainProps> {
       deletePostPending,
       topRipplePending,
       childRipplePending,
-      addRipplePending
+      addRipplePending,
+      changeRipplePending
     } = this.props
 
     if (this.props !== prevProps) {
@@ -63,7 +66,8 @@ class ProgressBar extends React.Component<ProgressBarMainProps> {
         deletePostPending === true ||
         topRipplePending === true ||
         childRipplePending === true ||
-        addRipplePending === true
+        addRipplePending === true ||
+        changeRipplePending === true
       ) {
         this.setState({
           loading: 40
@@ -103,6 +107,7 @@ const ProgressBarContainer: React.SFC<Props> = Props => (
     topRipplePending={Props.topRipplePending}
     childRipplePending={Props.childRipplePending}
     addRipplePending={Props.addRipplePending}
+    changeRipplePending={Props.changeRipplePending}
   />
 )
 
@@ -118,5 +123,6 @@ export default connect(({ Category, Post, Ripple }: StoreState) => ({
   deletePostPending: Post.delete.deletePending,
   topRipplePending: Ripple.topLoad.pending,
   childRipplePending: Ripple.childLoad.pending,
-  addRipplePending: Ripple.addRippleState.pending
+  addRipplePending: Ripple.addRippleState.pending,
+  changeRipplePending: Ripple.changeRippleState.pending
 }))(ProgressBarContainer)

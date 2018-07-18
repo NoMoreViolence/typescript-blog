@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'
 import regExp from 'lib/RegExp'
 
 interface Props {
-  submitTopRipple: (value: PostTopRipple) => Promise<any>
+  postTopRipple: (value: PostTopRipple) => Promise<any>
   addRippleStatePending: boolean
 }
 
@@ -111,7 +111,7 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>, Stat
     const requestToServer = (data: SubmitINFO): Promise<any> => {
       // Top ripple add
       return this.props
-        .submitTopRipple({
+        .postTopRipple({
           category: this.props.match.url.split('/')[1],
           title: this.props.match.url.split('/')[2],
           writer: this.state.writer,

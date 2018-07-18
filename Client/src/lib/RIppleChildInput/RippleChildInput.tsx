@@ -12,7 +12,7 @@ interface Props {
   category: string
   title: string
   topID: string
-  submitChildRipple: (value: PostChildRipple) => Promise<any>
+  postChildRipple: (value: PostChildRipple) => Promise<any>
   topNumber: number
 }
 
@@ -29,7 +29,6 @@ interface SubmitINFO {
   text: string
   password: string
   topID: string
-  topNumber: number
 }
 
 class RippleChildInput extends React.Component<Props, State> {
@@ -54,7 +53,7 @@ class RippleChildInput extends React.Component<Props, State> {
   public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const { category, title, topID, topNumber } = this.props
+    const { category, title, topID } = this.props
     const { writer, text, password } = this.state
 
     // Value check function, if the data is null or '', return 0
@@ -108,14 +107,13 @@ class RippleChildInput extends React.Component<Props, State> {
     const requestToServer = (data: SubmitINFO): Promise<any> => {
       // Child ripple add
       return this.props
-        .submitChildRipple({
+        .postChildRipple({
           category: data.category,
           title: data.title,
           writer: data.writer,
           ripple: data.text,
           password: data.password,
-          topID: data.topID,
-          topNumber: data.topNumber
+          topID: data.topID
         })
         .then((res: any) => {
           toast(res.action.payload.data.message)
@@ -170,8 +168,7 @@ class RippleChildInput extends React.Component<Props, State> {
       writer,
       text,
       password,
-      topID,
-      topNumber
+      topID
     })
       .then(requestToServer)
       .catch(onError)

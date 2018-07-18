@@ -2,30 +2,34 @@ import * as React from 'react'
 
 import './RippleChildRipple.css'
 import Input from 'reactstrap/lib/Input'
+import { toast } from 'react-toastify'
 
-import { ChangeChildMode } from 'store/modules/Ripple'
+import { PatchChildRipple, ChildMode } from 'store/modules/Ripple'
 
 interface Props {
   // Top Ripple data
   writer: string
   text: string
   date: number
+  topNumber: number
+  childNumber: number
   topID: string
+  rippleID: string
   // URL
   category: string
   title: string
   // ripple mode key & child Ripples number
-  topNumber: number
-  childNumber: number
   // Ripple mode
+  changeRippleStatePending: boolean
   childChangeMode: boolean
   childDeleteMode: boolean
   childMoreRippleView: boolean
   childMoreRippleViewMessage: string
   // Mode change
-  changeChildChangeMode: (value: ChangeChildMode) => boolean
-  changeChildDeleteMode: (value: ChangeChildMode) => boolean
-  changeChildMoreViewMode: (value: ChangeChildMode) => boolean
+  changeChildChangeMode: (value: ChildMode) => any
+  changeChildRipple: (value: PatchChildRipple) => Promise<any>
+  changeChildDeleteMode: (value: ChildMode) => any
+  changeChildMoreViewMode: (value: ChildMode) => any
 }
 
 interface State {
@@ -55,7 +59,29 @@ class RippleChildRipple extends React.Component<Props, State> {
 
   // Change Ripple
   public handleRippleChange = (e: { currentTarget: HTMLButtonElement }) => {
-    //
+    const { category, title, writer, topID, rippleID, changeRippleStatePending } = this.props
+    const { text, passwordToChange } = this.state
+
+    if (changeRippleStatePending === true) {
+      return toast('댓글이 변경 중입니다. 잠시 후에 다시 시도해 주세요 !')
+    }
+
+    return this.props
+      .changeChildRipple({
+        category,
+        title,
+        writer,
+        text,
+        topID,
+        rippleID,
+        password: passwordToChange
+      })
+      .then((res: any) => {
+        toast(res.action.payload.data.message)
+      })
+      .catch((err: any) => {
+        toast(err.response.data.message)
+      })
   }
   // Delte Ripple
   public handleRippleDelete = (e: { currentTarget: HTMLButtonElement }) => {

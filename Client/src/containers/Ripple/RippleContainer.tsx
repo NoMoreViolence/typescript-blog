@@ -13,13 +13,13 @@ import {
   GetChildRipples,
   PostTopRipple,
   PostChildRipple,
-  ChangeChildMode
+  PatchChildRipple,
+  ChildMode
 } from 'store/modules/Ripple'
 
 import Ripple from 'components/Templates/Ripple'
 
 interface Props {
-  showRipple: TopOrChildRippleState[]
   topRipple: TopOrChildRippleState[]
   topLoadState: TopLoadState
   childRipple: TopOrChildRippleState[]
@@ -36,12 +36,13 @@ interface Props {
   changeTopDeleteMode: (value: number) => never
   changeTopMoreViewMode: (value: number) => never
   // child
-  changeChildChangeMode: (value: ChangeChildMode) => never
-  changeChildDeleteMode: (value: ChangeChildMode) => never
-  changeChildMoreViewMode: (value: ChangeChildMode) => never
+  changeChildChangeMode: (value: ChildMode) => never
+  changeChildRipple: (value: PatchChildRipple) => any
+  changeChildDeleteMode: (value: ChildMode) => never
+  changeChildMoreViewMode: (value: ChildMode) => never
   // submit ripple state
   addRippleStatePending: boolean
-  submitChildRipple: (value: PostChildRipple) => never
+  changeRippleStatePending: boolean
 }
 
 const RippleContainer: React.SFC<Props> = Props => (
@@ -61,10 +62,11 @@ const RippleContainer: React.SFC<Props> = Props => (
     changeTopDeleteMode={Props.changeTopDeleteMode}
     changeTopMoreViewMode={Props.changeTopMoreViewMode}
     changeChildChangeMode={Props.changeChildChangeMode}
+    changeChildRipple={Props.changeChildRipple}
     changeChildDeleteMode={Props.changeChildDeleteMode}
     changeChildMoreViewMode={Props.changeChildMoreViewMode}
-    submitChildRipple={Props.submitChildRipple}
     addRippleStatePending={Props.addRippleStatePending}
+    changeRippleStatePending={Props.changeRippleStatePending}
   />
 )
 
@@ -74,7 +76,8 @@ export default connect(
     topLoadState: Ripple.topLoad,
     childRipple: Ripple.childRipple,
     childLoadState: Ripple.childLoad,
-    addRippleStatePending: Ripple.addRippleState.pending
+    addRippleStatePending: Ripple.addRippleState.pending,
+    changeRippleStatePending: Ripple.changeRippleState.pending
   }),
   dispatch => ({
     rippleClear: bindActionCreators(RippleActions.rippleClear, dispatch),
@@ -88,8 +91,8 @@ export default connect(
     changeTopDeleteMode: bindActionCreators(RippleActions.changeTopDeleteMode, dispatch),
     changeTopMoreViewMode: bindActionCreators(RippleActions.changeTopMoreShowMode, dispatch),
     changeChildChangeMode: bindActionCreators(RippleActions.changeChildChangeMode, dispatch),
+    changeChildRipple: bindActionCreators(RippleActions.patchChangeChildRipple, dispatch),
     changeChildDeleteMode: bindActionCreators(RippleActions.changeChildDeleteMode, dispatch),
-    changeChildMoreViewMode: bindActionCreators(RippleActions.changeChildMoreShowMode, dispatch),
-    submitChildRipple: bindActionCreators(RippleActions.postChildRipple, dispatch)
+    changeChildMoreViewMode: bindActionCreators(RippleActions.changeChildMoreShowMode, dispatch)
   })
 )(RippleContainer)

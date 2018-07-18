@@ -34,7 +34,8 @@ function postTopRippleAPI(value: PostTopRipple) {
     `/api/${value.category}/${value.title}/${value.writer}/top`,
     {
       ripple: value.ripple,
-      password: value.password
+      password: value.password,
+      topID: ''
     },
     {
       headers: {
@@ -52,17 +53,14 @@ export interface PostChildRipple {
   topID: string
   ripple: string
   password: string
-  topNumber: number
 }
 function postChildRippleAPI(value: PostChildRipple) {
-  // tslint:disable-next-line:no-console
-  console.log('topNumber: ' + value.topNumber)
   return axios.post(
-    `/api/${value.category}/${value.title}/${value.writer}/child/?topID=${value.topID}`,
+    `/api/${value.category}/${value.title}/${value.writer}/child`,
     {
       ripple: value.ripple,
       password: value.password,
-      topNumber: value.topNumber
+      topID: value.topID
     },
     {
       headers: {
@@ -70,6 +68,44 @@ function postChildRippleAPI(value: PostChildRipple) {
       }
     }
   )
+}
+
+export interface PatchTopRipple {
+  category: string
+  title: string
+  writer: string
+  text: string
+  password: string
+  rippleID: string
+  topNumber: number
+}
+/*
+function patchTopRippleAPI(value: PatchTopRipple) {
+  return axios.patch(`/api/${value.category}/${value.title}/${value.writer}/top`, {
+    text: value.text,
+    rippleID: value.rippleID,
+    password: value.password
+  })
+}
+*/
+
+export interface PatchChildRipple {
+  category: string
+  title: string
+  writer: string
+  text: string
+  password: string
+  topID: string
+  rippleID: string
+}
+
+function patchChildRippleAPI(value: PatchChildRipple) {
+  return axios.patch(`/api/${value.category}/${value.title}/${value.writer}/child`, {
+    text: value.text,
+    topID: value.topID,
+    rippleID: value.rippleID,
+    password: value.password
+  })
 }
 
 // Reset all state data
@@ -82,6 +118,10 @@ const CHANGE_TOP_DELETE_MODE = 'CHANGE_TOP_DELETE_MODE'
 const CHANGE_TOP_MORE_SHOW_MODE = 'CHANGE_TOP_MORE_SHOW_MODE'
 // Change one of child ripples action state
 const CHANGE_CHILD_CHANGE_MODE = 'CHANGE_CHILD_CHANGE_MODE'
+const CHANGE_CHILD_RIPPLE = 'CHANGE_CHILD_RIPPLE'
+const CHANGE_CHILD_RIPPLE_PENDING = 'CHANGE_CHILD_RIPPLE_PENDING'
+const CHANGE_CHILD_RIPPLE_SUCCESS = 'CHANGE_CHILD_RIPPLE_SUCCESS'
+const CHANGE_CHILD_RIPPLE_FAILURE = 'CHANGE_CHILD_RIPPLE_FAILURE'
 const CHANGE_CHILD_DELETE_MODE = 'CHANGE_CHILD_DELETE_MODE'
 const CHANGE_CHILD_MORE_SHOW_MODE = 'CHANGE_CHILD_MORE_SHOW_MODE'
 // Bring All TOP ripples from some post
@@ -106,11 +146,10 @@ const POST_ADD_CHILD_RIPPLE_PENDING = 'POST_ADD_CHILD_RIPPLE_PENDING'
 const POST_ADD_CHILD_RIPPLE_SUCCESS = 'POST_ADD_CHILD_RIPPLE_SUCCESS'
 const POST_ADD_CHILD_RIPPLE_FAILURE = 'POST_ADD_CHILD_RIPPLE_FAILURE'
 
-export interface ChangeChildMode {
+export interface ChildMode {
   top?: number
   child?: number
 }
-
 type APIPayload = any
 
 export const RippleActions = {
@@ -123,9 +162,10 @@ export const RippleActions = {
   changeTopDeleteMode: createAction<number, number>(CHANGE_TOP_DELETE_MODE, value => value),
   changeTopMoreShowMode: createAction<number, number>(CHANGE_TOP_MORE_SHOW_MODE, value => value),
   // Change one of child ripples change mode
-  changeChildChangeMode: createAction<ChangeChildMode, ChangeChildMode>(CHANGE_CHILD_CHANGE_MODE, value => value),
-  changeChildDeleteMode: createAction<ChangeChildMode, ChangeChildMode>(CHANGE_CHILD_DELETE_MODE, value => value),
-  changeChildMoreShowMode: createAction<ChangeChildMode, ChangeChildMode>(CHANGE_CHILD_MORE_SHOW_MODE, value => value),
+  changeChildChangeMode: createAction<ChildMode, ChildMode>(CHANGE_CHILD_CHANGE_MODE, value => value),
+  patchChangeChildRipple: createAction<APIPayload, PatchChildRipple>(CHANGE_CHILD_RIPPLE, patchChildRippleAPI),
+  changeChildDeleteMode: createAction<ChildMode, ChildMode>(CHANGE_CHILD_DELETE_MODE, value => value),
+  changeChildMoreShowMode: createAction<ChildMode, ChildMode>(CHANGE_CHILD_MORE_SHOW_MODE, value => value),
   // Get top ripples
   getTopRipples: createAction<APIPayload, GetTopRipples>(GET_BRING_TOP_RIPPLE_INFO, getTopRipplesAPI),
   // Get child ripples
@@ -137,6 +177,11 @@ export const RippleActions = {
 }
 
 export interface AddRippleState {
+  pending: boolean
+  error: boolean
+}
+
+export interface ChangeRippleState {
   pending: boolean
   error: boolean
 }
@@ -163,13 +208,9 @@ export interface TopOrChildRippleState {
   top: boolean
   __v: number
   addMode: boolean
-  addPending: boolean
   showChildMode: boolean
-  showChildPending: boolean
   changeMode: boolean
-  changePending: boolean
   deleteMode: boolean
-  deletePending: boolean
   moreRippleView: boolean
   moreRippleViewMessage: string
 }
@@ -180,6 +221,7 @@ export interface RippleState {
   topRipple: TopOrChildRippleState[]
   childRipple: TopOrChildRippleState[]
   addRippleState: AddRippleState
+  changeRippleState: ChangeRippleState
 }
 
 const initialState: RippleState = {
@@ -187,7 +229,8 @@ const initialState: RippleState = {
   childLoad: { pending: false, error: false },
   topRipple: [],
   childRipple: [],
-  addRippleState: { pending: false, error: false }
+  addRippleState: { pending: false, error: false },
+  changeRippleState: { pending: false, error: false }
 }
 
 type TopAddModePayload = ReturnType<typeof RippleActions.changeTopAddMode>
@@ -260,10 +303,8 @@ const reducer = handleActions<RippleState, any>(
         draft.topRipple[action.payload || 0].moreRippleView = !draft.topRipple[action.payload || 0].moreRippleView
       }),
     // Change one of child ripples action state
-    [CHANGE_CHILD_CHANGE_MODE]: (state, action: any) => {
+    [CHANGE_CHILD_CHANGE_MODE]: (state, action: Action<any>) => {
       const { top, child } = action.payload
-      // tslint:disable-next-line:no-console
-      console.log(state.topRipple[top || 0].childRipple[child || 0].changeMode)
       // Change
       if (state.topRipple[top || 0].childRipple[child || 0].changeMode === false) {
         return produce(state, draft => {
@@ -276,7 +317,46 @@ const reducer = handleActions<RippleState, any>(
         draft.topRipple[top || 0].childRipple[child || 0].changeMode = false
       })
     },
-    [CHANGE_CHILD_DELETE_MODE]: (state, action: any) => {
+    [CHANGE_CHILD_RIPPLE_PENDING]: state =>
+      produce(state, draft => {
+        draft.changeRippleState.pending = true
+        draft.changeRippleState.error = false
+      }),
+    [CHANGE_CHILD_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
+      // Rirpple data
+      const changedRipple = action.payload.data.value.changedRipple
+      const data = state.topRipple.map((object: TopOrChildRippleState, i: number) => {
+        if (object._id === changedRipple.topID) {
+          return {
+            ...object,
+            childRipple: object.childRipple.map((object: TopOrChildRippleState, i: number) => {
+              if (object._id === changedRipple._id) {
+                return {
+                  ...changedRipple,
+                  changeMode: false,
+                  deleteMode: false,
+                  moreRippleView: false,
+                  moreRippleViewMessage: '더 보기'
+                }
+              }
+              return object
+            })
+          }
+        }
+        return object
+      })
+      return produce(state, draft => {
+        draft.topRipple = data
+        draft.changeRippleState.pending = false
+        draft.changeRippleState.error = false
+      })
+    },
+    [CHANGE_CHILD_RIPPLE_FAILURE]: state =>
+      produce(state, draft => {
+        draft.changeRippleState.pending = false
+        draft.changeRippleState.error = true
+      }),
+    [CHANGE_CHILD_DELETE_MODE]: (state, action: Action<any>) => {
       const { top, child } = action.payload
       // Change
       if (state.topRipple[top || 0].childRipple[child || 0].deleteMode === false) {
@@ -290,7 +370,7 @@ const reducer = handleActions<RippleState, any>(
         draft.topRipple[top || 0].childRipple[child || 0].deleteMode = false
       })
     },
-    [CHANGE_CHILD_MORE_SHOW_MODE]: (state, action: any) => {
+    [CHANGE_CHILD_MORE_SHOW_MODE]: (state, action: Action<any>) => {
       const { top, child } = action.payload
       const currentMessage = state.topRipple[top || 0].childRipple[child || 0].moreRippleViewMessage
 
@@ -432,27 +512,31 @@ const reducer = handleActions<RippleState, any>(
         draft.addRippleState.error = false
       }),
     [POST_ADD_CHILD_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
+      // Response data
       const addedRipple = action.payload.data.value.addedRipple
-
-      // Show ripple state merge
-      const childRipple: TopOrChildRippleState[] = Array.prototype.concat(
-        state.topRipple[addedRipple.topNumber || 0].childRipple,
-        {
-          ...addedRipple,
-          childRippleLoaded: false,
-          changeMode: false,
-          changePending: false,
-          deleteMode: false,
-          deletePending: false,
-          moreRippleView: false,
-          moreRippleViewMessage: '더 보기'
+      let topNumber: number
+      let childRipple: TopOrChildRippleState[]
+      state.topRipple.map((object: TopOrChildRippleState, i: number) => {
+        if (object._id === addedRipple.topID) {
+          topNumber = i
+          childRipple = Array.prototype.concat(state.topRipple[i || 0].childRipple, {
+            ...addedRipple,
+            childRippleLoaded: false,
+            changeMode: false,
+            changePending: false,
+            deleteMode: false,
+            deletePending: false,
+            moreRippleView: false,
+            moreRippleViewMessage: '더 보기'
+          })
         }
-      )
+      })
 
+      // Submit added child ripple
       return produce(state, draft => {
         draft.addRippleState.pending = false
         draft.addRippleState.error = false
-        draft.topRipple[addedRipple.topNumber || 0].childRipple = childRipple
+        draft.topRipple[topNumber || 0].childRipple = childRipple
       })
     },
     [POST_ADD_CHILD_RIPPLE_FAILURE]: state =>
