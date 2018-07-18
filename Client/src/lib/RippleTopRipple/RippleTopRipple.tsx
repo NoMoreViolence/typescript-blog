@@ -54,7 +54,8 @@ interface Props {
 }
 
 interface State {
-  password?: string
+  passwordToChange?: string
+  passwordToDelete?: string
   text?: string
 }
 
@@ -72,7 +73,8 @@ interface ShowChildRippleFunction {
 class RippleTopRipple extends React.Component<Props, State> {
   // State
   public state = {
-    password: '',
+    passwordToChange: '',
+    passwordToDelete: '',
     text: this.props.text
   }
 
@@ -182,8 +184,8 @@ class RippleTopRipple extends React.Component<Props, State> {
             <Input
               type="password"
               placeholder="작성할 때 입력한 비밀번호를 입력해 주세요"
-              name="password"
-              value={this.state.password}
+              name="passwordToChange"
+              value={this.state.passwordToChange}
               onChange={this.handleChange}
             />
             <Input
@@ -330,6 +332,22 @@ class RippleTopRipple extends React.Component<Props, State> {
         </button>
       )
     }
+    const showRippleDeleteMode = (childDeleteMode: boolean): JSX.Element | null => {
+      if (childDeleteMode === true) {
+        return (
+          <div className="ripple-delete-mode">
+            <Input
+              type="password"
+              placeholder="작성할 때 입력한 비밀번호를 입력해 주세요"
+              name="passwordToDelete"
+              value={this.state.passwordToDelete}
+              onChange={this.handleChange}
+            />
+          </div>
+        )
+      }
+      return null
+    }
 
     return (
       <div className="ripple-unit">
@@ -339,6 +357,7 @@ class RippleTopRipple extends React.Component<Props, State> {
         </div>
         <div className="ripple-text">{printTextOrTextArea(topChangeMode, topMoreRippleView, text)}</div>
         <div className="ripple-child-input">{rippleAddModeShow(topAddMode)}</div>
+        {showRippleDeleteMode(topDeleteMode)}
         <div className="ripple-action-buttons">
           {rippleAddMode(topAddMode)}
           {rippleShowChildMode({ topShowChildMode, childRipple })}
