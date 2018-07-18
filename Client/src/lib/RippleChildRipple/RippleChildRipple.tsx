@@ -180,6 +180,7 @@ class RippleChildRipple extends React.Component<Props, State> {
       return showMoreRipple(text, moreView)
     }
 
+    // Ripple change mode
     const rippleChangeMode = (childChangeMode: boolean): JSX.Element | null => {
       if (childChangeMode) {
         return (
@@ -200,20 +201,8 @@ class RippleChildRipple extends React.Component<Props, State> {
         </button>
       )
     }
-    const passwordShowOrHide = (childDeleteMode: boolean): JSX.Element | null => {
-      if (childDeleteMode === true) {
-        return (
-          <Input
-            type="text"
-            placeholder="작성할 때 입력한 비밀번호를 입력해 주세요"
-            name="passwordToDelete"
-            value={this.state.passwordToDelete}
-            onChange={this.handleChange}
-          />
-        )
-      }
-      return null
-    }
+
+    // Ripple delete mode
     const rippleDeleteMode = (childDeleteMode: boolean): JSX.Element | null => {
       if (childDeleteMode) {
         return (
@@ -233,6 +222,20 @@ class RippleChildRipple extends React.Component<Props, State> {
         </button>
       )
     }
+    const showRippleDeleteMode = (childDeleteMode: boolean): JSX.Element | null => {
+      if (childDeleteMode === true) {
+        return (
+          <Input
+            type="password"
+            placeholder="작성할 때 입력한 비밀번호를 입력해 주세요"
+            name="passwordToDelete"
+            value={this.state.passwordToDelete}
+            onChange={this.handleChange}
+          />
+        )
+      }
+      return null
+    }
 
     return (
       <div className="ripple-unit">
@@ -241,7 +244,7 @@ class RippleChildRipple extends React.Component<Props, State> {
           <div className="ripple-date">{date.toString().slice(0, 10)}</div>
         </div>
         <div className="ripple-text">{printTextOrTextArea(childChangeMode, childMoreRippleView, text)}</div>
-        <div className="ripple-password-confirm">{passwordShowOrHide(childDeleteMode)}</div>
+        <div className="ripple-password-confirm">{showRippleDeleteMode(childDeleteMode)}</div>
         <div className="ripple-action-buttons">
           {rippleChangeMode(childChangeMode)}
           {rippleDeleteMode(childDeleteMode)}
