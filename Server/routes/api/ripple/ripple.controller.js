@@ -417,6 +417,10 @@ exports.changeRipple = (req, res) => {
       return Promise.reject(new Error('댓글의 포스트가 일치하지 않습니다 !'))
     }
 
+    if (data.ripple.writer !== data.writer) {
+      return Promise.reject(new Error('댓글 작성자의 이름이 일치하지 않습니다 !'))
+    }
+
     if (data.ripple.top === true && data.toporchild === 'top') {
       return Promise.resolve(data)
     }
@@ -442,7 +446,21 @@ exports.changeRipple = (req, res) => {
       return Promise.reject(new Error('비밀번호가 일치하지 않습니다 !'))
     }
 
-    return Promise.resolve(data)
+    // Password hide
+    const cleanedData = {
+      topID: data.ripple.topID,
+      childRipple: data.ripple.childRipple,
+      date: data.ripple.date,
+      _id: data.ripple.id,
+      text: data.ripple.text,
+      writer: data.ripple.writer,
+      password: '!!!',
+      categoryID: data.ripple.categoryID,
+      postID: data.ripple.postID,
+      top: data.ripple.top
+    }
+
+    return Promise.resolve({ ...data, ripple: cleanedData })
   }
 
   // Change ripple
@@ -502,9 +520,8 @@ exports.changeRipple = (req, res) => {
 }
 
 /*
-   PATCH /api/:category/:title/:writer/:toporchild
+   DELETE /api/:category/:title/:writer/:toporchild
     {
-      text: string
       topID: string
       rippleID: objectID
       password: string
@@ -514,9 +531,16 @@ exports.deleteRipple = (req, res) => {
   const {
     category, title, writer, toporchild
   } = req.params
-  const {
-    text, topID, rippleID, password
-  } = req.body
+  const { topID, rippleID, password } = req.body
+
+  // Body data check
+  const bodyDataCheck = data => {
+    if (!data.topID || !data.rippleID || !data.password) {
+      return Promise.reject(new Error('잘못된 요청입니다 !'))
+    }
+
+    return Promise.resolve(data)
+  }
 
   // Check data.title is exist or not
   const postExistCheck = async data => {
@@ -580,6 +604,10 @@ exports.deleteRipple = (req, res) => {
       return Promise.reject(new Error('댓글의 포스트가 일치하지 않습니다 !'))
     }
 
+    if (data.ripple.writer !== data.writer) {
+      return Promise.reject(new Error('댓글 작성자의 이름이 일치하지 않습니다 !'))
+    }
+
     if (data.ripple.top === true && data.toporchild === 'top') {
       return Promise.resolve(data)
     }
@@ -598,20 +626,34 @@ exports.deleteRipple = (req, res) => {
     // Encryption
     const encryptedPassword = await crypto
       .createHash('sha512')
-      .update(req.body.password)
+      .update(data.password)
       .digest('base64')
 
     if (encryptedPassword !== data.ripple.password) {
       return Promise.reject(new Error('비밀번호가 일치하지 않습니다 !'))
     }
 
-    return Promise.resolve(data)
+    // Password hide
+    const cleanedData = {
+      topID: data.ripple.topID,
+      childRipple: data.ripple.childRipple,
+      date: data.ripple.date,
+      id: data.ripple.id,
+      text: data.ripple.text,
+      writer: data.ripple.writer,
+      password: '!!!',
+      categoryID: data.ripple.categoryID,
+      postID: data.ripple.postID,
+      top: data.ripple.top
+    }
+
+    return Promise.resolve({ ...data, ripple: cleanedData })
   }
 
   // Delete ripple
   const deleteRipple = async data => {
     if (data.toporchild === 'top') {
-      const removedRipple = await Ripple.removeOne(data.ripple.id)
+      const removedRipple = await Ripple.removeOne(data.rippleID)
       await Ripple.removeAllChildRipple(removedRipple.id)
 
       const cleanedData = {
@@ -631,6 +673,7 @@ exports.deleteRipple = (req, res) => {
 
     if (data.toporchild === 'child') {
       const removedRipple = await Ripple.removeOne(data.ripple.id)
+      await Ripple.pullRefInTopRipple(data.topID, data.rippleID)
 
       const cleanedData = {
         _id: removedRipple.id,
@@ -677,16 +720,16 @@ exports.deleteRipple = (req, res) => {
   }
 
   // Promise
-  postExistCheck({
+  bodyDataCheck({
     category,
     title,
     writer,
-    text,
     password,
     topID,
     rippleID,
     toporchild
   })
+    .then(postExistCheck)
     .then(categoryExistCheck)
     .then(rippleObjectIdCheck)
     .then(rippleExistCheck)

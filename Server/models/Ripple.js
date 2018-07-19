@@ -131,6 +131,10 @@ Ripple.statics.removeOne = function (rippleID) {
 Ripple.statics.removeAllChildRipple = function (topID) {
   return this.remove({ topID }).exec()
 }
+// Pull Ref in top ripple state
+Ripple.statics.pullRefInTopRipple = function (topID, rippleID) {
+  return this.findOneAndUpdate({ _id: topID }, { $pull: { childRipple: rippleID } })
+}
 
 // Add ref in top class
 // TODO: ref
