@@ -500,3 +500,200 @@ exports.changeRipple = (req, res) => {
     .then(respondToClient)
     .catch(onError)
 }
+
+/*
+   PATCH /api/:category/:title/:writer/:toporchild
+    {
+      text: string
+      topID: string
+      rippleID: objectID
+      password: string
+    }
+*/
+exports.deleteRipple = (req, res) => {
+  const {
+    category, title, writer, toporchild
+  } = req.params
+  const {
+    text, topID, rippleID, password
+  } = req.body
+
+  // Check data.title is exist or not
+  const postExistCheck = async data => {
+    // Find
+    const postData = await Post.findPost(data.category, data.title)
+    // Cehck postData is exist or not
+    if (postData === null) {
+      // Throw error
+      return Promise.reject(new Error(`'${data.title}' 포스트는 존재하지 않습니다 !`))
+    }
+
+    return Promise.resolve({ ...data, postData, postID: postData.id })
+  }
+  // Check data.post.category is exist or not
+  const categoryExistCheck = async data => {
+    // Check data.post.category
+    if (data.postData.category === null) {
+      // Check data.category is exist or not
+      const categoryData = await Category.findSameCategory(data.category)
+      if (categoryData !== null) {
+        return Promise.reject(new Error(`'${data.title}'포스트는 '${data.category}' 카테고리가 아닙니다 !`))
+      }
+      // Throw error
+      return Promise.reject(new Error(`'${data.category}' 카테고리는 존재하지 않습니다 !`))
+    }
+
+    return Promise.resolve({ ...data, categoryData: data.postData.category, categoryID: data.postData.category.id })
+  }
+
+  // Check objectID
+  const rippleObjectIdCheck = async data => {
+    // Check ripple ID
+    const rippleIDchecked = await Ripple.checkObjectID(data.rippleID)
+
+    if (rippleIDchecked !== true) {
+      return Promise.reject(new Error('잘못된 요청입니다 !'))
+    }
+
+    return Promise.resolve(data)
+  }
+
+  // Find ripple by obj ID
+  const rippleExistCheck = async data => {
+    // Find rippl
+    const ripple = await Ripple.searchOneRippleByID(data.rippleID, 1)
+
+    if (ripple === null) {
+      return Promise.reject(new Error('변경하고자 하는 댓글이 존재하지 않습니다 !'))
+    }
+
+    return Promise.resolve({ ...data, ripple })
+  }
+
+  // Check ripple data
+  const rippleDataCheck = data => {
+    if (data.ripple.categoryID.toString() !== data.categoryID.toString()) {
+      return Promise.reject(new Error('댓글의 카테고리가 일치하지 않습니다 !'))
+    }
+
+    if (data.ripple.postID.toString() !== data.postID.toString()) {
+      return Promise.reject(new Error('댓글의 포스트가 일치하지 않습니다 !'))
+    }
+
+    if (data.ripple.top === true && data.toporchild === 'top') {
+      return Promise.resolve(data)
+    }
+
+    if (data.ripple.top === false && data.toporchild === 'child') {
+      if (data.ripple.topID === data.topID) {
+        return Promise.resolve(data)
+      }
+    }
+
+    return Promise.reject(new Error('잘못된 요청입니다 !'))
+  }
+
+  // Check req.body.password === data.ripple.password
+  const passwordCheck = async data => {
+    // Encryption
+    const encryptedPassword = await crypto
+      .createHash('sha512')
+      .update(req.body.password)
+      .digest('base64')
+
+    if (encryptedPassword !== data.ripple.password) {
+      return Promise.reject(new Error('비밀번호가 일치하지 않습니다 !'))
+    }
+
+    return Promise.resolve(data)
+  }
+
+  // Delete ripple
+  const deleteRipple = async data => {
+    if (data.toporchild === 'top') {
+      const removedRipple = await Ripple.removeOne(data.ripple.id)
+      await Ripple.removeAllChildRipple(removedRipple.id)
+
+      const cleanedData = {
+        _id: removedRipple.id,
+        categoryID: removedRipple.categoryID,
+        postID: removedRipple.postID,
+        writer: removedRipple.writer,
+        text: removedRipple.text,
+        password: '!!!',
+        top: removedRipple.top,
+        childRipple: [],
+        date: removedRipple.date
+      }
+
+      return Promise.resolve({ ...data, removedRipple: cleanedData })
+    }
+
+    if (data.toporchild === 'child') {
+      const removedRipple = await Ripple.removeOne(data.ripple.id)
+
+      const cleanedData = {
+        _id: removedRipple.id,
+        topID: data.topID,
+        categoryID: removedRipple.categoryID,
+        postID: removedRipple.postID,
+        writer: removedRipple.writer,
+        text: removedRipple.text,
+        password: '!!!',
+        top: removedRipple.top,
+        childRipple: [],
+        date: removedRipple.date
+      }
+
+      return Promise.resolve({ ...data, removedRipple: cleanedData })
+    }
+
+    return Promise.reject(new Error('잘못된 요청입니다 !'))
+  }
+
+  // Data cleaning
+  const dataCleaning = data => {
+    const cleaningData = { ...data, password: '!!!' }
+
+    return Promise.resolve(cleaningData)
+  }
+
+  // Respond
+  const respondToClient = data => {
+    res.json({
+      success: true,
+      message: `'${data.writer}' 의 댓글 삭제 성공 !`,
+      value: data
+    })
+  }
+
+  // Error handler
+  const onError = err => {
+    res.status(409).json({
+      success: false,
+      message: err.message,
+      value: []
+    })
+  }
+
+  // Promise
+  postExistCheck({
+    category,
+    title,
+    writer,
+    text,
+    password,
+    topID,
+    rippleID,
+    toporchild
+  })
+    .then(categoryExistCheck)
+    .then(rippleObjectIdCheck)
+    .then(rippleExistCheck)
+    .then(rippleDataCheck)
+    .then(passwordCheck)
+    .then(deleteRipple)
+    .then(dataCleaning)
+    .then(respondToClient)
+    .catch(onError)
+}

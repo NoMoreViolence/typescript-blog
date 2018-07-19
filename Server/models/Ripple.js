@@ -123,8 +123,13 @@ Ripple.statics.changeRipple = function (rippleID, text, passwordShow) {
 
 // Ripple delete
 // TODO: Delete
-Ripple.statics.removeRipple = function (category) {
-  return this.findOneAndRemove({ category })
+// Delete one ripple
+Ripple.statics.removeOne = function (rippleID) {
+  return this.findOneAndRemove({ _id: rippleID }).exec()
+}
+// Delete all child ripple
+Ripple.statics.removeAllChildRipple = function (topID) {
+  return this.remove({ topID }).exec()
 }
 
 // Add ref in top class

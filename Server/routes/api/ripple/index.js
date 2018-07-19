@@ -11,6 +11,6 @@ router.post('/:category/:title/:writer/:toporchild', controller.addRipple)
 router.patch('/:category/:title/:writer/:toporchild', controller.changeRipple)
 
 // Delete the ripple
-// router.delete('/:category/:title/:writer', controller.deleteRipple)
+router.delete('/:category/:title/:writer/:toporchild', controller.deleteRipple)
 
 module.exports = router
