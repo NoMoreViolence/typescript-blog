@@ -9,6 +9,7 @@
 
 .ripple-writer-and-date {
   width: 100%;
+  font-weight: 400;
   padding-bottom: 15px;
   display: flex;
   justify-content: space-between;
@@ -18,7 +19,7 @@
 }
 
 .ripple-text {
-
+  font-weight: 300;
 }
 
 .ripple-delete-mode {
