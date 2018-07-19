@@ -3,14 +3,13 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 
 import {
   TopOrChildRippleState,
-  TopLoadState,
-  ChildLoadState,
   GetTopRipples,
   GetChildRipples,
   PostTopRipple,
   PostChildRipple,
   PatchChildRipple,
-  ChildMode
+  ChildMode,
+  PatchTopRipple
 } from 'store/modules/Ripple'
 
 import RippleTopInput from 'lib/RippleTopInput'
@@ -22,9 +21,6 @@ import { toast } from 'react-toastify'
 interface Props {
   // Ripple data
   topRipple: TopOrChildRippleState[]
-  topLoadState: TopLoadState
-  childRipple: TopOrChildRippleState[]
-  childLoadState: ChildLoadState
   // Ripple http fun
   rippleClear: () => Promise<object>
   topRippleLoad: (value: GetTopRipples) => Promise<object>
@@ -35,6 +31,7 @@ interface Props {
   changeTopAddMode: (value: number) => boolean
   changeTopShowChildMode: (value: number) => boolean
   changeTopChangeMode: (value: number) => boolean
+  changeTopRipple: (value: PatchTopRipple) => Promise<object>
   changeTopDeleteMode: (value: number) => boolean
   changeTopMoreViewMode: (value: number) => boolean
   // Ripple staet fun: child
@@ -107,6 +104,7 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
               topAddMode={object.addMode}
               topShowChildMode={object.showChildMode}
               topChangeMode={object.changeMode}
+              changeTopRipple={this.props.changeTopRipple}
               topDeleteMode={object.deleteMode}
               topMoreRippleView={object.moreRippleView}
               topMoreRippleViewMessage={object.moreRippleViewMessage}

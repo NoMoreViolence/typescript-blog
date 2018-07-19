@@ -77,9 +77,7 @@ export interface PatchTopRipple {
   text: string
   password: string
   rippleID: string
-  topNumber: number
 }
-/*
 function patchTopRippleAPI(value: PatchTopRipple) {
   return axios.patch(`/api/${value.category}/${value.title}/${value.writer}/top`, {
     text: value.text,
@@ -87,7 +85,6 @@ function patchTopRippleAPI(value: PatchTopRipple) {
     password: value.password
   })
 }
-*/
 
 export interface PatchChildRipple {
   category: string
@@ -114,6 +111,10 @@ const RIPPLE_CLEAR = 'RIPPLE_CLEAR'
 const CHANGE_TOP_ADD_MODE = 'CHANGE_TOP_ADD_MODE'
 const CHANGE_TOP_SHOW_CHILD_MODE = 'CHANGE_TOP_SHOW_CHILD_MODE'
 const CHANGE_TOP_CHANGE_MODE = 'CHANGE_TOP_CHANGE_MODE'
+const CHANGE_TOP_RIPPLE = 'CHANGE_TOP_RIPPLE'
+const CHANGE_TOP_RIPPLE_PENDING = 'CHANGE_TOP_RIPPLE_PENDING'
+const CHANGE_TOP_RIPPLE_SUCCESS = 'CHANGE_TOP_RIPPLE_SUCCESS'
+const CHANGE_TOP_RIPPLE_FAILURE = 'CHANGE_TOP_RIPPLE_FAILURE'
 const CHANGE_TOP_DELETE_MODE = 'CHANGE_TOP_DELETE_MODE'
 const CHANGE_TOP_MORE_SHOW_MODE = 'CHANGE_TOP_MORE_SHOW_MODE'
 // Change one of child ripples action state
@@ -159,6 +160,7 @@ export const RippleActions = {
   changeTopAddMode: createAction<number, number>(CHANGE_TOP_ADD_MODE, value => value),
   changeTopShowChildMode: createAction<number, number>(CHANGE_TOP_SHOW_CHILD_MODE, value => value),
   changeTopChangeMode: createAction<number, number>(CHANGE_TOP_CHANGE_MODE, value => value),
+  patchChangeTopRipple: createAction<APIPayload, PatchTopRipple>(CHANGE_TOP_RIPPLE, patchTopRippleAPI),
   changeTopDeleteMode: createAction<number, number>(CHANGE_TOP_DELETE_MODE, value => value),
   changeTopMoreShowMode: createAction<number, number>(CHANGE_TOP_MORE_SHOW_MODE, value => value),
   // Change one of child ripples change mode
@@ -283,6 +285,35 @@ const reducer = handleActions<RippleState, any>(
       }
       return produce(state, draft => {
         draft.topRipple[action.payload || 0].changeMode = false
+      })
+    },
+    [CHANGE_TOP_RIPPLE_PENDING]: (state, action: Action<APIPayload>) => {
+      return produce(state, draft => {
+        draft.changeRippleState.pending = true
+        draft.changeRippleState.error = false
+      })
+    },
+    [CHANGE_TOP_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
+      const { changedRipple } = action.payload.data.value
+
+      const TopRipple = state.topRipple.map((object: TopOrChildRippleState, i: number) => {
+        if (object._id === changedRipple._id) {
+          return { ...object, text: changedRipple.text, changeMode: false }
+        }
+
+        return object
+      })
+
+      return produce(state, draft => {
+        draft.topRipple = TopRipple
+        draft.changeRippleState.pending = false
+        draft.changeRippleState.error = false
+      })
+    },
+    [CHANGE_TOP_RIPPLE_FAILURE]: (state, action: Action<APIPayload>) => {
+      return produce(state, draft => {
+        draft.changeRippleState.pending = false
+        draft.changeRippleState.error = true
       })
     },
     [CHANGE_TOP_DELETE_MODE]: (state, action: TopDeleteModePayload) => {

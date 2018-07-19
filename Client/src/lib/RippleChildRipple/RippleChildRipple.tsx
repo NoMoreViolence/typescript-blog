@@ -53,12 +53,13 @@ class RippleChildRipple extends React.Component<Props, State> {
     })
   }
 
+  // Handle ripple action button
   public handleButtonActionChange = (e: { currentTarget: HTMLButtonElement }) => {
     this.props[e.currentTarget.name]({ top: this.props.topNumber, child: this.props.childNumber })
   }
 
   // Change Ripple
-  public handleRippleChange = (e: { currentTarget: HTMLButtonElement }) => {
+  public handleRippleChange = () => {
     const { category, title, writer, topID, rippleID, changeRippleStatePending } = this.props
     const { text, passwordToChange } = this.state
 
@@ -118,7 +119,6 @@ class RippleChildRipple extends React.Component<Props, State> {
             {enterConfigedData.map((object: JSX.Element, i: number) => {
               return <React.Fragment key={i}>{object}</React.Fragment>
             })}
-            <br />
             <button
               className="ripple-more-view primary-half"
               name="changeChildMoreViewMode"
@@ -136,7 +136,6 @@ class RippleChildRipple extends React.Component<Props, State> {
             {enterConfigedData.map((object: JSX.Element, i: number) => {
               return <React.Fragment key={i}>{object}</React.Fragment>
             })}
-            <br />
             <button
               className="ripple-more-view primary-half"
               name="changeChildMoreViewMode"
@@ -189,7 +188,7 @@ class RippleChildRipple extends React.Component<Props, State> {
             <button className="info-half" name="changeChildChangeMode" onClick={this.handleButtonActionChange}>
               수정 취소
             </button>
-            <button className="info-half" name="changeChildChangeMode" onClick={this.handleRippleChange}>
+            <button className="info-half" onClick={this.handleRippleChange}>
               수정 확인
             </button>
           </div>
@@ -211,7 +210,7 @@ class RippleChildRipple extends React.Component<Props, State> {
             <button className="danger-half" name="changeChildDeleteMode" onClick={this.handleButtonActionChange}>
               삭제 취소
             </button>
-            <button className="danger-half" name="changeChildDeleteMode" onClick={this.handleRippleDelete}>
+            <button className="danger-half" onClick={this.handleRippleDelete}>
               삭제 확인
             </button>
           </div>

@@ -9,10 +9,12 @@ import {
   GetChildRipples,
   PostChildRipple,
   PatchChildRipple,
-  ChildMode
+  ChildMode,
+  PatchTopRipple
 } from 'store/modules/Ripple'
 import RippleChildRipple from 'lib/RippleChildRipple'
 import RippleChildInput from 'lib/RippleChildInput'
+import { toast } from '../../../node_modules/react-toastify'
 
 interface Props {
   // Top Ripple data
@@ -41,11 +43,12 @@ interface Props {
   changeTopAddMode: (value: number) => boolean
   changeTopShowChildMode: (value: number) => boolean
   changeTopChangeMode: (value: number) => boolean
+  changeTopRipple: (value: PatchTopRipple) => Promise<object>
   changeTopDeleteMode: (value: number) => boolean
   changeTopMoreViewMode: (value: number) => boolean
   // Mode change
   changeChildChangeMode: (value: ChildMode) => boolean
-  changeChildRipple: (value: PatchChildRipple) => Promise<any>
+  changeChildRipple: (value: PatchChildRipple) => Promise<object>
   changeRippleStatePending: boolean
   changeChildDeleteMode: (value: ChildMode) => boolean
   changeChildMoreViewMode: (value: ChildMode) => boolean
@@ -86,16 +89,6 @@ class RippleTopRipple extends React.Component<Props, State> {
     })
   }
 
-  // Handle show more view
-  public handleRippleShowMoreView = () => {
-    this.props.changeTopMoreViewMode(this.props.topNumber)
-  }
-
-  // Handle add mode
-  public handleRippleAddMode = () => {
-    this.props.changeTopAddMode(this.props.topNumber)
-  }
-
   // Handle more mode
   public handleRippleShowChildMode = () => {
     if (this.props.topShowChildMode === false) {
@@ -104,18 +97,47 @@ class RippleTopRipple extends React.Component<Props, State> {
     this.props.changeTopShowChildMode(this.props.topNumber)
   }
 
-  // Handle change mode
-  public handleRippleChangeMode = () => {
-    this.props.changeTopChangeMode(this.props.topNumber)
-  }
-
-  // Handle delete mode
-  public handleRippleDeleteMode = () => {
-    this.props.changeTopDeleteMode(this.props.topNumber)
-  }
-
+  // Handle ripple action button
   public handleButtonActionChange = (e: { currentTarget: HTMLButtonElement }) => {
+    // State clear
+    if (e.currentTarget.name === 'changeTopChangeMode') {
+      this.setState({
+        text: this.props.text,
+        passwordToChange: ''
+      })
+    } else if (e.currentTarget.name === 'changeTopDeleteMode') {
+      this.setState({
+        passwordToDelete: ''
+      })
+    }
+    // Change mode
     this.props[e.currentTarget.name](this.props.topNumber)
+  }
+
+  // Change Ripple
+  public handleRippleChange = () => {
+    const { category, title, writer, rippleID, changeRippleStatePending } = this.props
+    const { text, passwordToChange } = this.state
+
+    if (changeRippleStatePending === true) {
+      return toast('댓글이 변경 중입니다. 잠시 후에 다시 시도해 주세요 !')
+    }
+
+    return this.props
+      .changeTopRipple({
+        category,
+        title,
+        writer,
+        text,
+        rippleID,
+        password: passwordToChange
+      })
+      .then((res: any) => {
+        toast(res.action.payload.data.message)
+      })
+      .catch((err: any) => {
+        toast(err.response.data.message)
+      })
   }
 
   // Optimization rendering problem
@@ -167,7 +189,6 @@ class RippleTopRipple extends React.Component<Props, State> {
             {enterConfigedData.map((object: JSX.Element, i: number) => {
               return <React.Fragment key={i}>{object}</React.Fragment>
             })}
-            <br />
             <button
               className="ripple-more-view primary-half"
               name="changeTopMoreViewMode"
@@ -186,7 +207,6 @@ class RippleTopRipple extends React.Component<Props, State> {
             {enterConfigedData.map((object: JSX.Element, i: number) => {
               return <React.Fragment key={i}>{object}</React.Fragment>
             })}
-            <br />
             <button
               className="ripple-more-view primary-half"
               name="changeTopMoreViewMode"
@@ -236,14 +256,14 @@ class RippleTopRipple extends React.Component<Props, State> {
       if (topAddMode) {
         return (
           <React.Fragment>
-            <button className="primary" onClick={this.handleRippleAddMode}>
+            <button className="primary" name="changeTopAddMode" onClick={this.handleButtonActionChange}>
               답글 취소
             </button>
           </React.Fragment>
         )
       }
       return (
-        <button className="primary" onClick={this.handleRippleAddMode}>
+        <button className="primary" name="changeTopAddMode" onClick={this.handleButtonActionChange}>
           답글 달기
         </button>
       )
@@ -324,10 +344,10 @@ class RippleTopRipple extends React.Component<Props, State> {
       if (topChangeMode) {
         return (
           <div className="ripple-flex">
-            <button className="info-half" onClick={this.handleRippleChangeMode}>
+            <button className="info-half" name="changeTopChangeMode" onClick={this.handleButtonActionChange}>
               수정 취소
             </button>
-            <button className="info-half" onClick={this.handleRippleChangeMode}>
+            <button className="info-half" onClick={this.handleRippleChange}>
               수정 확인
             </button>
           </div>
@@ -335,7 +355,7 @@ class RippleTopRipple extends React.Component<Props, State> {
       }
 
       return (
-        <button className="info" onClick={this.handleRippleChangeMode}>
+        <button className="info" name="changeTopChangeMode" onClick={this.handleButtonActionChange}>
           댓글 수정
         </button>
       )
@@ -345,17 +365,15 @@ class RippleTopRipple extends React.Component<Props, State> {
       if (topDeleteMode) {
         return (
           <div className="ripple-flex">
-            <button className="danger-half" onClick={this.handleRippleDeleteMode}>
+            <button className="danger-half" name="changeTopDeleteMode" onClick={this.handleButtonActionChange}>
               삭제 취소
             </button>
-            <button className="danger-half" onClick={this.handleRippleDeleteMode}>
-              삭제 확인
-            </button>
+            <button className="danger-half">삭제 확인</button>
           </div>
         )
       }
       return (
-        <button className="danger" name="" onClick={this.handleRippleDeleteMode}>
+        <button className="danger" name="changeTopDeleteMode" onClick={this.handleButtonActionChange}>
           삭제 하기
         </button>
       )
