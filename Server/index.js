@@ -25,7 +25,7 @@ app.set('jwt-secret', config.secret)
 // set server Route
 app.use('/api', require('./routes/api'))
 // Client React.js file
-app.use(express.static(path.join(__dirname, './build')))
+app.use(express.static(path.join(__dirname, 'build')))
 
 // mongo connect
 // mongoose.set('debug', true)
