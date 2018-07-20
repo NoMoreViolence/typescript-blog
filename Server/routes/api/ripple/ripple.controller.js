@@ -535,7 +535,7 @@ exports.deleteRipple = (req, res) => {
 
   // Body data check
   const bodyDataCheck = data => {
-    if (!data.topID || !data.rippleID || !data.password) {
+    if (data.topID === undefined || !data.rippleID || !data.password) {
       return Promise.reject(new Error('잘못된 요청입니다 !'))
     }
 
@@ -657,7 +657,7 @@ exports.deleteRipple = (req, res) => {
       await Ripple.removeAllChildRipple(removedRipple.id)
 
       const cleanedData = {
-        _id: removedRipple.id,
+        id: removedRipple.id,
         categoryID: removedRipple.categoryID,
         postID: removedRipple.postID,
         writer: removedRipple.writer,
@@ -676,7 +676,7 @@ exports.deleteRipple = (req, res) => {
       await Ripple.pullRefInTopRipple(data.topID, data.rippleID)
 
       const cleanedData = {
-        _id: removedRipple.id,
+        id: removedRipple.id,
         topID: data.topID,
         categoryID: removedRipple.categoryID,
         postID: removedRipple.postID,
@@ -703,6 +703,7 @@ exports.deleteRipple = (req, res) => {
 
   // Respond
   const respondToClient = data => {
+    console.log('정상 작동 합니다')
     res.json({
       success: true,
       message: `'${data.writer}' 의 댓글 삭제 성공 !`,
@@ -712,6 +713,7 @@ exports.deleteRipple = (req, res) => {
 
   // Error handler
   const onError = err => {
+    console.log('에러 입니다')
     res.status(409).json({
       success: false,
       message: err.message,
