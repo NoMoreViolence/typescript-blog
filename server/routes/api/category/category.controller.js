@@ -16,7 +16,7 @@ exports.showTitleAndSubTitle = (req, res) => {
     // Right value
     if (data.requestCategory.toLowerCase() === 'admin') {
       // 'admin' throw error
-      return Promise.reject(new Error(`'${data.requestCategory}' 는 관리자 이름의 카테고리라 존재할 수 없습니다 !`))
+      return Promise.reject(new Error(`'${data.requestCategory}' 는 관리자 이름의 카테고리이기 때문에 존재할 수 없습니다 !`))
     }
     return Promise.resolve(data)
   }
