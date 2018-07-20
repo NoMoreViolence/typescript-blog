@@ -4,7 +4,7 @@ yarn.lock
 
 # Server dependencies
 /Server/node_modules
-
+/Server/build
 
 # Server yarn-lock
 /Server/yarn.lock
