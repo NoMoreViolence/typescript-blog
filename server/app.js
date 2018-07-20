@@ -9,7 +9,7 @@ const mongoose = require('mongoose')
 // mongo connect config file
 const config = require('./config.js')
 // port config
-const port = process.env.port || 3001
+const port = process.env.PORT || 3001
 
 // express start
 const app = express()
