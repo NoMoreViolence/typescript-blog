@@ -14,7 +14,7 @@ import {
   DeleteChildRipple
 } from 'store/modules/Ripple'
 
-import RippleTopInput from 'lib/RippleTopInput'
+import RippleInputTop from 'lib/RippleInputTop'
 import RippleTopRipple from 'lib/RippleTopRipple'
 
 import './Ripple.css'
@@ -138,7 +138,7 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
     }
     return (
       <React.Fragment>
-        <RippleTopInput
+        <RippleInputTop
           postTopRipple={this.props.postTopRipple}
           addRippleStatePending={this.props.addRippleStatePending}
         />

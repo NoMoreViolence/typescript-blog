@@ -65,6 +65,7 @@ interface DeleteRipple {
 class RippleChildRipple extends React.Component<Props, State> {
   // State
   public state = {
+    // Child Text
     text: this.props.text,
     passwordToChange: '',
     passwordToDelete: ''

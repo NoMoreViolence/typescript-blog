@@ -1,16 +1,18 @@
 import * as React from 'react'
 
-import './RippleTopInput.css'
-import { Input, Button } from 'reactstrap'
-import { PostTopRipple } from 'store/modules/Ripple'
-
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import './RippleInputChild.css'
 import { toast } from 'react-toastify'
+import { Input, Button } from 'reactstrap'
+
+import { PostChildRipple } from 'store/modules/Ripple'
 
 import regExp from 'lib/RegExp'
 
 interface Props {
-  postTopRipple: (value: PostTopRipple) => Promise<object>
+  category: string
+  title: string
+  topID: string
+  postChildRipple: (value: PostChildRipple) => Promise<object>
   addRippleStatePending: boolean
 }
 
@@ -26,10 +28,12 @@ interface SubmitINFO {
   writer: string
   text: string
   password: string
+  topID: string
   pending: boolean
 }
 
-class RippleInput extends React.Component<Props & RouteComponentProps<any>, State> {
+class RippleChildInput extends React.Component<Props, State> {
+  // Ref
   public userName: any = null
   public userPassword: any = null
   public userText: any = null
@@ -51,14 +55,8 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>, Stat
   public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    // If request is pending, return false
-    const pendingCheck = (data: SubmitINFO) => {
-      if (data.pending === true) {
-        return Promise.reject(new Error(''))
-      }
-
-      return Promise.resolve(data)
-    }
+    const { category, title, topID, addRippleStatePending } = this.props
+    const { writer, text, password } = this.state
 
     // Value check function, if the data is null or '', return 0
     //                       if the data is exit, return 1
@@ -77,6 +75,15 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>, Stat
         return { result: false, ECode }
       }
       return { result: true, ECode }
+    }
+
+    // Check the child ripple add process is already pending
+    const pendingCheck = (data: SubmitINFO): Promise<object> => {
+      if (data.pending === true) {
+        return Promise.reject(new Error('Pending'))
+      }
+
+      return Promise.resolve(data)
     }
 
     // Writer name check
@@ -109,14 +116,15 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>, Stat
 
     // Request to server
     const requestToServer = (data: SubmitINFO): Promise<any> => {
-      // Top ripple add
+      // Child ripple add
       return this.props
-        .postTopRipple({
-          category: this.props.match.url.split('/')[1],
-          title: this.props.match.url.split('/')[2],
-          writer: this.state.writer,
-          ripple: this.state.text,
-          password: this.state.password
+        .postChildRipple({
+          category: data.category,
+          title: data.title,
+          writer: data.writer,
+          ripple: data.text,
+          password: data.password,
+          topID: data.topID
         })
         .then((res: any) => {
           toast(res.action.payload.data.message)
@@ -137,6 +145,8 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>, Stat
     const onError = (err: Error): void => {
       if (err.message === 'Undefined') {
         toast('알 수 없는 에러 입니다 !')
+      } else if (err.message === 'Pending') {
+        toast('댓글 추가 작업이 이미 진행 중에 있습니다. 잠시 후에 다시 시도해 주세요 !')
       } else if (err.message === '/_?_&_#') {
         this.setState({
           writer: ''
@@ -164,30 +174,19 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>, Stat
       }
     }
 
-    // Url category title
-    const categoryAndTitle = this.props.match.url.split('/')
-    // Name type & (admin or user)
-
     // Promise
     pendingCheck({
-      category: categoryAndTitle[1],
-      title: categoryAndTitle[2],
-      writer: this.state.writer,
-      text: this.state.text,
-      password: this.state.password,
-      pending: this.props.addRippleStatePending
+      category,
+      title,
+      writer,
+      text,
+      password,
+      topID,
+      pending: addRippleStatePending
     })
       .then(valueCheck)
       .then(requestToServer)
       .catch(onError)
-  }
-
-  // Optimization rendering problem
-  public shouldComponentUpdate(nextProps: Props, nextState: State) {
-    if (nextProps !== this.props || nextState !== this.state) {
-      return true
-    }
-    return false
   }
 
   // Component Remove action
@@ -197,9 +196,9 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>, Stat
     this.userText = null
   }
 
-  public render() {
+  public render(): JSX.Element {
     return (
-      <form onSubmit={this.handleSubmit} className="ripple-form">
+      <form onSubmit={this.handleSubmit} className="ripple-child-form">
         <div className="ripple-personal-info">
           <Input
             name="writer"
@@ -240,4 +239,4 @@ class RippleInput extends React.Component<Props & RouteComponentProps<any>, Stat
   }
 }
 
-export default withRouter(RippleInput)
+export default RippleChildInput

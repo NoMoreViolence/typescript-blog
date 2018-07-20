@@ -14,11 +14,11 @@ import {
   DeleteTopRipple
 } from 'store/modules/Ripple'
 import RippleChildRipple from 'lib/RippleChildRipple'
-import RippleChildInput from 'lib/RippleChildInput'
+import RippleInputChild from 'lib/RippleInputChild'
 import { toast } from '../../../node_modules/react-toastify'
 
 interface Props {
-  // Top Ripple data
+  // State
   writer: string
   text: string
   date: number
@@ -372,7 +372,7 @@ class RippleTopRipple extends React.Component<Props, State> {
     const rippleAddModeShow = (topAddMode: boolean): JSX.Element | null => {
       if (topAddMode) {
         return (
-          <RippleChildInput
+          <RippleInputChild
             category={this.props.category}
             title={this.props.title}
             topID={this.props.rippleID}
