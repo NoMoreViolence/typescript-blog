@@ -9,7 +9,9 @@ import {
   PostChildRipple,
   PatchChildRipple,
   ChildMode,
-  PatchTopRipple
+  PatchTopRipple,
+  DeleteTopRipple,
+  DeleteChildRipple
 } from 'store/modules/Ripple'
 
 import RippleTopInput from 'lib/RippleTopInput'
@@ -27,21 +29,24 @@ interface Props {
   childRippleLoad: (value: GetChildRipples) => Promise<object>
   postTopRipple: (value: PostTopRipple) => Promise<object>
   postChildRipple: (value: PostChildRipple) => Promise<object>
+  changeTopRipple: (value: PatchTopRipple) => Promise<object>
+  changeChildRipple: (value: PatchChildRipple) => Promise<object>
+  deleteTopRipple: (value: DeleteTopRipple) => Promise<object>
+  deleteChildRipple: (value: DeleteChildRipple) => Promise<object>
   // Ripple state fun: top
   changeTopAddMode: (value: number) => boolean
   changeTopShowChildMode: (value: number) => boolean
   changeTopChangeMode: (value: number) => boolean
-  changeTopRipple: (value: PatchTopRipple) => Promise<object>
   changeTopDeleteMode: (value: number) => boolean
   changeTopMoreViewMode: (value: number) => boolean
   // Ripple staet fun: child
   changeChildChangeMode: (value: ChildMode) => boolean
-  changeChildRipple: (value: PatchChildRipple) => Promise<object>
   changeChildDeleteMode: (value: ChildMode) => boolean
   changeChildMoreViewMode: (value: ChildMode) => boolean
   // Submit ripple state
   addRippleStatePending: boolean
   changeRippleStatePending: boolean
+  deleteRippleStatePending: boolean
 }
 
 interface State {
@@ -104,7 +109,6 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
               topAddMode={object.addMode}
               topShowChildMode={object.showChildMode}
               topChangeMode={object.changeMode}
-              changeTopRipple={this.props.changeTopRipple}
               topDeleteMode={object.deleteMode}
               topMoreRippleView={object.moreRippleView}
               topMoreRippleViewMessage={object.moreRippleViewMessage}
@@ -112,17 +116,21 @@ class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
               changeTopAddMode={this.props.changeTopAddMode}
               changeTopShowChildMode={this.props.changeTopShowChildMode}
               changeTopChangeMode={this.props.changeTopChangeMode}
+              changeTopRipple={this.props.changeTopRipple}
               changeTopDeleteMode={this.props.changeTopDeleteMode}
+              deleteTopRipple={this.props.deleteTopRipple}
               changeTopMoreViewMode={this.props.changeTopMoreViewMode}
               // Ripple state change
+              postChildRipple={this.props.postChildRipple}
               changeChildChangeMode={this.props.changeChildChangeMode}
               changeChildRipple={this.props.changeChildRipple}
-              changeRippleStatePending={this.props.changeRippleStatePending}
               changeChildDeleteMode={this.props.changeChildDeleteMode}
+              deleteChildRipple={this.props.deleteChildRipple}
               changeChildMoreViewMode={this.props.changeChildMoreViewMode}
-              // Submit child ripple
-              postChildRipple={this.props.postChildRipple}
+              // State
               addRippleStatePending={this.props.addRippleStatePending}
+              changeRippleStatePending={this.props.changeRippleStatePending}
+              deleteRippleStatePending={this.props.deleteRippleStatePending}
             />
           </React.Fragment>
         )
