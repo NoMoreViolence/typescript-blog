@@ -176,6 +176,7 @@ class RippleTopRipple extends React.Component<Props, State> {
       }
     }
 
+    // Promise
     pendingCheck({
       category,
       title,
@@ -416,6 +417,7 @@ class RippleTopRipple extends React.Component<Props, State> {
         return (
           <React.Fragment key={i}>
             <RippleChildRipple
+              // Basic stuff
               writer={object.writer}
               text={object.text}
               date={object.date}
@@ -425,15 +427,20 @@ class RippleTopRipple extends React.Component<Props, State> {
               rippleID={object._id}
               category={category}
               title={title}
-              changeRippleStatePending={this.props.changeRippleStatePending}
+              // State
               childChangeMode={object.changeMode}
-              changeChildRipple={this.props.changeChildRipple}
               childDeleteMode={object.deleteMode}
               childMoreRippleView={object.moreRippleView}
               childMoreRippleViewMessage={object.moreRippleViewMessage}
+              // Change mode
               changeChildChangeMode={changeChildChangeMode}
               changeChildDeleteMode={changeChildDeleteMode}
               changeChildMoreViewMode={changeChildMoreViewMode}
+              // Action
+              changeChildRipple={this.props.changeChildRipple}
+              changeRippleStatePending={this.props.changeRippleStatePending}
+              deleteChildRipple={this.props.deleteChildRipple}
+              deleteRippleStatePending={this.props.deleteRippleStatePending}
             />
           </React.Fragment>
         )
