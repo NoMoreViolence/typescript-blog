@@ -28,20 +28,15 @@ app.use('/api', require('./routes/api'))
 app.use(express.static(path.join(__dirname, 'build')))
 
 // mongo connect
-// mongoose.set('debug', true)
+mongoose.set('debug', true)
 mongoose.connect(config.mongodbUri)
-
 const db = mongoose.connection
-
-// if error
 db.on('error', console.error.bind(console, 'connection error:'))
-// if opened
 db.once('open', () => {
-  // we're connected!
   console.log("We're connnected")
 })
 
-// server open
+// Node server
 app.listen(port, () => {
   console.log(`server is running at http://localhost:${port}`)
 })
