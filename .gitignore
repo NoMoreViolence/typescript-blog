@@ -1,12 +1,16 @@
+# heroku dependencies
+/node_modules
+yarn.lock
+
 # Server dependencies
 /Server/node_modules
+
 
 # Server yarn-lock
 /Server/yarn.lock
 
 # Server DataBase config
-/Server/config.js
-
+# /Server/config.js
 
 # Client dependencies
 /Client/node_modules

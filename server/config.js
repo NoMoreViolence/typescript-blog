@@ -1,4 +1,4 @@
 module.exports = {
-  secret: 'FuckYouThisIsSecretKey',
-  mongodbUri: 'mongodb://LeonardoLee:jihoon8033@ds117739.mlab.com:17739/ts-blog-database'
+  secret: 'NowShowTimeThisIsTheNewSecretKey',
+  mongodbUri: 'mongodb://LeonardoLee:jihoon8033@ds018558.mlab.com:18558/ts-blog'
 }
