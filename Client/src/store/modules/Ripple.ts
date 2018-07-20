@@ -398,10 +398,13 @@ const reducer = handleActions<RippleState, any>(
         draft.deleteRippleState.error = false
       }),
     [DELETE_TOP_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
-      const { deletedRipple } = action.payload.data.value
+      const { removedRipple } = action.payload.data.value
+
+      // tslint:disable-next-line:no-console
+      console.log(removedRipple)
 
       const filteredData = state.topRipple.filter((object: TopOrChildRippleState, i: number) => {
-        if (object._id === deletedRipple.id) {
+        if (object._id === removedRipple.id) {
           return false
         }
 
@@ -509,14 +512,14 @@ const reducer = handleActions<RippleState, any>(
         draft.deleteRippleState.error = false
       }),
     [DELETE_CHILD_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
-      const { deletedRipple } = action.payload.data.value
+      const { removedRipple } = action.payload.data.value
 
       const filteredData = state.topRipple.map((object: TopOrChildRippleState, i: number) => {
-        if (object._id === deletedRipple.topID) {
+        if (object._id === removedRipple.topID) {
           return {
             ...object,
             childRipple: object.childRipple.filter((object: TopOrChildRippleState, i: number) => {
-              if (object._id === deletedRipple.id) {
+              if (object._id === removedRipple.id) {
                 return false
               }
               return true
