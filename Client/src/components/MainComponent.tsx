@@ -1,13 +1,11 @@
-import * as React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import App from 'components/App';
+import * as React from 'react'
+import { BrowserRouter } from 'react-router-dom'
+import App from 'components/App'
 
-const MainComponent = () => {
-  return (
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  );
-};
+const MainComponent: React.SFC = () => (
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+)
 
-export default MainComponent;
+export default MainComponent
