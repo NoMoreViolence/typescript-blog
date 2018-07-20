@@ -95,7 +95,6 @@ export interface PatchChildRipple {
   topID: string
   rippleID: string
 }
-
 function patchChildRippleAPI(value: PatchChildRipple) {
   return axios.patch(`/api/${value.category}/${value.title}/${value.writer}/child`, {
     text: value.text,
@@ -105,26 +104,57 @@ function patchChildRippleAPI(value: PatchChildRipple) {
   })
 }
 
+export interface DeleteTopRipple {
+  category: string
+  title: string
+  writer: string
+  password: string
+  rippleID: string
+}
+function deleteTopRippleAPI(value: DeleteTopRipple) {
+  return axios.delete(`/api/${value.category}/${value.title}/${value.writer}/top`, {
+    data: {
+      topID: '',
+      rippleID: value.rippleID,
+      password: value.password
+    },
+    headers: {
+      'Context-Type': 'application/json'
+    }
+  })
+}
+
+export interface DeleteChildRipple {
+  category: string
+  title: string
+  writer: string
+  password: string
+  topID: string
+  rippleID: string
+}
+function deleteChildRippleAPI(value: DeleteChildRipple) {
+  return axios.delete(`/api/${value.category}/${value.title}/${value.writer}/child`, {
+    data: {
+      topID: value.topID,
+      rippleID: value.rippleID,
+      password: value.password
+    }
+  })
+}
+
 // Reset all state data
 const RIPPLE_CLEAR = 'RIPPLE_CLEAR'
 // Change one of top ripples action state
 const CHANGE_TOP_ADD_MODE = 'CHANGE_TOP_ADD_MODE'
 const CHANGE_TOP_SHOW_CHILD_MODE = 'CHANGE_TOP_SHOW_CHILD_MODE'
 const CHANGE_TOP_CHANGE_MODE = 'CHANGE_TOP_CHANGE_MODE'
-const CHANGE_TOP_RIPPLE = 'CHANGE_TOP_RIPPLE'
-const CHANGE_TOP_RIPPLE_PENDING = 'CHANGE_TOP_RIPPLE_PENDING'
-const CHANGE_TOP_RIPPLE_SUCCESS = 'CHANGE_TOP_RIPPLE_SUCCESS'
-const CHANGE_TOP_RIPPLE_FAILURE = 'CHANGE_TOP_RIPPLE_FAILURE'
 const CHANGE_TOP_DELETE_MODE = 'CHANGE_TOP_DELETE_MODE'
 const CHANGE_TOP_MORE_SHOW_MODE = 'CHANGE_TOP_MORE_SHOW_MODE'
 // Change one of child ripples action state
 const CHANGE_CHILD_CHANGE_MODE = 'CHANGE_CHILD_CHANGE_MODE'
-const CHANGE_CHILD_RIPPLE = 'CHANGE_CHILD_RIPPLE'
-const CHANGE_CHILD_RIPPLE_PENDING = 'CHANGE_CHILD_RIPPLE_PENDING'
-const CHANGE_CHILD_RIPPLE_SUCCESS = 'CHANGE_CHILD_RIPPLE_SUCCESS'
-const CHANGE_CHILD_RIPPLE_FAILURE = 'CHANGE_CHILD_RIPPLE_FAILURE'
 const CHANGE_CHILD_DELETE_MODE = 'CHANGE_CHILD_DELETE_MODE'
 const CHANGE_CHILD_MORE_SHOW_MODE = 'CHANGE_CHILD_MORE_SHOW_MODE'
+// Bring ripple
 // Bring All TOP ripples from some post
 const GET_BRING_TOP_RIPPLE_INFO = 'GET_BRING_TOP_RIPPLE_INFO'
 const GET_BRING_TOP_RIPPLE_INFO_PENDING = 'GET_BRING_TOP_RIPPLE_INFO_PENDING'
@@ -146,6 +176,28 @@ const POST_ADD_CHILD_RIPPLE = 'POST_ADD_CHILD_RIPPLE'
 const POST_ADD_CHILD_RIPPLE_PENDING = 'POST_ADD_CHILD_RIPPLE_PENDING'
 const POST_ADD_CHILD_RIPPLE_SUCCESS = 'POST_ADD_CHILD_RIPPLE_SUCCESS'
 const POST_ADD_CHILD_RIPPLE_FAILURE = 'POST_ADD_CHILD_RIPPLE_FAILURE'
+// Changing ripple
+// TOP
+const PATCH_TOP_RIPPLE = 'PATCHE_TOP_RIPPLE'
+const PATCH_TOP_RIPPLE_PENDING = 'PATCH_TOP_RIPPLE_PENDING'
+const PATCH_TOP_RIPPLE_SUCCESS = 'PATCH_TOP_RIPPLE_SUCCESS'
+const PATCH_TOP_RIPPLE_FAILURE = 'PATCH_TOP_RIPPLE_FAILURE'
+// CHILD
+const PATCH_CHILD_RIPPLE = 'PATCH_CHILD_RIPPLE'
+const PATCH_CHILD_RIPPLE_PENDING = 'PATCH_CHILD_RIPPLE_PENDING'
+const PATCH_CHILD_RIPPLE_SUCCESS = 'PATCH_CHILD_RIPPLE_SUCCESS'
+const PATCH_CHILD_RIPPLE_FAILURE = 'PATCH_CHILD_RIPPLE_FAILURE'
+// Deleting ripple
+// TOP
+const DELETE_TOP_RIPPLE = 'DELETE_TOP_RIPPLE'
+const DELETE_TOP_RIPPLE_PENDING = 'DELETE_TOP_RIPPLE_PENDING'
+const DELETE_TOP_RIPPLE_SUCCESS = 'DELETE_TOP_RIPPLE_SUCCESS'
+const DELETE_TOP_RIPPLE_FAILURE = 'DELETE_TOP_RIPPLE_FAILURE'
+// TOP
+const DELETE_CHILD_RIPPLE = 'DELETE_CHILD_RIPPLE'
+const DELETE_CHILD_RIPPLE_PENDING = 'DELETE_CHILD_RIPPLE_PENDING'
+const DELETE_CHILD_RIPPLE_SUCCESS = 'DELETE_CHILD_RIPPLE_SUCCESS'
+const DELETE_CHILD_RIPPLE_FAILURE = 'DELETE_CHILD_RIPPLE_FAILURE'
 
 export interface ChildMode {
   top?: number
@@ -160,12 +212,10 @@ export const RippleActions = {
   changeTopAddMode: createAction<number, number>(CHANGE_TOP_ADD_MODE, value => value),
   changeTopShowChildMode: createAction<number, number>(CHANGE_TOP_SHOW_CHILD_MODE, value => value),
   changeTopChangeMode: createAction<number, number>(CHANGE_TOP_CHANGE_MODE, value => value),
-  patchChangeTopRipple: createAction<APIPayload, PatchTopRipple>(CHANGE_TOP_RIPPLE, patchTopRippleAPI),
   changeTopDeleteMode: createAction<number, number>(CHANGE_TOP_DELETE_MODE, value => value),
   changeTopMoreShowMode: createAction<number, number>(CHANGE_TOP_MORE_SHOW_MODE, value => value),
   // Change one of child ripples change mode
   changeChildChangeMode: createAction<ChildMode, ChildMode>(CHANGE_CHILD_CHANGE_MODE, value => value),
-  patchChangeChildRipple: createAction<APIPayload, PatchChildRipple>(CHANGE_CHILD_RIPPLE, patchChildRippleAPI),
   changeChildDeleteMode: createAction<ChildMode, ChildMode>(CHANGE_CHILD_DELETE_MODE, value => value),
   changeChildMoreShowMode: createAction<ChildMode, ChildMode>(CHANGE_CHILD_MORE_SHOW_MODE, value => value),
   // Get top ripples
@@ -175,15 +225,26 @@ export const RippleActions = {
   // Post top ripple
   postTopRipple: createAction<APIPayload, PostTopRipple>(POST_ADD_TOP_RIPPLE, postTopRippleAPI),
   // Post child ripple
-  postChildRipple: createAction<APIPayload, PostChildRipple>(POST_ADD_CHILD_RIPPLE, postChildRippleAPI)
+  postChildRipple: createAction<APIPayload, PostChildRipple>(POST_ADD_CHILD_RIPPLE, postChildRippleAPI),
+  // Patch top ripple
+  patchTopRipple: createAction<APIPayload, PatchTopRipple>(PATCH_TOP_RIPPLE, patchTopRippleAPI),
+  // Patch child ripple
+  patchChildRipple: createAction<APIPayload, PatchChildRipple>(PATCH_CHILD_RIPPLE, patchChildRippleAPI),
+  // Delete top ripple
+  deleteTopRipple: createAction<APIPayload, DeleteTopRipple>(DELETE_TOP_RIPPLE, deleteTopRippleAPI),
+  // Delete child ripple
+  deleteChildRipple: createAction<APIPayload, DeleteChildRipple>(DELETE_CHILD_RIPPLE, deleteChildRippleAPI)
 }
 
 export interface AddRippleState {
   pending: boolean
   error: boolean
 }
-
 export interface ChangeRippleState {
+  pending: boolean
+  error: boolean
+}
+export interface DeleteRippleState {
   pending: boolean
   error: boolean
 }
@@ -224,6 +285,7 @@ export interface RippleState {
   childRipple: TopOrChildRippleState[]
   addRippleState: AddRippleState
   changeRippleState: ChangeRippleState
+  deleteRippleState: DeleteRippleState
 }
 
 const initialState: RippleState = {
@@ -232,7 +294,8 @@ const initialState: RippleState = {
   topRipple: [],
   childRipple: [],
   addRippleState: { pending: false, error: false },
-  changeRippleState: { pending: false, error: false }
+  changeRippleState: { pending: false, error: false },
+  deleteRippleState: { pending: false, error: false }
 }
 
 type TopAddModePayload = ReturnType<typeof RippleActions.changeTopAddMode>
@@ -287,13 +350,13 @@ const reducer = handleActions<RippleState, any>(
         draft.topRipple[action.payload || 0].changeMode = false
       })
     },
-    [CHANGE_TOP_RIPPLE_PENDING]: (state, action: Action<APIPayload>) => {
+    [PATCH_TOP_RIPPLE_PENDING]: (state, action: Action<APIPayload>) => {
       return produce(state, draft => {
         draft.changeRippleState.pending = true
         draft.changeRippleState.error = false
       })
     },
-    [CHANGE_TOP_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
+    [PATCH_TOP_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
       const { changedRipple } = action.payload.data.value
 
       const TopRipple = state.topRipple.map((object: TopOrChildRippleState, i: number) => {
@@ -310,7 +373,7 @@ const reducer = handleActions<RippleState, any>(
         draft.changeRippleState.error = false
       })
     },
-    [CHANGE_TOP_RIPPLE_FAILURE]: (state, action: Action<APIPayload>) => {
+    [PATCH_TOP_RIPPLE_FAILURE]: (state, action: Action<APIPayload>) => {
       return produce(state, draft => {
         draft.changeRippleState.pending = false
         draft.changeRippleState.error = true
@@ -329,6 +392,21 @@ const reducer = handleActions<RippleState, any>(
         draft.topRipple[action.payload || 0].deleteMode = false
       })
     },
+    [DELETE_TOP_RIPPLE_PENDING]: state =>
+      produce(state, draft => {
+        draft.deleteRippleState.pending = true
+        draft.deleteRippleState.error = false
+      }),
+    [DELETE_TOP_RIPPLE_SUCCESS]: state =>
+      produce(state, draft => {
+        draft.deleteRippleState.pending = false
+        draft.deleteRippleState.error = false
+      }),
+    [DELETE_TOP_RIPPLE_FAILURE]: state =>
+      produce(state, draft => {
+        draft.deleteRippleState.pending = false
+        draft.deleteRippleState.error = true
+      }),
     [CHANGE_TOP_MORE_SHOW_MODE]: (state, action: TopMoreShowPayload) => {
       const currentMessage = state.topRipple[action.payload || 0].moreRippleViewMessage
 
@@ -360,12 +438,12 @@ const reducer = handleActions<RippleState, any>(
         draft.topRipple[top || 0].childRipple[child || 0].changeMode = false
       })
     },
-    [CHANGE_CHILD_RIPPLE_PENDING]: state =>
+    [PATCH_CHILD_RIPPLE_PENDING]: state =>
       produce(state, draft => {
         draft.changeRippleState.pending = true
         draft.changeRippleState.error = false
       }),
-    [CHANGE_CHILD_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
+    [PATCH_CHILD_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
       // Rirpple data
       const changedRipple = action.payload.data.value.changedRipple
       const data = state.topRipple.map((object: TopOrChildRippleState, i: number) => {
@@ -394,7 +472,7 @@ const reducer = handleActions<RippleState, any>(
         draft.changeRippleState.error = false
       })
     },
-    [CHANGE_CHILD_RIPPLE_FAILURE]: state =>
+    [PATCH_CHILD_RIPPLE_FAILURE]: state =>
       produce(state, draft => {
         draft.changeRippleState.pending = false
         draft.changeRippleState.error = true
@@ -413,6 +491,21 @@ const reducer = handleActions<RippleState, any>(
         draft.topRipple[top || 0].childRipple[child || 0].deleteMode = false
       })
     },
+    [DELETE_CHILD_RIPPLE_PENDING]: state =>
+      produce(state, draft => {
+        draft.deleteRippleState.pending = true
+        draft.deleteRippleState.error = false
+      }),
+    [DELETE_CHILD_RIPPLE_SUCCESS]: state =>
+      produce(state, draft => {
+        draft.deleteRippleState.pending = false
+        draft.deleteRippleState.error = false
+      }),
+    [DELETE_CHILD_RIPPLE_FAILURE]: state =>
+      produce(state, draft => {
+        draft.deleteRippleState.pending = false
+        draft.deleteRippleState.error = true
+      }),
     [CHANGE_CHILD_MORE_SHOW_MODE]: (state, action: Action<any>) => {
       const { top, child } = action.payload
       const currentMessage = state.topRipple[top || 0].childRipple[child || 0].moreRippleViewMessage
