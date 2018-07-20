@@ -10,7 +10,8 @@ import {
   PostChildRipple,
   PatchChildRipple,
   ChildMode,
-  PatchTopRipple
+  PatchTopRipple,
+  DeleteTopRipple
 } from 'store/modules/Ripple'
 import RippleChildRipple from 'lib/RippleChildRipple'
 import RippleChildInput from 'lib/RippleChildInput'
@@ -39,28 +40,50 @@ interface Props {
   topDeleteMode: boolean
   topMoreRippleView: boolean
   topMoreRippleViewMessage: string
-  // Mode change
+  // Mode change & HTTP request - TOP
   changeTopAddMode: (value: number) => boolean
   changeTopShowChildMode: (value: number) => boolean
   changeTopChangeMode: (value: number) => boolean
   changeTopRipple: (value: PatchTopRipple) => Promise<object>
   changeTopDeleteMode: (value: number) => boolean
+  deleteTopRipple: (value: DeleteTopRipple) => Promise<object>
   changeTopMoreViewMode: (value: number) => boolean
-  // Mode change
+  // Mode change & HTTP request - CHILD
+  postChildRipple: (value: PostChildRipple) => Promise<any>
   changeChildChangeMode: (value: ChildMode) => boolean
   changeChildRipple: (value: PatchChildRipple) => Promise<object>
-  changeRippleStatePending: boolean
   changeChildDeleteMode: (value: ChildMode) => boolean
+  deleteChildRipple: (value: PatchChildRipple) => Promise<object>
   changeChildMoreViewMode: (value: ChildMode) => boolean
-  // PostChildRipple
-  postChildRipple: (value: PostChildRipple) => Promise<any>
+  // Pending State
   addRippleStatePending: boolean
+  changeRippleStatePending: boolean
+  deleteRippleStatePending: boolean
 }
 
 interface State {
   passwordToChange?: string
   passwordToDelete?: string
   text?: string
+}
+
+interface ChangeRipple {
+  category: string
+  title: string
+  writer: string
+  text: string
+  password: string
+  rippleID: string
+  pending: boolean
+}
+
+interface DeleteRipple {
+  category: string
+  title: string
+  writer: string
+  password: string
+  rippleID: string
+  pending: boolean
 }
 
 interface ShowChildRippleButtonFunction {
@@ -116,28 +139,105 @@ class RippleTopRipple extends React.Component<Props, State> {
 
   // Change Ripple
   public handleRippleChange = () => {
-    const { category, title, writer, rippleID, changeRippleStatePending } = this.props
+    const { changeTopRipple, category, title, writer, rippleID, changeRippleStatePending } = this.props
     const { text, passwordToChange } = this.state
 
-    if (changeRippleStatePending === true) {
-      return toast('댓글이 변경 중입니다. 잠시 후에 다시 시도해 주세요 !')
+    // Pending check
+    const pendingCheck = (data: ChangeRipple): Promise<object> => {
+      if (data.pending === true) {
+        return Promise.reject(new Error('Pending'))
+      }
+
+      return Promise.resolve(data)
     }
 
-    return this.props
-      .changeTopRipple({
-        category,
-        title,
-        writer,
-        text,
-        rippleID,
-        password: passwordToChange
+    // Change ripple
+    const rippleChange = (data: ChangeRipple): void => {
+      changeTopRipple({
+        category: data.category,
+        title: data.title,
+        writer: data.writer,
+        text: data.text,
+        rippleID: data.rippleID,
+        password: data.password
       })
-      .then((res: any) => {
-        toast(res.action.payload.data.message)
+        .then((res: any) => {
+          toast(res.action.payload.data.message)
+        })
+        .catch((err: any) => {
+          toast(err.response.data.message)
+        })
+    }
+
+    // Error handler
+    const onError = (err: Error) => {
+      if (err.message === 'Pending') {
+        toast('댓글이 변경 중입니다. 잠시 후에 다시 시도해 주세요 !')
+      }
+    }
+
+    pendingCheck({
+      category,
+      title,
+      writer,
+      text,
+      rippleID,
+      password: passwordToChange,
+      pending: changeRippleStatePending
+    })
+      .then(rippleChange)
+      .catch(onError)
+  }
+
+  // Delete ripple
+  public handleRippleDelete = () => {
+    const { deleteTopRipple, category, title, writer, rippleID, deleteRippleStatePending } = this.props
+    const { passwordToDelete } = this.state
+
+    // Pending check
+    const pendingCheck = (data: DeleteRipple): Promise<object> => {
+      if (data.pending === true) {
+        return Promise.reject(new Error('Pending'))
+      }
+
+      return Promise.resolve(data)
+    }
+
+    // Delete ripple
+    const rippleDelete = (data: DeleteRipple): void => {
+      deleteTopRipple({
+        category: data.category,
+        title: data.title,
+        writer: data.writer,
+        rippleID: data.rippleID,
+        password: data.password
       })
-      .catch((err: any) => {
-        toast(err.response.data.message)
-      })
+        .then((res: any) => {
+          toast(res.action.payload.data.message)
+        })
+        .catch((err: any) => {
+          toast(err.response.data.message)
+        })
+    }
+
+    // Error handler
+    const onError = (err: Error): void => {
+      if (err.message === 'Pending') {
+        toast('댓글이 삭제 중입니다. 잠시 후에 다시 시도해 주세요 !')
+      }
+    }
+
+    // Promise
+    pendingCheck({
+      category,
+      title,
+      writer,
+      password: passwordToDelete,
+      rippleID,
+      pending: deleteRippleStatePending
+    })
+      .then(rippleDelete)
+      .catch(onError)
   }
 
   // Optimization rendering problem
@@ -368,7 +468,9 @@ class RippleTopRipple extends React.Component<Props, State> {
             <button className="danger-half" name="changeTopDeleteMode" onClick={this.handleButtonActionChange}>
               삭제 취소
             </button>
-            <button className="danger-half">삭제 확인</button>
+            <button className="danger-half" onClick={this.handleRippleDelete}>
+              삭제 확인
+            </button>
           </div>
         )
       }
