@@ -3,29 +3,29 @@
 yarn.lock
 
 # Server dependencies
-/Server/node_modules
-/Server/build
+/blog-backend/node_modules
+/blog-backend/build
 
 # Server yarn-lock
-/Server/yarn.lock
+/blog-backend/yarn.lock
 
 # Server DataBase config
 
 # Client dependencies
-/Client/node_modules
+/blog-frontend/node_modules
 
 # Client yarn-lock
-/Client/yarn.lock
+/blog-frontend/yarn.lock
 
 # Client production
-/Client/build
+/blog-frontend/build
 
 # Client misc
-/Client/.DS_Store
-/Client/.env.local
-/Client/.env.development.local
-/Client/.env.test.local
-/Client/.env.production.local
-/Client/npm-debug.log*
-/Client/yarn-debug.log*
-/Client/yarn-error.log*
+/blog-frontend/.DS_Store
+/blog-frontend/.env.local
+/blog-frontend/.env.development.local
+/blog-frontend/.env.test.local
+/blog-frontend/.env.production.local
+/blog-frontend/npm-debug.log*
+/blog-frontend/yarn-debug.log*
+/blog-frontend/yarn-error.log*
