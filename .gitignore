@@ -10,7 +10,7 @@ yarn.lock
 /Server/yarn.lock
 
 # Server DataBase config
-# /Server/config.js
+/Server/config.js
 
 # Client dependencies
 /Client/node_modules
