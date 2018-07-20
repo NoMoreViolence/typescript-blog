@@ -71,9 +71,7 @@ Category.statics.changeCategory = function (category, changeCategory) {
 // Delete Category
 // Return category's _id
 Category.statics.deleteCategory = function (category) {
-  return this.findOneAndRemove({ category })
-    .select({ _id: 1 })
-    .exec()
+  return this.findOneAndRemove({ category }).exec()
 }
 // Delete
 

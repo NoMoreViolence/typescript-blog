@@ -218,6 +218,7 @@ exports.categoryChange = (req, res) => {
   // Category chagne using mongo db
   const categoryChange = async data => {
     await Category.changeCategory(data.category, data.changeCategory)
+
     return Promise.resolve(data)
   }
 
@@ -269,11 +270,11 @@ exports.categoryDelete = (req, res) => {
   const categoryExistCheck = async data => {
     // Find category
     const dataCategory = await Category.findSameCategory(data.category)
-
     // Check req.params.category is exist or not
     if (dataCategory === null) {
       return Promise.reject(new Error('삭제할 카테고리가 존재하지 않습니다 !'))
     }
+
     return Promise.resolve({ ...data, categoryData: dataCategory })
   }
 
@@ -282,6 +283,7 @@ exports.categoryDelete = (req, res) => {
     if (data.category !== data.doubleCheck) {
       return Promise.reject(new Error('카테고리 중복 확인 실패 !'))
     }
+
     return Promise.resolve(data)
   }
 
@@ -290,10 +292,11 @@ exports.categoryDelete = (req, res) => {
     // TODO: ReadME
     // First, delete Category, and delete posts of categorys
     // Last, delete Ripple that has deleted categoryID
-    await Post.deletePostsOfDeletedCategory(await Category.deleteCategory(data.category))
+    await Category.deleteCategory(data.category)
+    await Post.deletePostsOfDeletedCategory(data.categoryData.id)
     await Ripple.deleteAllByCategoryID(data.categoryData.id)
 
-    Promise.resolve(data)
+    return Promise.resolve(data)
   }
 
   // Response to client
