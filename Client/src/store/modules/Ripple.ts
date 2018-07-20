@@ -397,11 +397,23 @@ const reducer = handleActions<RippleState, any>(
         draft.deleteRippleState.pending = true
         draft.deleteRippleState.error = false
       }),
-    [DELETE_TOP_RIPPLE_SUCCESS]: state =>
-      produce(state, draft => {
+    [DELETE_TOP_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
+      const { deletedRipple } = action.payload.data.value
+
+      const filteredData = state.topRipple.filter((object: TopOrChildRippleState, i: number) => {
+        if (object._id === deletedRipple.id) {
+          return false
+        }
+
+        return true
+      })
+
+      return produce(state, draft => {
+        draft.topRipple = filteredData
         draft.deleteRippleState.pending = false
         draft.deleteRippleState.error = false
-      }),
+      })
+    },
     [DELETE_TOP_RIPPLE_FAILURE]: state =>
       produce(state, draft => {
         draft.deleteRippleState.pending = false
@@ -445,7 +457,7 @@ const reducer = handleActions<RippleState, any>(
       }),
     [PATCH_CHILD_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
       // Rirpple data
-      const changedRipple = action.payload.data.value.changedRipple
+      const { changedRipple } = action.payload.data.value
       const data = state.topRipple.map((object: TopOrChildRippleState, i: number) => {
         if (object._id === changedRipple.topID) {
           return {
@@ -496,11 +508,30 @@ const reducer = handleActions<RippleState, any>(
         draft.deleteRippleState.pending = true
         draft.deleteRippleState.error = false
       }),
-    [DELETE_CHILD_RIPPLE_SUCCESS]: state =>
-      produce(state, draft => {
+    [DELETE_CHILD_RIPPLE_SUCCESS]: (state, action: Action<APIPayload>) => {
+      const { deletedRipple } = action.payload.data.value
+
+      const filteredData = state.topRipple.map((object: TopOrChildRippleState, i: number) => {
+        if (object._id === deletedRipple.topID) {
+          return {
+            ...object,
+            childRipple: object.childRipple.filter((object: TopOrChildRippleState, i: number) => {
+              if (object._id === deletedRipple.id) {
+                return false
+              }
+              return true
+            })
+          }
+        }
+        return object
+      })
+
+      return produce(state, draft => {
+        draft.topRipple = filteredData
         draft.deleteRippleState.pending = false
         draft.deleteRippleState.error = false
-      }),
+      })
+    },
     [DELETE_CHILD_RIPPLE_FAILURE]: state =>
       produce(state, draft => {
         draft.deleteRippleState.pending = false
