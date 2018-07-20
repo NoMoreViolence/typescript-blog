@@ -190,7 +190,7 @@ exports.postCreate = (req, res) => {
 /*
     PUT /api/:category/:title
     {
-      changeCategory: category
+      changeCategory: string
       changeTitle: string,
       changeSubTitle: string,
       changeMainText: string

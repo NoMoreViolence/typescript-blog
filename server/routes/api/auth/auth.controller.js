@@ -29,8 +29,6 @@ const MakeNewJwtToken = (username, admin, secret) => {
     }
 */
 exports.register = (req, res) => {
-  console.log(`회원가입 비밀번호: ${req.body.password}`)
-
   // crypto password
   req.body.password = crypto
     .createHash('sha512')
@@ -75,14 +73,15 @@ exports.register = (req, res) => {
   const respond = isAdmin => {
     res.json({
       message: '정상적인 작업 - 회원가입 성공',
-      admin: !!isAdmin
+      admin: true
     })
   }
 
   // run when there is an error (username exists)
   const onError = error => {
     res.status(409).json({
-      message: error.message
+      message: error.message,
+      admin: false
     })
   }
 
