@@ -70,7 +70,7 @@ RESPONSE: {
 ```typescript
 POST
 
-자동 로그인: /api/auto/check
+자동 로그인: '/api/auto/check'
 
 headers: {
   'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ headers: {
 }
 
 params: {
-  category
+  category: string
 }
 
 body: {
@@ -132,7 +132,7 @@ headers: {
 }
 
 params: {
-  category
+  category: string
 }
 
 body: {
@@ -157,11 +157,11 @@ headers: {
 }
 
 params: {
-  category
+  category: string
 }
 
 body: {
-  changeCategory
+  changeCategory: string
 }
 
 RESPONSE: {
@@ -182,11 +182,11 @@ headers: {
 }
 
 params: {
-  category
+  category: string
 }
 
 body: {
-  doubleCheck
+  doubleCheck: string
 }
 
 RESPONSE: {
@@ -203,7 +203,7 @@ RESPONSE: {
 ```typescript
 GET
 
-포스트 조회: '/api/:category/:title'
+포스트 조회: '/api/:category/:title?type={value}'
 
 headers: {
   'Content-Type': 'application/json',
@@ -211,12 +211,12 @@ headers: {
 }
 
 params: {
-  category,
-  title
+  category: string,
+  title: string
 }
 
 query: {
-  type: number
+  type: string, used as a number (type * 1)
 }
 
 body: {
@@ -241,8 +241,8 @@ headers: {
 }
 
 params: {
-  category,
-  title
+  category: string,
+  title: string
 }
 
 body: {
@@ -268,8 +268,8 @@ headers: {
 }
 
 params: {
-  category,
-  title
+  category: string,
+  title: string
 }
 
 body: {
@@ -297,8 +297,8 @@ headers: {
 }
 
 params: {
-  category,
-  title
+  category: string,
+  title: string
 }
 
 body: {
@@ -326,9 +326,9 @@ headers: {
 }
 
 params: {
-  category,
-  title,
-  toporchild
+  category: string,
+  title: string,
+  toporchild: string ('top' | 'child')
 }
 
 body: {
@@ -352,10 +352,10 @@ headers: {
 }
 
 params: {
-  category,
-  title,
-  writer,
-  toporchild
+  category: string,
+  title: string,
+  writer: string,
+  toporchild: string ('top' | 'child')
 }
 
 body: {
@@ -381,10 +381,10 @@ headers: {
 }
 
 params: {
-  category,
-  title,
-  writer,
-  toporchild
+  category: string,
+  title: string,
+  writer: string,
+  toporchild: string ('top' | 'child')
 }
 
 body: {
@@ -411,10 +411,10 @@ headers: {
 }
 
 params: {
-  category,
-  title,
-  writer,
-  toporchild
+  category: string,
+  title: string,
+  writer: string,
+  toporchild: string ('top' | 'child')
 }
 
 body: {
