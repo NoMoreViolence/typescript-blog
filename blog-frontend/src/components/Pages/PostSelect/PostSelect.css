@@ -1,10 +1,106 @@
-/* post view container, this is post root */
-.post-view-container {
+.post-container {
   width: 100%;
-  background-color: transparent;
-  border: 1px solid rgba(0, 0, 0, .125);
-  border-radius: .25rem;
-  padding: 15px;
-  margin-top: 2.5%;
+  display: flex;
+  justify-content: center;
+}
+
+/* iphone SE */
+/* very small mobie view */
+/* Reactive font size */
+@media only screen and (min-width: 0px) and (max-width: 320px) {
+}
+
+/* iphone 6 7 8, galaxy S5 */
+/* small mobie view */
+/* Reactive font size */
+@media only screen and (min-width: 321px) and (max-width: 375px) {
+  /* post view container, this is post root */
+  .post-view-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+    padding: 15px;
+    margin-top: 2.5%;
+  }
+}
+
+/* iphone 6+, 7+, 8+, galaxy Note, Nexus 5X */
+/* large mobie view */
+/* Reactive font size */
+@media only screen and (min-width: 376px) and (max-width: 425px) {
+  /* post view container, this is post root */
+  .post-view-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+    padding: 15px;
+    margin-top: 2.5%;
+  }
+}
+
+/* tablet */
+@media only screen and (min-width: 426px) and (max-width: 768px) {
+  /* post view container, this is post root */
+  .post-view-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+    padding: 15px;
+    margin-top: 2.5%;
+  }
+}
+
+/* laptop */
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  /* post view container, this is post root */
+  .post-view-container {
+    display: flex;
+    flex-direction: column;
+    width: 700px;
+    background-color: transparent;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+    padding: 15px;
+    margin-top: 2.5%;
+  }
+}
+
+/* default desktop */
+@media only screen and (min-width: 1025px) and (max-width: 2000px) {
+  /* post view container, this is post root */
+  .post-view-container {
+    display: flex;
+    flex-direction: column;
+    width: 850px;
+    background-color: transparent;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+    padding: 15px;
+    margin-top: 2.5%;
+  }
+}
+
+/* for 4K display */
+@media only screen and (min-width: 2001px) {
+  /* post view container, this is post root */
+  .post-view-container {
+    display: flex;
+    flex-direction: column;
+    width: 1000px;
+    background-color: transparent;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+    padding: 15px;
+    margin-top: 2.5%;
+  }
 }
 
