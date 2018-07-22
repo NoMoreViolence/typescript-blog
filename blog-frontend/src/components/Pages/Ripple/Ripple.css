@@ -99,7 +99,7 @@
   .ripple-container {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 1000px;
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     border-radius: .25rem;
