@@ -20,26 +20,6 @@
   font-weight: 500;
 }
 
-.markdown-render h1 code,
-.markdown-render h2 code,
-.markdown-render h3 code,
-.markdown-render h4 code,
-.markdown-render h5 code,
-.markdown-render p code {
-  font-family: 'D2 Coding';
-  color: #383e41;
-  font-weight: 300;
-  background: #f3f6fa;
-  padding: 0.25rem;
-  border: 1px solid #f3f6fa;
-  border-radius: 2px;
-}
-
-.markdown-render code[class*="language-"],
-.markdown-render pre[class*="language-"] {
-  font-family: 'D2 Coding';
-}
-
 .markdown-render a {
   color: #007bff;
 }
@@ -84,6 +64,28 @@
   .markdown-render p {
     font-size: 0.9rem;
   }
+
+  .markdown-render h1 code,
+  .markdown-render h2 code,
+  .markdown-render h3 code,
+  .markdown-render h4 code,
+  .markdown-render h5 code,
+  .markdown-render p code {
+    font-size: 0.85rem;
+    font-family: 'monaco';
+    color: #383e41;
+    font-weight: 300;
+    background: #f3f6fa;
+    padding: 0.25rem;
+    border: 1px solid #f3f6fa;
+    border-radius: 2px;
+  }
+
+  .markdown-render code[class*="language-"],
+  .markdown-render pre[class*="language-"] {
+    font-size: 0.85rem;
+    font-family: 'monaco';
+  }
 }
 
 /* iphone 6 7 8, galaxy S5 */
@@ -96,6 +98,28 @@
 
   .markdown-render p {
     font-size: 0.95rem;
+  }
+
+  .markdown-render h1 code,
+  .markdown-render h2 code,
+  .markdown-render h3 code,
+  .markdown-render h4 code,
+  .markdown-render h5 code,
+  .markdown-render p code {
+    font-size: 0.85rem;
+    font-family: 'monaco';
+    color: #383e41;
+    font-weight: 300;
+    background: #f3f6fa;
+    padding: 0.25rem;
+    border: 1px solid #f3f6fa;
+    border-radius: 2px;
+  }
+
+  .markdown-render code[class*="language-"],
+  .markdown-render pre[class*="language-"] {
+    font-size: 0.85rem;
+    font-family: 'monaco';
   }
 }
 
@@ -110,6 +134,28 @@
   .markdown-render p {
     font-size: 1rem;
   }
+
+  .markdown-render h1 code,
+  .markdown-render h2 code,
+  .markdown-render h3 code,
+  .markdown-render h4 code,
+  .markdown-render h5 code,
+  .markdown-render p code {
+    font-size: 0.85rem;
+    font-family: 'monaco';
+    color: #383e41;
+    font-weight: 300;
+    background: #f3f6fa;
+    padding: 0.25rem;
+    border: 1px solid #f3f6fa;
+    border-radius: 2px;
+  }
+
+  .markdown-render code[class*="language-"],
+  .markdown-render pre[class*="language-"] {
+    font-size: 0.85rem;
+    font-family: 'monaco';
+  }
 }
 
 /* tablet */
@@ -120,6 +166,28 @@
 
   .markdown-render p {
     font-size: 1.05rem;
+  }
+
+  .markdown-render h1 code,
+  .markdown-render h2 code,
+  .markdown-render h3 code,
+  .markdown-render h4 code,
+  .markdown-render h5 code,
+  .markdown-render p code {
+    font-size: 0.85rem;
+    font-family: 'monaco';
+    color: #383e41;
+    font-weight: 300;
+    background: #f3f6fa;
+    padding: 0.25rem;
+    border: 1px solid #f3f6fa;
+    border-radius: 2px;
+  }
+
+  .markdown-render code[class*="language-"],
+  .markdown-render pre[class*="language-"] {
+    font-size: 0.85rem;
+    font-family: 'monaco';
   }
 }
 
@@ -132,6 +200,28 @@
   .markdown-render p {
     font-size: 1.1rem;
   }
+
+  .markdown-render h1 code,
+  .markdown-render h2 code,
+  .markdown-render h3 code,
+  .markdown-render h4 code,
+  .markdown-render h5 code,
+  .markdown-render p code {
+    font-size: 0.85rem;
+    font-family: 'monaco';
+    color: #383e41;
+    font-weight: 300;
+    background: #f3f6fa;
+    padding: 0.25rem;
+    border: 1px solid #f3f6fa;
+    border-radius: 2px;
+  }
+
+  .markdown-render code[class*="language-"],
+  .markdown-render pre[class*="language-"] {
+    font-size: 0.85rem;
+    font-family: 'monaco';
+  }
 }
 
 /* default desktop */
@@ -143,15 +233,59 @@
   .markdown-render p {
     font-size: 1.25rem;
   }
+
+  .markdown-render h1 code,
+  .markdown-render h2 code,
+  .markdown-render h3 code,
+  .markdown-render h4 code,
+  .markdown-render h5 code,
+  .markdown-render p code {
+    font-size: 1rem;
+    font-family: 'monaco';
+    color: #383e41;
+    font-weight: 300;
+    background: #f3f6fa;
+    padding: 0.25rem;
+    border: 1px solid #f3f6fa;
+    border-radius: 2px;
+  }
+
+  .markdown-render code[class*="language-"],
+  .markdown-render pre[class*="language-"] {
+    font-size: 1rem;
+    font-family: 'monaco';
+  }
 }
 
 /* for 4K display */
 @media only screen and (min-width: 2001px) {
   .markdown-render pre {
-    font-size: 1.9rem;
+    font-size: 1.8rem;
   }
 
   .markdown-render p {
-    font-size: 1.9rem;
+    font-size: 1.8rem;
+  }
+
+  .markdown-render h1 code,
+  .markdown-render h2 code,
+  .markdown-render h3 code,
+  .markdown-render h4 code,
+  .markdown-render h5 code,
+  .markdown-render p code {
+    font-size: 1.5rem;
+    font-family: 'monaco';
+    color: #383e41;
+    font-weight: 300;
+    background: #f3f6fa;
+    padding: 0.25rem;
+    border: 1px solid #f3f6fa;
+    border-radius: 2px;
+  }
+
+  .markdown-render code[class*="language-"],
+  .markdown-render pre[class*="language-"] {
+    font-size: 1.5rem;
+    font-family: 'monaco';
   }
 }
