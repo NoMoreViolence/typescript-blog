@@ -1,5 +1,7 @@
 import * as React from 'react'
 import { Route, Switch } from 'react-router-dom'
+import * as Loadable from 'react-loadable'
+
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 // css module
@@ -10,15 +12,25 @@ import 'components/commonCSS/color.css'
 
 // Pages
 import Basic from 'components/Pages/Basic'
-import Login from 'components/Pages/Login'
 import Header from 'components/Pages/Header'
 import CategoryAll from 'components/Pages/CategoryAll'
 import CategorySelect from 'components/Pages/CategorySelect'
-import Admin from 'components/Pages/Admin'
 import PostSelect from 'components/Pages/PostSelect'
 import Ripple from './Pages/Ripple'
 
 import ProgressBar from 'lib/ProgressBar'
+import LoadingCircle from 'lib/LoadingCircle'
+
+const Login = Loadable({
+  loader: () => import('components/Pages/Login'),
+  loading: LoadingCircle
+})
+
+// Code splitting
+const Admin = Loadable({
+  loader: () => import('components/Pages/Admin'),
+  loading: LoadingCircle
+})
 
 const App: React.SFC = () => (
   <React.Fragment>
