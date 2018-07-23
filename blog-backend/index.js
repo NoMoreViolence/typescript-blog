@@ -22,14 +22,25 @@ app.use(bodyParser.json({ limit: '50mb' }))
 app.use(morgan('dev'))
 // jwt secret key
 app.set('jwt-secret', config.secret)
-// set server Route
-app.use('/api', require('./routes/api'))
 // Client React.js file
 app.use(express.static(path.join(__dirname, 'build')))
+// set server Route
+app.use('/api', require('./routes/api'))
+// Defalut route
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build/index.html'), err => {
+    if (err) {
+      res.status(500).send(err)
+    }
+  })
+})
 
 // mongo connect
 mongoose.set('debug', true)
-mongoose.connect(config.mongodbUri)
+mongoose.connect(
+  config.mongodbUri,
+  { useNewUrlParser: true }
+)
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', () => {
