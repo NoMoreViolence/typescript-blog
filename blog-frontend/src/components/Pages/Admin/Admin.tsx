@@ -12,21 +12,17 @@ import PostAddContainer from 'containers/Admin/PostAddContainer'
 import PostChangeContainer from 'containers/Admin/PostChangeContainer'
 import PostDeleteContainer from 'containers/Admin/PostDeleteContainer'
 
-// markdown editor & renderer css file
-import 'prismjs/themes/prism-okaidia.css'
+// color of markdown syntax
+import 'codemirror/mode/markdown/markdown'
 // call the support PL's code highlighting
 // http://prismjs.com/#languages-list
-import 'prismjs/components/prism-bash.min.js'
 import 'prismjs/components/prism-javascript.min.js'
 import 'prismjs/components/prism-typescript.min.js'
 import 'prismjs/components/prism-jsx.min.js'
 import 'prismjs/components/prism-css.min.js'
 import 'prismjs/components/prism-tsx.min.js'
 import 'prismjs/components/prism-c.min.js'
-import 'prismjs/components/prism-flow.min.js'
 
-// color of markdown syntax
-import 'codemirror/mode/markdown/markdown'
 // markdown colorSet for PL
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/mode/htmlmixed/htmlmixed'
