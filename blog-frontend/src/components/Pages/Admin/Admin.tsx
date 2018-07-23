@@ -14,6 +14,8 @@ import PostDeleteContainer from 'containers/Admin/PostDeleteContainer'
 
 // color of markdown syntax
 import 'codemirror/mode/markdown/markdown'
+// markdown editor & renderer css file
+import 'prismjs/themes/prism-okaidia.css'
 // call the support PL's code highlighting
 // http://prismjs.com/#languages-list
 import 'prismjs/components/prism-javascript.min.js'

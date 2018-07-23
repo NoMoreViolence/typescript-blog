@@ -10,9 +10,6 @@ import 'components/commonCSS/cardView.css'
 import 'components/commonCSS/button.css'
 import 'components/commonCSS/color.css'
 
-// markdown editor & renderer css file
-import 'prismjs/themes/prism-okaidia.css'
-
 // Pages
 import Basic from 'components/Pages/Basic'
 import Header from 'components/Pages/Header'

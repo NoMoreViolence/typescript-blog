@@ -3,14 +3,19 @@ import * as React from 'react'
 import './PostSelect.css'
 
 import { GetPostBringAPIInterface } from 'store/modules/Post'
+import * as Loadable from 'react-loadable'
 
 import NotFound from 'components/Pages/NotFound'
 import LoadingCircle from 'lib/LoadingCircle'
 
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-import MarkDownRendererShowContainer from 'containers/MarkDownRendererShow/MarkDownRendererShowContainer'
 import { toast } from 'react-toastify'
+
+const MarkDownRendererShowContainer = Loadable({
+  loader: () => import('containers/MarkDownRendererShow/MarkDownRendererShowContainer'),
+  loading: LoadingCircle
+})
 
 interface Props {
   postPending: boolean
