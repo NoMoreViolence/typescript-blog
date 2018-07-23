@@ -78,11 +78,11 @@
 /* Reactive font size */
 @media only screen and (min-width: 0px) and (max-width: 320px) {
   .markdown-render pre {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
 
   .markdown-render p {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -91,11 +91,11 @@
 /* Reactive font size */
 @media only screen and (min-width: 321px) and (max-width: 375px) {
   .markdown-render pre {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
   }
 
   .markdown-render p {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
   }
 }
 
@@ -104,54 +104,54 @@
 /* Reactive font size */
 @media only screen and (min-width: 376px) and (max-width: 425px) {
   .markdown-render pre {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   .markdown-render p {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 }
 
 /* tablet */
 @media only screen and (min-width: 426px) and (max-width: 768px) {
   .markdown-render pre {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
   }
 
   .markdown-render p {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
   }
 }
 
 /* laptop */
 @media only screen and (min-width: 769px) and (max-width: 1024px) {
   .markdown-render pre {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .markdown-render p {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 }
 
 /* default desktop */
 @media only screen and (min-width: 1025px) and (max-width: 2000px) {
   .markdown-render pre {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
   }
 
   .markdown-render p {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
   }
 }
 
 /* for 4K display */
 @media only screen and (min-width: 2001px) {
   .markdown-render pre {
-    font-size: 1.8rem;
+    font-size: 1.9rem;
   }
 
   .markdown-render p {
-    font-size: 1.8rem;
+    font-size: 1.9rem;
   }
 }
