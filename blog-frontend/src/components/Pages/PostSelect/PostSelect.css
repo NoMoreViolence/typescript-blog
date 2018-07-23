@@ -7,7 +7,17 @@
 /* iphone SE */
 /* very small mobie view */
 /* Reactive font size */
-@media only screen and (min-width: 0px) and (max-width: 320px) {
+@media only screen and (min-width: 0px) and (max-width: 320px) {/* post view container, this is post root */
+  .post-view-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+    padding: 15px;
+    margin-top: 2.5%;
+  }
 }
 
 /* iphone 6 7 8, galaxy S5 */

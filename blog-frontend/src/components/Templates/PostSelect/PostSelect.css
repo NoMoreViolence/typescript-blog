@@ -11,17 +11,17 @@
 /* Reactive font size */
 @media only screen and (min-width: 0px) and (max-width: 320px) {
   .post-view-title {
-    font-size: 1.05rem;
+    font-size: 1.3rem;
     font-weight: 450;
   }
 
   .post-view-category {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 350;
   }
 
   .post-view-sub-title {
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 300;
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
@@ -33,17 +33,17 @@
 /* Reactive font size */
 @media only screen and (min-width: 321px) and (max-width: 375px) {
   .post-view-title {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: 450;
   }
 
   .post-view-category {
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 350;
   }
 
   .post-view-sub-title {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     font-weight: 300;
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
