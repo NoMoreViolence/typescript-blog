@@ -12,6 +12,7 @@ import 'components/commonCSS/color.css'
 
 // Pages
 import Basic from 'components/Pages/Basic'
+import Helmet from 'components/Pages/Helmet'
 import Header from 'components/Pages/Header'
 import CategoryAll from 'components/Pages/CategoryAll'
 import CategorySelect from 'components/Pages/CategorySelect'
@@ -37,6 +38,7 @@ const App: React.SFC = () => (
     <ProgressBar />
     <div className="main">
       <Basic />
+      <Helmet />
       <ToastContainer />
       <Header />
 
