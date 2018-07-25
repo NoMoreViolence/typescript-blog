@@ -21,8 +21,12 @@ class HeaderCategory extends React.Component<Props> {
   }
 
   public render(): JSX.Element {
-    const navLinkStyle: object = {
+    const navLinkStyleDefalut: object = {
       color: '#17a2b8'
+    }
+
+    const navLinkStyleAdmin: object = {
+      color: 'black'
     }
 
     // Data sort
@@ -30,11 +34,11 @@ class HeaderCategory extends React.Component<Props> {
       return data.map((object, i) => {
         const url = `/${object.category}`
         return (
-          <div key={i}>
-            <NavLink to={url} activeStyle={navLinkStyle}>
-              <h5>{object.category}</h5>
+          <h3 key={i}>
+            <NavLink to={url} className="default-a" activeStyle={navLinkStyleDefalut}>
+              {object.category}
             </NavLink>
-          </div>
+          </h3>
         )
       })
     }
@@ -44,24 +48,24 @@ class HeaderCategory extends React.Component<Props> {
         {loadCategory(this.props.Category)}
         {this.props.Logined === true && (
           <React.Fragment>
-            <div>
-              <NavLink to="/admin" style={{ color: '#dc3545' }}>
-                <h5>관리자 페이지</h5>
+            <h3>
+              <NavLink to="/admin" className="admin-a" activeStyle={navLinkStyleAdmin}>
+                관리자 페이지
               </NavLink>
-            </div>
-            <div>
-              <NavLink to="/" onClick={this.handleSignOut} style={{ color: '#dc3545' }}>
-                <h5>로그아웃</h5>
+            </h3>
+            <h3>
+              <NavLink to="/" onClick={this.handleSignOut} className="admin-a">
+                로그아웃
               </NavLink>
-            </div>
+            </h3>
           </React.Fragment>
         )}
         {this.props.Logined === false && (
-          <div>
-            <NavLink to="/admin/login" style={{ color: '#dc3545' }}>
-              <h5> 관리자 로그인</h5>
+          <h3>
+            <NavLink to="/admin/login" className="admin-a" activeStyle={navLinkStyleAdmin}>
+              관리자 로그인
             </NavLink>
-          </div>
+          </h3>
         )}
       </div>
     )

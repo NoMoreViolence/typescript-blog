@@ -4,6 +4,10 @@ body {
   padding: 0;
 }
 
+h1, h2, h3, h4, h5, h6, p, input, textarea, .primary, .info, .danger, a, .category-all-child, .current-category-unit {
+  font-family: 'Do Hyeon', sans-serif;
+}
+
 @media only screen and (min-width: 0px) and (max-width: 425px) {
   .main {
     padding-top: 8px;
