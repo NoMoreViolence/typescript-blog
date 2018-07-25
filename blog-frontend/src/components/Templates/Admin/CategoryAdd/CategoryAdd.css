@@ -1,3 +1,13 @@
 .category-add-p {
   color: #007bff;
 }
+
+.category-add-form {
+  display: flex;
+  justify-content: space-between;
+}
+
+.category-add-input {
+  flex: 1;
+}
+

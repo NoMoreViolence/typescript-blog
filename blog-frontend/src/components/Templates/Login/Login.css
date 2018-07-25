@@ -1,3 +1,22 @@
-.login-form {
+.login-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
   margin-top: 13%;
+}
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.login-input {
+  width: 300px;
+  padding: 20px;
+}
+
+.login-button {
+  width: 300px;
 }

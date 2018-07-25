@@ -5,3 +5,28 @@
 .category-change-p {
   color: #17a2b8;
 }
+
+.category-change-select-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.category-change-select-filed {
+  width: 100%;
+  height: 150px;
+  overflow-y: auto;
+}
+
+.category-change-select-filed > button {
+  width: 100%;
+  flex: 1;
+}
+
+.category-change-form {
+  display: flex;
+  justify-content: space-between;
+}
+
+.category-change-input {
+  flex: 1;
+}

@@ -2,3 +2,98 @@
   margin-top: 5%;
   margin-bottom: 5%;
 }
+
+.current-category-unit {
+  color: #007bff
+}
+
+/* iphone SE */
+/* very small mobie view */
+/* Reactive font size */
+@media only screen and (min-width: 0px) and (max-width: 320px) {
+  .currnet-category-unit-container {
+    width: 100%;
+    padding: 0.735rem;
+    border-radius: .25rem;
+    background-color: #e9ecef;
+    -webkit-row-count: 1;
+    column-count: 1;
+  }
+}
+
+/* iphone 6 7 8, galaxy S5 */
+/* small mobie view */
+/* Reactive font size */
+@media only screen and (min-width: 321px) and (max-width: 375px) {
+  .currnet-category-unit-container {
+    width: 100%;
+    padding: 0.735rem;
+    border-radius: .25rem;
+    background-color: #e9ecef;
+    -webkit-row-count: 2;
+    column-count: 2;
+  }
+}
+
+/* iphone 6+, 7+, 8+, galaxy Note, Nexus 5X */
+/* large mobie view */
+/* Reactive font size */
+@media only screen and (min-width: 376px) and (max-width: 425px) {
+  .currnet-category-unit-container {
+    width: 100%;
+    padding: 0.735rem;
+    border-radius: .25rem;
+    background-color: #e9ecef;
+    -webkit-row-count: 2;
+    column-count: 2;
+  }
+}
+
+/* tablet */
+@media only screen and (min-width: 426px) and (max-width: 768px) {
+  .currnet-category-unit-container {
+    width: 100%;
+    padding: 0.735rem;
+    border-radius: .25rem;
+    background-color: #e9ecef;
+    -webkit-row-count: 3;
+    column-count: 3;
+  }
+}
+
+/* laptop */
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  .currnet-category-unit-container {
+    width: 100%;
+    padding: 0.735rem;
+    border-radius: .25rem;
+    background-color: #e9ecef;
+    -webkit-row-count: 4;
+    column-count: 4;
+  }
+}
+
+/* default desktop */
+@media only screen and (min-width: 1025px) and (max-width: 2000px) {
+  .currnet-category-unit-container {
+    width: 100%;
+    padding: 0.735rem;
+    border-radius: .25rem;
+    background-color: #e9ecef;
+    -webkit-row-count: 4;
+    column-count: 4;
+  }
+}
+
+/* for 4K display */
+@media only screen and (min-width: 2001px) {
+  .currnet-category-unit-container {
+    width: 100%;
+    padding: 0.735rem;
+    border-radius: .25rem;
+    background-color: #e9ecef;
+    -webkit-row-count: 4;
+    column-count: 4;
+  }
+}
+

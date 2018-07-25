@@ -1,6 +1,5 @@
 import * as React from 'react'
 
-import { Container, Row, Col, Button, Form, Input } from 'reactstrap'
 import './Login.css'
 import { toast } from 'react-toastify'
 
@@ -70,27 +69,27 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
       const requestToServer = (data: LoginInterface): void => {
         postLogin({ username: data.username, password: data.password })
           .then((res: any) => {
-            toast('관리자님 환영합니다 !')
+            toast('관리자님 환영합니다 !', { type: 'success' })
             sessionStorage.setItem('token', res.value.data.token)
             history.push('/')
           })
           .catch((err: any) => {
             if (err.response.status === 500) {
-              toast('서버가 응답하지 않습니다 !')
+              toast('서버가 응답하지 않습니다 !', { type: 'error' })
             }
-            toast(err.response.data.message)
+            toast(err.response.data.message, { type: 'error' })
           })
       }
 
       // Error handler
       const onError = (err: Error): void => {
         if (err.message === 'ID') {
-          toast('ID를 입력해 주세요 !')
+          toast('ID를 입력해 주세요 !', { type: 'error' })
           this.ID.focus()
         }
 
         if (err.message === 'PW') {
-          toast('비밀번호를 입력해 주세요 !')
+          toast('비밀번호를 입력해 주세요 !', { type: 'error' })
           this.PW.focus()
         }
       }
@@ -116,40 +115,31 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
 
     public render(): JSX.Element {
       return (
-        <Container className="login-form">
-          <Row>
-            <Col sm="12" md={{ size: 6, offset: 3 }}>
-              <Button outline={true} color="primary" size="lg" disabled={true}>
-                Admin Login
-              </Button>
-            </Col>
-          </Row>
-          <Row>
-            <Col sm="12" md={{ size: 6, offset: 3 }}>
-              <Form onSubmit={this.handleSubmit}>
-                <Input
-                  type="text"
-                  placeholder="Username"
-                  name="Username"
-                  value={this.props.loginUsername}
-                  onChange={this.handleChange}
-                  innerRef={ref => (this.ID = ref)}
-                />
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  name="Password"
-                  value={this.props.loginPassword}
-                  onChange={this.handleChange}
-                  innerRef={ref => (this.PW = ref)}
-                />
-                <Button color="primary" size="lg" block={true}>
-                  Login
-                </Button>
-              </Form>
-            </Col>
-          </Row>
-        </Container>
+        <div className="login-container">
+          <form onSubmit={this.handleSubmit}>
+            <div className="login-form">
+              <input
+                type="text"
+                placeholder="Username"
+                name="Username"
+                className="primary-input login-input"
+                value={this.props.loginUsername}
+                onChange={this.handleChange}
+                ref={ref => (this.ID = ref)}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                name="Password"
+                className="primary-input login-input"
+                value={this.props.loginPassword}
+                onChange={this.handleChange}
+                ref={ref => (this.PW = ref)}
+              />
+              <button className="primary login-button">Login</button>
+            </div>
+          </form>
+        </div>
       )
     }
   }

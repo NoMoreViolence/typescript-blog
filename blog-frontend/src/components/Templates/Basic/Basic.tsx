@@ -43,11 +43,11 @@ class Basic extends React.Component<Props> {
     const autoLogin = async (data: ClientAutoLoginInterface): Promise<void> => {
       await getLogin({ token: data.token })
         .then((res: any) => {
-          toast('관리자님 환영합니다 !')
+          toast('관리자님 환영합니다 !', { type: 'success' })
         })
         .catch((err: any) => {
           sessionStorage.clear()
-          toast('이런.. 토큰값이 손상되었네요.. 재 로그인해 주세요 !')
+          toast('이런.. 토큰값이 손상되었네요.. 재 로그인해 주세요 !', { type: 'error' })
         })
     }
 

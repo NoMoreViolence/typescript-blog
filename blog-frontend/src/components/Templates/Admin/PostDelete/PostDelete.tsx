@@ -1,6 +1,5 @@
 import * as React from 'react'
 
-import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
 import { RouteComponentProps, withRouter } from 'react-router-dom'
@@ -159,14 +158,14 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     const requestToServer = async (data: DeleteDeleteMethodInterface): Promise<void> => {
       await deletePost({ category: data.category, title: data.title })
         .then((res: any) => {
-          toast(res.action.payload.data.message)
+          toast(res.action.payload.data.message, { type: 'success' })
         })
         .catch((err: any) => {
-          toast(err.response.data.message)
+          toast(err.response.data.message, { type: 'error' })
 
           // If user who has wrong login key or doesn't have login key request, throw error
           if (err.response.data.type) {
-            toast('서비스를 이용하시려면 다시 로그인 해 주세요 !')
+            toast('서비스를 이용하시려면 다시 로그인 해 주세요 !', { type: 'error' })
             logout()
             history.push('/')
           }
@@ -180,15 +179,15 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
     // Error handler
     const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
-        toast('관리자만 이용 가능합니다 !')
+        toast('관리자만 이용 가능합니다 !', { type: 'error' })
         // Logout method
         sessionStorage.clear()
         logout()
         history.push('/')
       } else if (err.message === 'No_Data_Category_Select') {
-        toast('삭제할 포스트의 카테고리를 선택해 주세요 !')
+        toast('삭제할 포스트의 카테고리를 선택해 주세요 !', { type: 'error' })
       } else if (err.message === 'No_Data_Title_Select') {
-        toast('삭제할 포스트를 선택해 주세요 !')
+        toast('삭제할 포스트를 선택해 주세요 !', { type: 'error' })
       }
     }
 
@@ -230,9 +229,9 @@ class PostDelete extends React.Component<Props & RouteComponentProps<History>, S
 
     return (
       <div className="admin-post-container">
-        <Button block={true} outline={true} color="danger" onClick={this.handlePostDeleteShowNoneToogle}>
+        <button className="danger admin-post-button" color="danger" onClick={this.handlePostDeleteShowNoneToogle}>
           {this.state.postDeleteMessage}
-        </Button>
+        </button>
 
         {this.state.showNone && (
           <div className="admin-post-only-preview">

@@ -1,7 +1,6 @@
 import * as React from 'react'
 
 import './CategoryChange.css'
-import { Form, InputGroup, Dropdown, DropdownToggle, DropdownItem, DropdownMenu, Input, Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
 import RegExp from 'lib/RegExp'
@@ -64,6 +63,9 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
     // change changeCategorySelects value
     public handleSelect = (e: React.MouseEvent<any>): void => {
       this.props.changeCategorySelectChange(e.currentTarget.innerText)
+      this.setState({
+        changeCategoryDropdown: false
+      })
     }
 
     // category change method
@@ -152,16 +154,16 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
         await changeCategory({ oldCategory: data.changeCategorySelect, newCategory: data.changeCategoryInput })
           // succeed change category
           .then((res: any) => {
-            toast(res.action.payload.data.message)
+            toast(res.action.payload.data.message, { type: 'success' })
           })
           // failure change category
           .catch((err: any) => {
             this.changeCategoryInput.focus()
-            toast(err.response.data.message)
+            toast(err.response.data.message, { type: 'error' })
 
             // if the requester has no admin token
             if (err.response.data.type) {
-              toast('서비스를 이용하시려면 로그인 해 주세요 !')
+              toast('서비스를 이용하시려면 로그인 해 주세요 !', { type: 'error' })
               logout()
               history.push('/')
             }
@@ -176,31 +178,31 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
       const onError = (err: Error): void => {
         if (err.message === 'Not_Admin_User') {
           // none admin user
-          toast('관리자만 이용 가능합니다 !')
+          toast('관리자만 이용 가능합니다 !', { type: 'error' })
           changeCategorySelectChange('변경할 카테고리 선택')
           logout()
           history.push('/')
         } else if (err.message === 'No_Data_Category_Select') {
           // none selected category select
-          toast('변경할 카테고리를 선택해 주세요 !')
+          toast('변경할 카테고리를 선택해 주세요 !', { type: 'error' })
         } else if (err.message === '/_?_&_#') {
           this.props.changeCategoryInputChange('')
           this.changeCategoryInput.focus()
           // Use invalid symbol
-          toast('변경할 카테고리 이름에 특수문자를 넣지 말아 주세요 !')
+          toast('변경할 카테고리 이름에 특수문자를 넣지 말아 주세요 !', { type: 'error' })
         } else if (err.message === 'No_Data_Category_Input') {
           this.props.changeCategoryInputChange('')
           this.changeCategoryInput.focus()
           // none category input data
-          toast('변경하고 싶은 카테고리 이름을 입력해 주세요 !')
+          toast('변경하고 싶은 카테고리 이름을 입력해 주세요 !', { type: 'error' })
         } else if (err.message === 'Can_Not_Be_A_Admin') {
           this.props.changeCategoryInputChange('')
           this.changeCategoryInput.focus()
           // category input can't be a 'admin'
-          toast("변경될 카테고리 이름은 'admin'이 될 수 없습니다")
+          toast("변경될 카테고리 이름은 'admin'이 될 수 없습니다", { type: 'error' })
         } else if (err.message === 'Can_Not_Match_Select_And_Input') {
           // category select === category input => don't need to change
-          toast('같은 값으로의 변경은 불필요 합니다 !')
+          toast('같은 값으로의 변경은 불필요 합니다 !', { type: 'error' })
         }
         // this clean method will excute when all task processed
         changeCategoryInputChange('')
@@ -232,46 +234,48 @@ const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
     }
 
     public render(): JSX.Element {
-      const { changeCategoryDropdown } = this.state
-      const { changeCategoryInputValue, changeCategorySelectValue } = this.props
-
-      // show current categories
-      const CurrentCategoryChangeBar = (data: CategoryStateInside[]): JSX.Element[] => {
+      // Show current category
+      const showCurrentCategoryChange = (data: CategoryStateInside[]): JSX.Element[] => {
         return data.map((object, i) => {
           return (
-            <DropdownItem key={i} onClick={this.handleSelect}>
+            <button key={i} onClick={this.handleSelect} className="info">
               {object.category}
-            </DropdownItem>
+            </button>
           )
         })
       }
 
       return (
         <div className="category-change-container">
-          <p className="category-change-p">카테고리 변경</p>
-          <Form onSubmit={this.handleSubmit}>
-            <InputGroup>
-              <Dropdown isOpen={changeCategoryDropdown} toggle={this.handleToogle}>
-                <DropdownToggle outline={true} color="info" caret={true}>
-                  {changeCategorySelectValue}
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem onClick={this.handleSelect}>변경할 카테고리 선택</DropdownItem>
-                  {CurrentCategoryChangeBar(this.props.category)}
-                </DropdownMenu>
-              </Dropdown>
-              <Input
+          <h5 className="category-change-p">카테고리 변경</h5>
+          <div className="category-change-select-container">
+            <button className="info" onClick={this.handleToogle}>
+              {this.props.changeCategorySelectValue}
+            </button>
+            {this.state.changeCategoryDropdown && (
+              <div className="category-change-select-filed">
+                {this.props.changeCategorySelectValue !== '변경할 카테고리 선택' && (
+                  <button onClick={this.handleSelect} className="info">
+                    변경할 카테고리 선택
+                  </button>
+                )}
+                {showCurrentCategoryChange(this.props.category)}
+              </div>
+            )}
+          </div>
+          <form onSubmit={this.handleSubmit}>
+            <div className="category-change-form">
+              <input
                 name="changeCategoryInputValue"
                 placeholder="변경할 카테고리 이름 입력"
-                value={changeCategoryInputValue}
-                innerRef={innerRef => (this.changeCategoryInput = innerRef)}
+                className="info-input category-change-input"
+                value={this.props.changeCategoryInputValue}
+                ref={ref => (this.changeCategoryInput = ref)}
                 onChange={this.handleChange}
               />
-              <Button outline={true} color="info">
-                카테고리 변경
-              </Button>
-            </InputGroup>
-          </Form>
+              <button className="info">카테고리 변경</button>
+            </div>
+          </form>
         </div>
       )
     }

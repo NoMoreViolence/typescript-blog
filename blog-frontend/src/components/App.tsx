@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css'
 // css module
 import 'components/commonCSS/layout.css'
 import 'components/commonCSS/cardView.css'
+import 'components/commonCSS/input.css'
 import 'components/commonCSS/button.css'
 import 'components/commonCSS/color.css'
 

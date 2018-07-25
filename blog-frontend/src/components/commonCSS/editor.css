@@ -5,6 +5,11 @@
   padding-top: 5%;
 }
 
+.admin-post-button {
+  width: 100%;
+  flex: 1;
+}
+
 .admin-post-editor-and-preview {
   width: 100%;
   padding-top: 2.5%;

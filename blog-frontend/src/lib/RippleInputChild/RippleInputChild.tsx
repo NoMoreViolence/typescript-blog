@@ -1,8 +1,6 @@
 import * as React from 'react'
 
-import './RippleInputChild.css'
 import { toast } from 'react-toastify'
-import { Input, Button } from 'reactstrap'
 
 import { PostChildRipple } from 'store/modules/Ripple'
 
@@ -44,8 +42,14 @@ class RippleChildInput extends React.Component<Props, State> {
     writer: ''
   }
 
-  // Input change
+  // input change
   public handleChange = (e: { target: HTMLInputElement }) => {
+    this.setState({
+      [e.target.name]: e.target.value
+    })
+  }
+
+  public handleChangeTextarea = (e: { target: HTMLTextAreaElement }) => {
     this.setState({
       [e.target.name]: e.target.value
     })
@@ -198,41 +202,38 @@ class RippleChildInput extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     return (
-      <form onSubmit={this.handleSubmit} className="ripple-child-form">
+      <form onSubmit={this.handleSubmit} className="ripple-form ripple-child-form">
         <div className="ripple-personal-info">
-          <Input
+          <input
             name="writer"
             type="text"
-            className="ripple-input"
+            className="ripple-input primary-input"
             placeholder="유저 이름을 입력해 주세요"
             value={this.state.writer}
             onChange={this.handleChange}
-            innerRef={ref => (this.userName = ref)}
+            ref={ref => (this.userName = ref)}
           />
-          <Input
+          <input
             name="password"
             type="password"
-            className="ripple-password"
+            className="ripple-password primary-input"
             placeholder="비밀번호를 입력해 주세요 - 수정, 삭제 시 사용"
             value={this.state.password}
             onChange={this.handleChange}
-            innerRef={ref => (this.userPassword = ref)}
+            ref={ref => (this.userPassword = ref)}
           />
         </div>
 
         <div className="ripple-text-info">
-          <Input
+          <textarea
             name="text"
-            type="textarea"
-            className="ripple-textarea"
+            className="ripple-textarea primary-input"
             placeholder="댓글의 내용을 입력해 주세요"
             value={this.state.text}
-            onChange={this.handleChange}
-            innerRef={ref => (this.userText = ref)}
+            onChange={this.handleChangeTextarea}
+            ref={ref => (this.userText = ref)}
           />
-          <Button color="primary" className="ripple-submit-button">
-            댓글 작성하기 !
-          </Button>
+          <button className="primary ripple-submit-button">댓글 작성하기 !</button>
         </div>
       </form>
     )

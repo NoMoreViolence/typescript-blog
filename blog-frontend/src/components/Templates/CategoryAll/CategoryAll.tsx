@@ -211,7 +211,7 @@ class CategoryAll extends React.Component<Props, State> {
           loadingCircle: true
         })
       } else if (err.message === 'Loading_Error') {
-        toast('데이터 불러오기 실패 !')
+        toast('데이터 불러오기 실패 !', { type: 'error' })
         this.setState({
           loadingCircle: false
         })

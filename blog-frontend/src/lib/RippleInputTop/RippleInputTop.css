@@ -2,26 +2,39 @@
   width: 100%;
 }
 
-.ripple-personal-info {
-  width: 100%;
-  display: flex;
+.ripple-child-form {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
-.ripple-writer {
+@media only screen and (max-width: 496px) {
+  .ripple-personal-info {
+    width: 100%;
+  }
 
+  .ripple-personal-info > input {
+    width: 100%;
+    flex: 1;
+  }
 }
 
-.ripple-password {
+@media only screen and (min-width: 497px) {
+  .ripple-personal-info {
+    width: 100%;
+    display: flex;
+  }
   
+  .ripple-personal-info > input {
+    flex: 1;
+  }
 }
 
 .ripple-text-info {
   width: 100%;
   display: flex;
+  flex-direction: column;
 }
 
-.ripple-textarea {
-}
-
-.ripple-submit-button {
+.ripple-text-info > textarea {
+  flex: 1;
 }

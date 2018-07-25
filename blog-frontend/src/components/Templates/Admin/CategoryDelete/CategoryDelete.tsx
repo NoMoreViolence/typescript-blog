@@ -1,7 +1,6 @@
 import * as React from 'react'
 
 import './CategoryDelete.css'
-import { Form, InputGroup, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 
 import { withRouter, RouteComponentProps } from 'react-router-dom'
@@ -61,6 +60,9 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
   // Change category select value
   public handleSelect = (e: React.MouseEvent<any>): void => {
     this.props.deleteCategorySelectChange(e.currentTarget.innerText)
+    this.setState({
+      deleteCategoryDropdown: false
+    })
   }
 
   // Change category input change
@@ -72,6 +74,10 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
   public handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     // Stop basic stuff
     e.preventDefault()
+
+    // tslint:disable:no-console
+    console.log(this.props.deleteCategoryInputValue)
+    console.log(this.props.deleteCategorySelectValue)
 
     const {
       loginLogined,
@@ -133,16 +139,16 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
       await deleteCategory({ category: data.deleteCategorySelect, doubleCheck: data.deleteCategoryInput })
         // Succeed delete category
         .then((res: any) => {
-          toast(res.action.payload.data.message)
+          toast(res.action.payload.data.message, { type: 'success' })
         })
         // Error
         .catch((err: any) => {
           this.deleteCategoryInput.focus()
-          toast(err.response.data.message)
+          toast(err.response.data.message, { type: 'error' })
 
           // If the requester has no admin token
           if (err.response.data.type) {
-            toast('서비스를 이용하시려면 로그인 해 주세요 !')
+            toast('서비스를 이용하시려면 로그인 해 주세요 !', { type: 'error' })
             logout()
             history.push('/')
           }
@@ -157,28 +163,28 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
     const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
         // None admin user
-        toast('관리자만 이용 가능합니다 !')
+        toast('관리자만 이용 가능합니다 !', { type: 'error' })
         deleteCategorySelectChange('삭제할 카테고리 선택')
         logout()
         history.push('/')
       } else if (err.message === 'No_Data_Category_Select') {
         // No data selected
-        toast('삭제할 카테고리를 선택해 주세요 !')
+        toast('삭제할 카테고리를 선택해 주세요 !', { type: 'error' })
       } else if (err.message === '/_?_&_#') {
         this.props.deleteCategoryInputChange('')
         this.deleteCategoryInput.focus()
         // Use invalid symbol
-        toast('삭제할 카테고리 이름에 특수문자를 넣지 말아 주세요 !')
+        toast('삭제할 카테고리 이름에 특수문자를 넣지 말아 주세요 !', { type: 'error' })
       } else if (err.message === 'No_Data_Category_Input') {
         this.props.deleteCategoryInputChange('')
         this.deleteCategoryInput.focus()
         // No data in deleteCategoryInput
-        toast('삭제할 카테고리 중복확인 칸을 입력해 주세요 !')
+        toast('삭제할 카테고리 중복확인 칸을 입력해 주세요 !', { type: 'error' })
       } else if (err.message === 'Not_Match_Select_And_Input') {
         this.props.deleteCategoryInputChange('')
         this.deleteCategoryInput.focus()
         // Not match in select & input
-        toast('카테고리 중복확인이 잘못되었습니다 !')
+        toast('카테고리 중복확인이 잘못되었습니다 !', { type: 'error' })
       }
       // This clean method will excute when all task processed
       deleteCategoryInputChange('')
@@ -208,46 +214,48 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
   }
 
   public render(): JSX.Element {
-    const { deleteCategoryDropdown } = this.state
-    const { deleteCategoryInputValue, deleteCategorySelectValue } = this.props
-
-    // Show current categories
-    const CurrentCategoryChangeBar = (data: CategoryStateInside[]): JSX.Element[] => {
+    // Show current category
+    const showCurrentCategoryDelete = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         return (
-          <DropdownItem key={i} onClick={this.handleSelect}>
+          <button key={i} onClick={this.handleSelect} className="danger">
             {object.category}
-          </DropdownItem>
+          </button>
         )
       })
     }
 
     return (
       <div className="category-delete-container">
-        <p className="category-delete-p">카테고리 삭제</p>
-        <Form onSubmit={this.handleSubmit}>
-          <InputGroup>
-            <Dropdown isOpen={deleteCategoryDropdown} toggle={this.handleToogle}>
-              <DropdownToggle outline={true} color="danger" caret={true}>
-                {deleteCategorySelectValue}
-              </DropdownToggle>
-              <DropdownMenu>
-                <DropdownItem onClick={this.handleSelect}>변경할 카테고리 선택</DropdownItem>
-                {CurrentCategoryChangeBar(this.props.category)}
-              </DropdownMenu>
-            </Dropdown>
-            <Input
-              name="deleteCategoryInput"
+        <h5 className="category-delete-p">카테고리 삭제</h5>
+        <div className="category-delete-select-container">
+          <button className="danger" onClick={this.handleToogle}>
+            {this.props.deleteCategorySelectValue}
+          </button>
+          {this.state.deleteCategoryDropdown && (
+            <div className="category-delete-select-filed">
+              {this.props.deleteCategorySelectValue !== '삭제할 카테고리 선택' && (
+                <button onClick={this.handleSelect} className="danger">
+                  삭제할 카테고리 선택
+                </button>
+              )}
+              {showCurrentCategoryDelete(this.props.category)}
+            </div>
+          )}
+        </div>
+        <form onSubmit={this.handleSubmit}>
+          <div className="category-delete-form">
+            <input
+              name="deleteCategoryInputValue"
               placeholder="삭제할 카테고리 이름 입력"
-              value={deleteCategoryInputValue}
-              innerRef={innerRef => (this.deleteCategoryInput = innerRef)}
+              className="danger-input category-delete-input"
+              value={this.props.deleteCategoryInputValue}
+              ref={ref => (this.deleteCategoryInput = ref)}
               onChange={this.handleChange}
             />
-            <Button outline={true} color="danger">
-              카테고리 삭제
-            </Button>
-          </InputGroup>
-        </Form>
+            <button className="danger">카테고리 삭제</button>
+          </div>
+        </form>
       </div>
     )
   }

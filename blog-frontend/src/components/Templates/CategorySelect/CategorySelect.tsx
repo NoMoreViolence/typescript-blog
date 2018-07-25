@@ -125,12 +125,12 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
       if (err.message === 'Not_Loaded') {
         // still loading
       } else if (err.message === 'Loading_Error') {
-        toast('데이터 불러오기 실패 !')
+        toast('데이터 불러오기 실패 !', { type: 'error' })
         this.setState({
           errorOrNot: true
         })
       } else if (err.message === 'Wrong_Url') {
-        toast('없는 카테고리 입니다 !')
+        toast('없는 카테고리 입니다 !', { type: 'error' })
         this.setState({
           errorOrNot: true
         })
@@ -182,7 +182,7 @@ class CategorySelect extends React.Component<Props & RouteComponentProps<any>, S
       } else if (err.message === 'URL_Not_Changed') {
         // do Nothing
       } else if (err.message === 'Wrong_URL') {
-        toast('없는 카테고리 입니다 !')
+        toast('없는 카테고리 입니다 !', { type: 'error' })
         this.setState({
           errorOrNot: true
         })

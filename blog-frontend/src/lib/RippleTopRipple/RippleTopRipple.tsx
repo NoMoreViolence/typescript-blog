@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import './RippleTopRipple.css'
-import Input from 'reactstrap/lib/Input'
+import { toast } from 'react-toastify'
 
 import {
   TopOrChildRippleState,
@@ -15,7 +15,6 @@ import {
 } from 'store/modules/Ripple'
 import RippleChildRipple from 'lib/RippleChildRipple'
 import RippleInputChild from 'lib/RippleInputChild'
-import { toast } from '../../../node_modules/react-toastify'
 
 interface Props {
   // State
@@ -107,6 +106,13 @@ class RippleTopRipple extends React.Component<Props, State> {
 
   // Handle change
   public handleChange = (e: { target: HTMLInputElement }) => {
+    this.setState({
+      [e.target.name]: e.target.value
+    })
+  }
+
+  // Handle change
+  public handleChangeTextarea = (e: { target: HTMLTextAreaElement }) => {
     this.setState({
       [e.target.name]: e.target.value
     })
@@ -329,21 +335,21 @@ class RippleTopRipple extends React.Component<Props, State> {
     const printTextOrTextArea = (changeMode: boolean, moreView: boolean, text: string): JSX.Element[] | JSX.Element => {
       if (changeMode === true) {
         return (
-          <div>
-            <Input
+          <div className="ripple-input-form">
+            <input
               type="password"
               placeholder="작성할 때 입력한 비밀번호를 입력해 주세요"
               name="passwordToChange"
+              className="info-input"
               value={this.state.passwordToChange}
               onChange={this.handleChange}
             />
-            <Input
-              type="textarea"
+            <textarea
               placeholder="수정할 댓글 내용을 입력해 주세요"
               name="text"
-              className="ripple-change-text"
+              className="ripple-change-text info-input"
               value={this.state.text}
-              onChange={this.handleChange}
+              onChange={this.handleChangeTextarea}
             />
           </div>
         )
@@ -491,10 +497,11 @@ class RippleTopRipple extends React.Component<Props, State> {
       if (childDeleteMode === true) {
         return (
           <div className="ripple-delete-mode">
-            <Input
+            <input
               type="password"
               placeholder="작성할 때 입력한 비밀번호를 입력해 주세요"
               name="passwordToDelete"
+              className="danger-input"
               value={this.state.passwordToDelete}
               onChange={this.handleChange}
             />

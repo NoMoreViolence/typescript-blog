@@ -1,7 +1,5 @@
 import * as React from 'react'
 
-import './RippleChildRipple.css'
-import Input from 'reactstrap/lib/Input'
 import { toast } from 'react-toastify'
 
 import { PatchChildRipple, ChildMode, DeleteChildRipple } from 'store/modules/Ripple'
@@ -73,6 +71,13 @@ class RippleChildRipple extends React.Component<Props, State> {
 
   // Handle ripple change value
   public handleChange = (e: { target: HTMLInputElement }): void => {
+    this.setState({
+      [e.target.name]: e.target.value
+    })
+  }
+
+  // Handle ripple change value
+  public handleChangeTextarea = (e: { target: HTMLTextAreaElement }): void => {
     this.setState({
       [e.target.name]: e.target.value
     })
@@ -258,21 +263,21 @@ class RippleChildRipple extends React.Component<Props, State> {
     const printTextOrTextArea = (changeMode: boolean, moreView: boolean, text: string): JSX.Element[] | JSX.Element => {
       if (changeMode === true) {
         return (
-          <div>
-            <Input
+          <div className="ripple-input-form">
+            <input
               type="password"
               placeholder="작성할 때 입력한 비밀번호를 입력해 주세요"
               name="passwordToChange"
+              className="info-input"
               value={this.state.passwordToChange}
               onChange={this.handleChange}
             />
-            <Input
-              type="textarea"
+            <textarea
               placeholder="수정할 댓글 내용을 입력해 주세요"
               name="text"
-              className="ripple-change-text"
+              className="ripple-change-text info-input"
               value={this.state.text}
-              onChange={this.handleChange}
+              onChange={this.handleChangeTextarea}
             />
           </div>
         )
@@ -326,13 +331,16 @@ class RippleChildRipple extends React.Component<Props, State> {
     const showRippleDeleteMode = (childDeleteMode: boolean): JSX.Element | null => {
       if (childDeleteMode === true) {
         return (
-          <Input
-            type="password"
-            placeholder="작성할 때 입력한 비밀번호를 입력해 주세요"
-            name="passwordToDelete"
-            value={this.state.passwordToDelete}
-            onChange={this.handleChange}
-          />
+          <div className="child-ripple-input-form">
+            <input
+              type="password"
+              placeholder="작성할 때 입력한 비밀번호를 입력해 주세요"
+              name="passwordToDelete"
+              className="danger-input"
+              value={this.state.passwordToDelete}
+              onChange={this.handleChange}
+            />
+          </div>
         )
       }
       return null

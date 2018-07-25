@@ -5,3 +5,28 @@
 .category-delete-p {
   color: #dc3545;
 }
+
+.category-delete-select-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.category-delete-select-filed {
+  width: 100%;
+  height: 150px;
+  overflow-y: auto;
+}
+
+.category-delete-select-filed > button {
+  width: 100%;
+  flex: 1;
+}
+
+.category-delete-form {
+  display: flex;
+  justify-content: space-between;
+}
+
+.category-delete-input {
+  flex: 1;
+}

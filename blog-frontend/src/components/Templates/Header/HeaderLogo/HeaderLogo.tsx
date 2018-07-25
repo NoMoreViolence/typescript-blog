@@ -1,8 +1,6 @@
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 
-import './HeaderLogo.css'
-
 interface Props {
   getCategory: () => void
 }

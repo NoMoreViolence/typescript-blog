@@ -1,9 +1,8 @@
 import * as React from 'react'
 
-import { RouteComponentProps, withRouter } from 'react-router-dom'
-
-import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
+
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 
 import { CategoryStateInside } from 'store/modules/Category'
 import { PutChangeAPIInterface, GetPostBringAPIInterface } from 'store/modules/Post'
@@ -267,15 +266,15 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       await changePost(post)
         // request call success
         .then(async (res: { value: any; action: any }) => {
-          toast(res.action.payload.data.message)
+          toast(res.action.payload.data.message, { type: 'success' })
         })
         // request call failure
         .catch((err: any) => {
-          toast(err.response.data.message)
+          toast(err.response.data.message, { type: 'error' })
 
           // if user who has wrong login key or doesn't have login key request, throw error
           if (err.response.data.type) {
-            toast('서비스를 이용하시려면 다시 로그인 해 주세요 !')
+            toast('서비스를 이용하시려면 다시 로그인 해 주세요 !', { type: 'error' })
             logout()
             history.push('/')
           }
@@ -289,34 +288,34 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
     // take all insert error
     const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
-        toast('관리자만 이용 가능합니다 !')
+        toast('관리자만 이용 가능합니다 !', { type: 'error' })
         // logout method
         sessionStorage.clear()
         logout()
         history.push('/')
       } else if (err.message === 'No_Data_Category_Select_Select') {
-        toast('변경할 포스트의 카테고리를 선택해 주세요 !')
+        toast('변경할 포스트의 카테고리를 선택해 주세요 !', { type: 'error' })
       } else if (err.message === 'Old_Category_/_?_&_#') {
-        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !")
+        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
       } else if (err.message === 'No_Data_Post_Select_Title') {
-        toast('변경할 포스트를 선택해 주세요 !')
+        toast('변경할 포스트를 선택해 주세요 !', { type: 'error' })
       } else if (err.message === 'Old_Title_/_?_&_#') {
-        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !")
+        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
       } else if (err.message === 'No_Data_Category_Select') {
-        toast('변경할 포스트의 카테고리를 선택해 주세요 !')
+        toast('변경할 포스트의 카테고리를 선택해 주세요 !', { type: 'error' })
       } else if (err.message === 'New_Category_/_?_&_#') {
-        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !")
+        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
       } else if (err.message === 'No_Data_Post_Title') {
-        toast('변경할 포스트의 제목을 입력해 주세요 !')
+        toast('변경할 포스트의 제목을 입력해 주세요 !', { type: 'error' })
         changePostError('title')
       } else if (err.message === 'New_Title_/_?_&_#') {
-        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !")
+        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
         changePostError('title')
       } else if (err.message === 'No_Data_Post_Sub_Title') {
-        toast('변경할 포스트의 부제목을 입력해 주세요 !')
+        toast('변경할 포스트의 부제목을 입력해 주세요 !', { type: 'error' })
         changePostError('subTitle')
       } else if (err.message === 'No_Data_Post_Main_Text') {
-        toast('변경할 포스트의 내용을 입력해 주세요 !')
+        toast('변경할 포스트의 내용을 입력해 주세요 !', { type: 'error' })
         changePostError('mainText')
       }
     }
@@ -428,16 +427,16 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
 
     return (
       <div className="admin-post-container">
-        <Button block={true} outline={true} color="info" onClick={this.handlePostChangeShowNoneToogle}>
+        <button className="info admin-post-button" color="info" onClick={this.handlePostChangeShowNoneToogle}>
           {this.state.postChangeMessage}
-        </Button>
+        </button>
 
         {this.state.showNone && (
           <div className="admin-post-editor-and-preview">
             <div className="admin-post-preview-change-button">
-              <Button color="info" onClick={this.changeEditAndPreview}>
+              <button className="info" onClick={this.changeEditAndPreview}>
                 에디터 / 프리뷰 화면 전환
-              </Button>
+              </button>
             </div>
 
             <div className="admin-post-select-container">

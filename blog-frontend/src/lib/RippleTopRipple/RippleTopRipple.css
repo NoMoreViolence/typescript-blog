@@ -1,8 +1,7 @@
 .ripple-unit {
   width: 100%;
   background-color: transparent;
-  border: 3px solid rgba(0, 0, 0, .125);
-  border-radius: .25rem;
+  border: 1px solid rgba(0, 0, 0, .125);
   padding: 15px;
   margin-top: 2.5%;
 }
@@ -26,6 +25,10 @@
   margin-top: 1rem;
 }
 
+.ripple-delete-mode > input {
+  width: 100%;
+}
+
 .ripple-password-confirm {
   margin-top: 1rem;
 }
@@ -43,6 +46,11 @@
 }
 
 .ripple-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.ripple-input-form {
   display: flex;
   flex-direction: column;
 }

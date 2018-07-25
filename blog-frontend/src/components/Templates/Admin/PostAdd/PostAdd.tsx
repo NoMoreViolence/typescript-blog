@@ -1,9 +1,8 @@
 import * as React from 'react'
 
-import { RouteComponentProps, withRouter } from 'react-router-dom'
-
-import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
+
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 
 import { AddPostState, PostAddAPIInterface } from 'store/modules/Post'
 import { CategoryStateInside } from 'store/modules/Category'
@@ -139,15 +138,15 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
       await addPost(data)
         // Request call success
         .then((res: any) => {
-          toast(res.action.payload.data.message)
+          toast(res.action.payload.data.message, { type: 'success' })
         })
         // Request call failure
         .catch((err: any) => {
-          toast(err.response.data.message)
+          toast(err.response.data.message, { type: 'error' })
 
           // If user who has wrong login key or doesn't have login key request, throw error
           if (err.response.data.type) {
-            toast('서비스를 이용하시려면 다시 로그인 해 주세요 !')
+            toast('서비스를 이용하시려면 다시 로그인 해 주세요 !', { type: 'error' })
             logout()
             history.push('/')
           }
@@ -161,21 +160,21 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     // Error handler
     const onError = (err: Error): void => {
       if (err.message === 'Not_Admin_User') {
-        toast('관리자만 이용 가능합니다 !')
+        toast('관리자만 이용 가능합니다 !', { type: 'error' })
         // Logout method
         sessionStorage.clear()
         logout()
         history.push('/')
       } else if (err.message === 'No_Data_Category_Select') {
-        toast('추가할 포스트의 카테고리를 선택해 주세요 !')
+        toast('추가할 포스트의 카테고리를 선택해 주세요 !', { type: 'error' })
       } else if (err.message === 'No_Data_Post_Title') {
-        toast('추가할 포스트의 제목을 입력해 주세요 !')
+        toast('추가할 포스트의 제목을 입력해 주세요 !', { type: 'error' })
         postError('title')
       } else if (err.message === 'No_Data_Post_Sub_Title') {
-        toast('추가할 포스트의부제목을 입력해 주세요 !')
+        toast('추가할 포스트의부제목을 입력해 주세요 !', { type: 'error' })
         postError('subTitle')
       } else if (err.message === 'No_Data_Post_Main_Text') {
-        toast('추가할 포스트의 본문을 입력해 주세요 !')
+        toast('추가할 포스트의 본문을 입력해 주세요 !', { type: 'error' })
         postError('mainText')
       }
     }
@@ -245,17 +244,17 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     return (
       <div className="admin-post-container">
         {/* Button that control post add */}
-        <Button block={true} outline={true} color="primary" onClick={this.handlePostAddShowNoneToogle}>
+        <button className="primary admin-post-button" onClick={this.handlePostAddShowNoneToogle}>
           {this.state.postAddMessage}
-        </Button>
+        </button>
 
         {/* This part show when activate post add button */}
         {this.state.showNone && (
           <div className="admin-post-editor-and-preview">
             <div className="admin-post-preview-change-button">
-              <Button color="primary" onClick={this.changeEditAndPreview}>
+              <button className="primary" onClick={this.changeEditAndPreview}>
                 에디터 / 프리뷰 화면 전환
-              </Button>
+              </button>
             </div>
 
             <div className="admin-post-select-container">

@@ -65,7 +65,7 @@ class PostSelect extends React.Component<Props & RouteComponentProps<History>, S
         this.setState({
           wrongUrl: true
         })
-        toast(err.response.data.message)
+        toast(err.response.data.message, { type: 'error' })
       })
       return Promise.resolve({ ...data, showPostData })
     }
