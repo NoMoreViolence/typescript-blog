@@ -1,21 +1,17 @@
-.post-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
 /* iphone SE */
 /* very small mobie view */
 /* Reactive font size */
-@media only screen and (min-width: 0px) and (max-width: 320px) {/* post view container, this is post root */
-  .post-view-container {
-    display: flex;
-    flex-direction: column;
+@media only screen and (min-width: 0px) and (max-width: 320px) {
+  /* each post box */
+  .header-category-container {
     width: 100%;
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    margin-top: 2.5%;
+    -webkit-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
   }
 }
 
@@ -23,15 +19,16 @@
 /* small mobie view */
 /* Reactive font size */
 @media only screen and (min-width: 321px) and (max-width: 375px) {
-  /* post view container, this is post root */
-  .post-view-container {
-    display: flex;
-    flex-direction: column;
+  /* each post box */
+  .header-category-container {
     width: 100%;
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    margin-top: 2.5%;
+    -webkit-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
   }
 }
 
@@ -39,71 +36,75 @@
 /* large mobie view */
 /* Reactive font size */
 @media only screen and (min-width: 376px) and (max-width: 425px) {
-  /* post view container, this is post root */
-  .post-view-container {
-    display: flex;
-    flex-direction: column;
+  /* each post box */
+  .header-category-container {
     width: 100%;
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    margin-top: 2.5%;
+    -webkit-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
   }
 }
 
 /* tablet */
 @media only screen and (min-width: 426px) and (max-width: 768px) {
-  /* post view container, this is post root */
-  .post-view-container {
-    display: flex;
-    flex-direction: column;
+  /* each post box */
+  .header-category-container {
     width: 100%;
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    margin-top: 2.5%;
+    -webkit-column-count: 3;
+    column-count: 3;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
   }
 }
 
 /* laptop */
 @media only screen and (min-width: 769px) and (max-width: 1024px) {
-  /* post view container, this is post root */
-  .post-view-container {
-    display: flex;
-    flex-direction: column;
+  /* each post box */
+  .header-category-container {
     width: 700px;
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    margin-top: 2.5%;
+    -webkit-column-count: 4;
+    column-count: 4;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
   }
 }
 
 /* default desktop */
-@media only screen and (min-width: 1025px) and (max-width: 2000px) {
-  /* post view container, this is post root */
-  .post-view-container {
-    display: flex;
-    flex-direction: column;
+@media only screen and (min-width: 1025px) and (max-width: 1680px) {
+  /* each post box */
+  .header-category-container {
     width: 850px;
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    margin-top: 2.5%;
+    -webkit-column-count: 4;
+    column-count: 4;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
   }
 }
 
 /* for 4K display */
-@media only screen and (min-width: 2001px) {
-  /* post view container, this is post root */
-  .post-view-container {
-    display: flex;
-    flex-direction: column;
+@media only screen and (min-width: 1681px) {
+  /* each post box */
+  .header-category-container {
     width: 1000px;
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    margin-top: 2.5%;
+    -webkit-column-count: 4;
+    column-count: 4;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
   }
 }
-

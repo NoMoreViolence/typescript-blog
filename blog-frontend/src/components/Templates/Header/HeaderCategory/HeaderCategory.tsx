@@ -1,8 +1,11 @@
 import * as React from 'react'
-import { NavLink } from 'react-router-dom'
-import { Breadcrumb, BreadcrumbItem } from 'reactstrap'
-import { CategoryStateInside } from 'store/modules/Category'
+
+import './HeaderCategory.css'
 import { toast } from 'react-toastify'
+
+import { CategoryStateInside } from 'store/modules/Category'
+
+import { NavLink } from 'react-router-dom'
 
 interface Props {
   Category: CategoryStateInside[]
@@ -14,45 +17,53 @@ class HeaderCategory extends React.Component<Props> {
   public handleSignOut = (): void => {
     this.props.Logout()
     sessionStorage.clear()
-    toast('로그아웃 되셨습니다')
+    toast('로그아웃 되셨습니다', { type: 'success' })
   }
 
   public render(): JSX.Element {
-    // 데이터 받아서 정렬
+    const navLinkStyle: object = {
+      color: '#17a2b8'
+    }
+
+    // Data sort
     const loadCategory = (data: CategoryStateInside[]): JSX.Element[] => {
       return data.map((object, i) => {
         const url = `/${object.category}`
         return (
-          <BreadcrumbItem key={i}>
-            <NavLink to={url}>{object.category}</NavLink>
-          </BreadcrumbItem>
+          <div key={i}>
+            <NavLink to={url} activeStyle={navLinkStyle}>
+              <h5>{object.category}</h5>
+            </NavLink>
+          </div>
         )
       })
     }
 
     return (
-      <Breadcrumb>
-        <BreadcrumbItem />
+      <div className="header-category-container">
         {loadCategory(this.props.Category)}
         {this.props.Logined === true && (
           <React.Fragment>
-            <BreadcrumbItem>
-              <NavLink to="/admin">관리자 페이지</NavLink>
-            </BreadcrumbItem>
-            <BreadcrumbItem>
-              <NavLink to="/" onClick={this.handleSignOut}>
-                로그아웃
+            <div>
+              <NavLink to="/admin" style={{ color: '#dc3545' }}>
+                <h5>관리자 페이지</h5>
               </NavLink>
-            </BreadcrumbItem>
+            </div>
+            <div>
+              <NavLink to="/" onClick={this.handleSignOut} style={{ color: '#dc3545' }}>
+                <h5>로그아웃</h5>
+              </NavLink>
+            </div>
           </React.Fragment>
         )}
         {this.props.Logined === false && (
-          <BreadcrumbItem>
-            <NavLink to="/admin/login">관리자 로그인</NavLink>
-          </BreadcrumbItem>
+          <div>
+            <NavLink to="/admin/login" style={{ color: '#dc3545' }}>
+              <h5> 관리자 로그인</h5>
+            </NavLink>
+          </div>
         )}
-        <BreadcrumbItem active={true}>Category</BreadcrumbItem>
-      </Breadcrumb>
+      </div>
     )
   }
 }

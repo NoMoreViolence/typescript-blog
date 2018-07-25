@@ -4,7 +4,7 @@
 }
 
 .current-category-unit {
-  color: #007bff
+  color: #007bff;
 }
 
 /* iphone SE */
@@ -13,8 +13,7 @@
 @media only screen and (min-width: 0px) and (max-width: 320px) {
   .currnet-category-unit-container {
     width: 100%;
-    padding: 0.735rem;
-    border-radius: .25rem;
+    padding: 0.9rem;
     background-color: #e9ecef;
     -webkit-row-count: 1;
     column-count: 1;
@@ -27,8 +26,7 @@
 @media only screen and (min-width: 321px) and (max-width: 375px) {
   .currnet-category-unit-container {
     width: 100%;
-    padding: 0.735rem;
-    border-radius: .25rem;
+    padding: 0.9rem;
     background-color: #e9ecef;
     -webkit-row-count: 2;
     column-count: 2;
@@ -41,8 +39,7 @@
 @media only screen and (min-width: 376px) and (max-width: 425px) {
   .currnet-category-unit-container {
     width: 100%;
-    padding: 0.735rem;
-    border-radius: .25rem;
+    padding: 0.9rem;
     background-color: #e9ecef;
     -webkit-row-count: 2;
     column-count: 2;
@@ -53,8 +50,7 @@
 @media only screen and (min-width: 426px) and (max-width: 768px) {
   .currnet-category-unit-container {
     width: 100%;
-    padding: 0.735rem;
-    border-radius: .25rem;
+    padding: 0.9rem;
     background-color: #e9ecef;
     -webkit-row-count: 3;
     column-count: 3;
@@ -65,8 +61,7 @@
 @media only screen and (min-width: 769px) and (max-width: 1024px) {
   .currnet-category-unit-container {
     width: 100%;
-    padding: 0.735rem;
-    border-radius: .25rem;
+    padding: 0.9rem;
     background-color: #e9ecef;
     -webkit-row-count: 4;
     column-count: 4;
@@ -77,8 +72,7 @@
 @media only screen and (min-width: 1025px) and (max-width: 2000px) {
   .currnet-category-unit-container {
     width: 100%;
-    padding: 0.735rem;
-    border-radius: .25rem;
+    padding: 0.9rem;
     background-color: #e9ecef;
     -webkit-row-count: 4;
     column-count: 4;
@@ -89,8 +83,7 @@
 @media only screen and (min-width: 2001px) {
   .currnet-category-unit-container {
     width: 100%;
-    padding: 0.735rem;
-    border-radius: .25rem;
+    padding: 0.9rem;
     background-color: #e9ecef;
     -webkit-row-count: 4;
     column-count: 4;

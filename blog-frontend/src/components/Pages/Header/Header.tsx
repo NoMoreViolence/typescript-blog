@@ -7,10 +7,16 @@ import HeaderCategoryContainer from 'containers/Header/HeaderCategoryContainer'
 
 const Header: React.SFC = () => {
   return (
-    <div className="layout-container">
-      <div className="header-menu">
-        <HeaderLogoContainer />
-        <HeaderCategoryContainer />
+    <div className="header-size-control-container">
+      <div className="header-container">
+        <div className="header-menu">
+          <div className="header-logo">
+            <HeaderLogoContainer />
+          </div>
+          <div className="header-category">
+            <HeaderCategoryContainer />
+          </div>
+        </div>
       </div>
     </div>
   )

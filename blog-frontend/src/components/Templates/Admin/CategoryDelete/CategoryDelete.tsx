@@ -247,7 +247,7 @@ class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, S
           <div className="category-delete-form">
             <input
               name="deleteCategoryInputValue"
-              placeholder="삭제할 카테고리 이름 입력"
+              placeholder="삭제할 카테고리 중복확인"
               className="danger-input category-delete-input"
               value={this.props.deleteCategoryInputValue}
               ref={ref => (this.deleteCategoryInput = ref)}
