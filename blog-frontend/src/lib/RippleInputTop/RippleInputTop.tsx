@@ -126,7 +126,7 @@ class RippleTopInput extends React.Component<Props & RouteComponentProps<any>, S
           password: this.state.password
         })
         .then((res: any) => {
-          toast(res.action.payload.data.message)
+          toast(res.action.payload.data.message, { type: 'success' })
 
           // Data clear
           this.setState({
@@ -136,38 +136,38 @@ class RippleTopInput extends React.Component<Props & RouteComponentProps<any>, S
           })
         })
         .catch((err: any) => {
-          toast(err.response.data.message)
+          toast(err.response.data.message, { type: 'error' })
         })
     }
 
     // Error handler
     const onError = (err: Error): void => {
       if (err.message === 'Undefined') {
-        toast('알 수 없는 에러 입니다 !')
+        toast('알 수 없는 에러 입니다 !', { type: 'error' })
       } else if (err.message === '/_?_&_#') {
         this.setState({
           writer: ''
         })
         this.userName.focus()
-        toast("댓글 작성자의 이름에는 '/', '?', '&', '#' 특수기호 사용이 블가능 합니다")
+        toast("댓글 작성자의 이름에는 '/', '?', '&', '#' 특수기호 사용이 블가능 합니다", { type: 'error' })
       } else if (err.message === 'Name') {
         this.setState({
           writer: ''
         })
         this.userName.focus()
-        toast('댓글 작성자의 이름을 입력해 주세요 !')
+        toast('댓글 작성자의 이름을 입력해 주세요 !', { type: 'error' })
       } else if (err.message === 'Password') {
         this.setState({
           password: ''
         })
         this.userPassword.focus()
-        toast('댓글의 비밀번호를 입력해 주세요 !')
+        toast('댓글의 비밀번호를 입력해 주세요 !', { type: 'error' })
       } else if (err.message === 'Text') {
         this.setState({
           text: ''
         })
         this.userText.focus()
-        toast('댓글 내용을 입력해 주세요 !')
+        toast('댓글 내용을 입력해 주세요 !', { type: 'error' })
       }
     }
 

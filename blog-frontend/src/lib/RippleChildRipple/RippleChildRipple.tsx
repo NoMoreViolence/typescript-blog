@@ -114,17 +114,17 @@ class RippleChildRipple extends React.Component<Props, State> {
         rippleID: data.rippleID
       })
         .then((res: any) => {
-          toast(res.action.payload.data.message)
+          toast(res.action.payload.data.message, { type: 'success' })
         })
         .catch((err: any) => {
-          toast(err.response.data.message)
+          toast(err.response.data.message, { type: 'error' })
         })
     }
 
     // Error handler
     const onError = (err: Error) => {
       if (err.message === 'Pending') {
-        toast('댓글이 변경 중입니다. 잠시 후에 다시 시도해 주세요 !')
+        toast('댓글이 변경 중입니다. 잠시 후에 다시 시도해 주세요 !', { type: 'error' })
       }
     }
 
@@ -167,17 +167,17 @@ class RippleChildRipple extends React.Component<Props, State> {
         rippleID: data.rippleID
       })
         .then((res: any) => {
-          toast(res.action.payload.data.message)
+          toast(res.action.payload.data.message, { type: 'error' })
         })
         .catch((err: any) => {
-          toast(err.response.data.message)
+          toast(err.response.data.message, { type: 'error' })
         })
     }
 
     // Error handler
     const onError = (err: Error): void => {
       if (err.message === 'Pending') {
-        toast('댓글이 삭제 중입니다. 잠시 후에 다시 시도해 주세요 !')
+        toast('댓글이 삭제 중입니다. 잠시 후에 다시 시도해 주세요 !', { type: 'error' })
       }
     }
 
