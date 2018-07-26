@@ -38,7 +38,6 @@
   border: 0;
   margin: 0;
   padding: 0;
-  height: 1.5rem;
   flex: 1;
 }
 
@@ -61,8 +60,12 @@
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    -webkit-column-width: 110px;
-    column-width: 110px;
+    -webkit-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
+    line-height: 1.7rem;
+    font-size: 1rem;
   }
 }
 
@@ -76,8 +79,12 @@
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    -webkit-column-width: 110px;
-    column-width: 110px;
+    -webkit-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
+    line-height: 2rem;
+    font-size: 1rem;
   }
 }
 
@@ -87,12 +94,17 @@
 @media only screen and (min-width: 376px) and (max-width: 425px) {
   /* each post box */
   .header-category-container {
+    font-size: 1rem;
     width: 100%;
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    -webkit-column-width: 110px;
-    column-width: 110px;
+    -webkit-column-count: 3;
+    column-count: 3;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
+    line-height: 2em;
+    font-size: 0.9rem;
   }
 }
 
@@ -104,8 +116,12 @@
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    -webkit-column-width: 110px;
-    column-width: 110px;
+    -webkit-column-count: 3;
+    column-count: 3;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
+    line-height: 2rem;
+    font-size: 1rem;
   }
 }
 
@@ -117,8 +133,12 @@
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    -webkit-column-width: 110px;
-    column-width: 110px;
+    -webkit-column-count: 4;
+    column-count: 4;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
+    line-height: 2rem;
+    font-size: 1.1rem;
   }
 }
 
@@ -130,8 +150,12 @@
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    -webkit-column-width: 110px;
-    column-width: 110px;
+    -webkit-column-count: 5;
+    column-count: 5;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
+    line-height: 2.5rem;
+    font-size: 1.2rem;
   }
 }
 
@@ -143,7 +167,11 @@
     background-color: transparent;
     border: 1px solid rgba(0, 0, 0, .125);
     padding: 15px;
-    -webkit-column-width: 110px;
-    column-width: 110px
+    -webkit-column-count: 5;
+    column-count: 5;
+    -webkit-column-gap: 1.25rem;
+    column-gap: 1.25rem;
+    line-height: 3rem;
+    font-size: 1.5rem;
   }
 }

@@ -34,11 +34,11 @@ class HeaderCategory extends React.Component<Props> {
       return data.map((object, i) => {
         const url = `/${object.category}`
         return (
-          <h3 key={i}>
+          <div key={i}>
             <NavLink to={url} className="default-a" activeStyle={navLinkStyleDefalut}>
               {object.category}
             </NavLink>
-          </h3>
+          </div>
         )
       })
     }
@@ -48,24 +48,24 @@ class HeaderCategory extends React.Component<Props> {
         {loadCategory(this.props.Category)}
         {this.props.Logined === true && (
           <React.Fragment>
-            <h3>
+            <div>
               <NavLink to="/admin" className="admin-a" activeStyle={navLinkStyleAdmin}>
                 관리자 페이지
               </NavLink>
-            </h3>
-            <h3>
+            </div>
+            <div>
               <NavLink to="/" onClick={this.handleSignOut} className="admin-a">
                 로그아웃
               </NavLink>
-            </h3>
+            </div>
           </React.Fragment>
         )}
         {this.props.Logined === false && (
-          <h3>
+          <div>
             <NavLink to="/admin/login" className="admin-a" activeStyle={navLinkStyleAdmin}>
               관리자 로그인
             </NavLink>
-          </h3>
+          </div>
         )}
       </div>
     )
