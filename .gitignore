@@ -29,3 +29,6 @@ yarn.lock
 /blog-frontend/npm-debug.log*
 /blog-frontend/yarn-debug.log*
 /blog-frontend/yarn-error.log*
+
+# test folder
+/frontend
