@@ -8,6 +8,7 @@ import * as Loadable from 'react-loadable'
 import NotFound from 'components/Pages/NotFound'
 import LoadingCircle from 'lib/LoadingCircle'
 
+import { AxiosPromise } from 'axios'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 import { toast } from 'react-toastify'
@@ -23,7 +24,10 @@ interface Props {
   title: string
   subTitle: string
   date: number
-  showPost: (value: GetPostBringAPIInterface) => any
+}
+
+interface Method {
+  showPost: (value: GetPostBringAPIInterface) => AxiosPromise<any>
 }
 
 interface State {
@@ -35,7 +39,7 @@ interface ReceiveDataParams {
   title: string
   showPostData: any
 }
-class PostSelect extends React.Component<Props & RouteComponentProps<History>, State> {
+class PostSelect extends React.Component<Props & Method & RouteComponentProps<History>, State> {
   public state = {
     wrongUrl: false
   }

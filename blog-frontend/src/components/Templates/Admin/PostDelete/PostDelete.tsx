@@ -11,20 +11,27 @@ import MarkdownRendererDeleteContainer from 'containers/MarkDownRendererDelete/M
 
 interface Props {
   loginLogined: boolean
-  logout: () => void
   category: CategoryStateInside[]
   deleteCategory: string
   deleteTitle: string
   deleteShowTitle: string
   deleteSubTitle: string
   deletePending: boolean
+}
+
+interface Method {
+  // Data Get
+  loadCategory: () => Promise<any>
+  loadPost: (value: any) => Promise<any>
+  // Delete Post
   changeCategorySelect: (value: string) => void
   changeTitleSelect: (value: string) => void
-  deletePost: (value: DeleteDeleteAPIInterface) => any
-  loadPost: (value: any) => void
+  deletePost: (value: DeleteDeleteAPIInterface) => Promise<any>
+  // Done
   categoryDone: () => void
   postDone: () => void
-  loadCategory: () => void
+  // Error
+  logout: () => void
 }
 
 interface State {
@@ -50,7 +57,7 @@ interface DeleteDeleteMethodInterface {
   title: string
 }
 
-class PostDelete extends React.Component<Props & RouteComponentProps<History>, State> {
+class PostDelete extends React.Component<Props & Method & RouteComponentProps<History>, State> {
   public state = {
     editorType: 'delete',
     postDeleteMessage: '포스트 삭제 하기 !',

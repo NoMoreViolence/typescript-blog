@@ -23,22 +23,24 @@ interface Props {
   newTitle: string
   subTitle: string
   mainText: string
-  loadingPending: boolean
   changePending: boolean
-  // Method
+}
+
+interface Method {
   // Loading method
-  loadCategory: () => any
-  loadPost: (value: GetPostBringAPIInterface) => any
+  loadCategory: () => Promise<any>
+  loadPost: (value: GetPostBringAPIInterface) => Promise<any>
   // Change post method
   changeSelectCategory: (value: string) => void
   changeCategory: (value: string) => void
   changeSelectTitle: (value: string) => void
-  changePost: (changePost: PutChangeAPIInterface) => any
-  changePostError: (value: string) => void
-  // Ending method
-  logout: () => void
-  postDone: () => void
+  changePost: (changePost: PutChangeAPIInterface) => Promise<any>
+  // Done
   categoryDone: () => void
+  postDone: () => void
+  // Error
+  changePostError: (value: string) => void
+  logout: () => void
 }
 
 interface State {
@@ -64,7 +66,7 @@ interface CTarget {
   currentTarget: HTMLButtonElement
 }
 
-class PostChange extends React.Component<Props & RouteComponentProps<History>, State> {
+class PostChange extends React.Component<Props & Method & RouteComponentProps<History>, State> {
   public state = {
     // For mde container's type
     postChangeMessage: '포스트 수정 하기 !',
@@ -157,18 +159,18 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       changePending
     } = this.props
 
-    // Pending check, if pending is true, return reject
-    const pendingCheck = (data: PutChangeMethodInterface): Promise<object> => {
-      if (data.changePending === true) {
-        return Promise.reject(new Error(''))
-      }
-      return Promise.resolve(data)
-    }
-
     // check user is logined or not
     const userAdminCheck = (data: PutChangeMethodInterface): Promise<object> => {
       if (data.loginLogined !== true) {
         return Promise.reject(new Error('Not_Admin_User'))
+      }
+      return Promise.resolve(data)
+    }
+
+    // Pending check, if pending is true, return reject
+    const pendingCheck = (data: PutChangeMethodInterface): Promise<object> => {
+      if (data.changePending === true) {
+        return Promise.reject(new Error('Pending'))
       }
       return Promise.resolve(data)
     }
@@ -186,7 +188,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       const oldCategoryTested = regExp.test(post.oldCategory)
       // If the data is not right
       if (oldCategoryTested === true) {
-        return Promise.reject(new Error('Old_Category_/_?_&_#'))
+        return Promise.reject(new Error('/_?_&_#'))
       }
       return Promise.resolve(post)
     }
@@ -204,7 +206,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       const oldTitleTested = regExp.test(post.oldTitle)
       // If the data is not right
       if (oldTitleTested === true) {
-        return Promise.reject(new Error('Old_Title_/_?_&_#'))
+        return Promise.reject(new Error('/_?_&_#'))
       }
       return Promise.resolve(post)
     }
@@ -222,7 +224,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       const newCategoryTested = regExp.test(post.newCategory)
       // If the data is not right
       if (newCategoryTested === true) {
-        return Promise.reject(new Error('New_Category_/_?_&_#'))
+        return Promise.reject(new Error('/_?_&_#'))
       }
       return Promise.resolve(post)
     }
@@ -287,41 +289,52 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
 
     // take all insert error
     const onError = (err: Error): void => {
-      if (err.message === 'Not_Admin_User') {
-        toast('관리자만 이용 가능합니다 !', { type: 'error' })
-        // logout method
-        sessionStorage.clear()
-        logout()
-        history.push('/')
-      } else if (err.message === 'No_Data_Category_Select_Select') {
-        toast('변경할 포스트의 카테고리를 선택해 주세요 !', { type: 'error' })
-      } else if (err.message === 'Old_Category_/_?_&_#') {
-        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
-      } else if (err.message === 'No_Data_Post_Select_Title') {
-        toast('변경할 포스트를 선택해 주세요 !', { type: 'error' })
-      } else if (err.message === 'Old_Title_/_?_&_#') {
-        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
-      } else if (err.message === 'No_Data_Category_Select') {
-        toast('변경할 포스트의 카테고리를 선택해 주세요 !', { type: 'error' })
-      } else if (err.message === 'New_Category_/_?_&_#') {
-        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
-      } else if (err.message === 'No_Data_Post_Title') {
-        toast('변경할 포스트의 제목을 입력해 주세요 !', { type: 'error' })
-        changePostError('title')
-      } else if (err.message === 'New_Title_/_?_&_#') {
-        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
-        changePostError('title')
-      } else if (err.message === 'No_Data_Post_Sub_Title') {
-        toast('변경할 포스트의 부제목을 입력해 주세요 !', { type: 'error' })
-        changePostError('subTitle')
-      } else if (err.message === 'No_Data_Post_Main_Text') {
-        toast('변경할 포스트의 내용을 입력해 주세요 !', { type: 'error' })
-        changePostError('mainText')
+      switch (err.message) {
+        case 'Not_Admin_User':
+          toast('관리자만 이용 가능합니다 !', { type: 'error' })
+          // logout method
+          sessionStorage.clear()
+          logout()
+          history.push('/')
+          break
+        case 'Pending':
+          toast('포스트가 변경 중 입니다... 잠시만 기다려 주세요 !', { type: 'error' })
+          break
+        case '/_?_&_#':
+          toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
+          break
+        case 'No_Data_Category_Select_Select':
+          toast('변경할 포스트의 카테고리를 선택해 주세요 !', { type: 'error' })
+          break
+        case 'No_Data_Post_Select_Title':
+          toast('변경할 포스트를 선택해 주세요 !', { type: 'error' })
+          break
+        case 'No_Data_Category_Select':
+          toast('변경할 포스트의 카테고리를 선택해 주세요 !', { type: 'error' })
+          break
+        case 'No_Data_Post_Title':
+          toast('변경할 포스트의 제목을 입력해 주세요 !', { type: 'error' })
+          changePostError('title')
+          break
+        case 'New_Title_/_?_&_#':
+          toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
+          changePostError('title')
+          break
+        case 'No_Data_Post_Sub_Title':
+          toast('변경할 포스트의 부제목을 입력해 주세요 !', { type: 'error' })
+          changePostError('subTitle')
+          break
+        case 'No_Data_Post_Main_Text':
+          toast('변경할 포스트의 내용을 입력해 주세요 !', { type: 'error' })
+          changePostError('mainText')
+          break
+        default:
+          break
       }
     }
 
     // Promise
-    pendingCheck({
+    userAdminCheck({
       loginLogined,
       oldCategory: selectCategory.trim(),
       newCategory: newCategory.trim(),
@@ -331,7 +344,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
       newMainText: mainText.trim(),
       changePending
     })
-      .then(userAdminCheck)
+      .then(pendingCheck)
       .then(oldCategoryCheckedCheck)
       .then(oldCategoryRegExpCheck)
       .then(oldTitleCheckedCheck)
@@ -484,7 +497,7 @@ class PostChange extends React.Component<Props & RouteComponentProps<History>, S
                   <div className="admin-post-select-child-container">
                     <div className="admin-post-select-child">
                       {this.props.selectCategory !== '카테고리 선택' && (
-                        <button onClick={this.handleCategoryShowNoneToogle} className="info">
+                        <button onClick={this.handleCategoryChange} className="info">
                           카테고리 선택
                         </button>
                       )}

@@ -3,14 +3,18 @@ import * as React from 'react'
 import './RippleInputTop.css'
 import { PostTopRipple } from 'store/modules/Ripple'
 
+import { AxiosPromise } from 'axios'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import regExp from 'lib/RegExp'
 
 interface Props {
-  postTopRipple: (value: PostTopRipple) => Promise<object>
   addRippleStatePending: boolean
+}
+
+interface Method {
+  postTopRipple: (value: PostTopRipple) => AxiosPromise<object>
 }
 
 interface State {
@@ -28,7 +32,7 @@ interface SubmitINFO {
   pending: boolean
 }
 
-class RippleTopInput extends React.Component<Props & RouteComponentProps<any>, State> {
+class RippleTopInput extends React.Component<Props & Method & RouteComponentProps<any>, State> {
   // Ref
   public userName: any = null
   public userPassword: any = null

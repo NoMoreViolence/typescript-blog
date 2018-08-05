@@ -8,7 +8,7 @@ import { LoginActions } from 'store/modules/Login'
 
 import { connect } from 'react-redux'
 import { StoreState } from 'store/modules'
-import { bindActionCreators } from 'redux'
+import { bindActionCreators, Dispatch } from 'redux'
 
 interface Props {
   // State
@@ -19,20 +19,24 @@ interface Props {
   title: string
   showSubTitle: string
   deletePending: boolean
-  // Loading
-  getCategory: () => never
-  getPost: (value: GetPostBringAPIInterface) => never
-  // Deleting
-  deleteDeleteCategorySelectChange: (value: string) => never
-  deleteDeletePostTitleSelectChange: (value: string) => never
-  deleteDeletePost: (value: DeleteDeleteAPIInterface) => never
-  // Ending
-  categoryDone: () => never
-  postDone: () => never
-  logout: () => never
 }
 
-const PostChangeContainer: React.SFC<Props> = Props => (
+interface Method {
+  // Data Get
+  getCategory: () => any
+  getPost: (value: GetPostBringAPIInterface) => any
+  // Deleting
+  deleteDeleteCategorySelectChange: (value: string) => void
+  deleteDeletePostTitleSelectChange: (value: string) => void
+  deleteDeletePost: (value: DeleteDeleteAPIInterface) => any
+  // Done
+  categoryDone: () => void
+  postDone: () => void
+  // Error
+  logout: () => void
+}
+
+const PostChangeContainer: React.SFC<Props & Method> = Props => (
   <PostDelete
     // Delete values
     loginLogined={Props.loginLogined}
@@ -56,7 +60,7 @@ const PostChangeContainer: React.SFC<Props> = Props => (
   />
 )
 
-export default connect(
+export default connect<Props, Method, void>(
   ({ Post, Category, Login }: StoreState) => ({
     loginLogined: Login.loginLogined,
     categories: Category.categoryCategory,
@@ -66,7 +70,7 @@ export default connect(
     showSubTitle: Post.delete.subTitle,
     deletePending: Post.delete.deletePending
   }),
-  dispatch => ({
+  (dispatch: Dispatch) => ({
     getCategory: bindActionCreators(CategoryActions.getCategory, dispatch),
     getPost: bindActionCreators(PostActions.getPost, dispatch),
     deleteDeleteCategorySelectChange: bindActionCreators(PostActions.deleteDeleteCategorySelectChange, dispatch),

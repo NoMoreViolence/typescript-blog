@@ -7,7 +7,7 @@ import { PostActions } from 'store/modules/Post'
 import { LoginActions } from 'store/modules/Login'
 
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import { bindActionCreators, Dispatch } from 'redux'
 import { StoreState } from 'store/modules'
 
 interface Props {
@@ -16,19 +16,22 @@ interface Props {
   deleteCategoryInputValue: string
   deleteCategoryCategoryValue: string
   deleteCategoryPending: boolean
-  // Category action
-  getCategory: () => never
-  deleteCategoryInputChange: (value: string) => never
-  deleteCategorySelectChange: (value: string) => never
-  deleteCategory: (value: DeleteCategoryDeleteAPIInterface) => never
-  categoryDone: () => never
-  // Post action
-  postDone: () => never
-  // Login action
-  logout: () => never
 }
 
-const CategoryDeleteContainer: React.SFC<Props> = Props => (
+interface Method {
+  // Category action
+  getCategory: () => any
+  deleteCategoryInputChange: (value: string) => void
+  deleteCategorySelectChange: (value: string) => void
+  deleteCategory: (value: DeleteCategoryDeleteAPIInterface) => any
+  categoryDone: () => void
+  // Post action
+  postDone: () => void
+  // Login action
+  logout: () => void
+}
+
+const CategoryDeleteContainer: React.SFC<Props & Method> = Props => (
   <CategoryDelete
     loginLogined={Props.loginLogined}
     category={Props.category}
@@ -45,7 +48,7 @@ const CategoryDeleteContainer: React.SFC<Props> = Props => (
   />
 )
 
-export default connect(
+export default connect<Props, Method, void>(
   ({ Category, Login }: StoreState) => ({
     loginLogined: Login.loginLogined,
     category: Category.categoryCategory,
@@ -53,7 +56,7 @@ export default connect(
     deleteCategoryCategoryValue: Category.deleteCategorySelectValue,
     deleteCategoryPending: Category.deleteCategoryPending
   }),
-  dispatch => ({
+  (dispatch: Dispatch) => ({
     getCategory: bindActionCreators(CategoryActions.getCategory, dispatch),
     deleteCategoryInputChange: bindActionCreators(CategoryActions.deleteCategoryInputChange, dispatch),
     deleteCategorySelectChange: bindActionCreators(CategoryActions.deleteCategorySelectChange, dispatch),

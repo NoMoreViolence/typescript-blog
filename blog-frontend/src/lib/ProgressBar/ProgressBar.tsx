@@ -117,7 +117,7 @@ const ProgressBarContainer: React.SFC<Props> = Props => (
 )
 
 // export
-export default connect(({ Category, Post, Ripple }: StoreState) => ({
+export default connect<Props, void, void>(({ Category, Post, Ripple }: StoreState) => ({
   categoryPending: Category.categoryPending,
   addCategoryPending: Category.addCategoryPending,
   changeCategoryPending: Category.changeCategoryPending,

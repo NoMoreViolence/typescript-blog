@@ -6,36 +6,31 @@ import { LoginActions } from 'store/modules/Login'
 import { CategoryStateInside } from 'store/modules/Category'
 
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import { bindActionCreators, Dispatch } from 'redux'
 import { StoreState } from 'store/modules'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 interface Props {
   Category: CategoryStateInside[]
-  loginActions: typeof LoginActions
   loginLogined: boolean
 }
 
-class HeaderCategoryContainer extends React.Component<Props & RouteComponentProps<any>> {
-  public render(): JSX.Element {
-    return (
-      <HeaderCategory
-        Category={this.props.Category}
-        Logout={this.props.loginActions.logout}
-        Logined={this.props.loginLogined}
-      />
-    )
-  }
+interface Method {
+  logout: () => any
 }
 
+const HeaderCategoryContainer: React.SFC<Props & Method & RouteComponentProps<any>> = Props => (
+  <HeaderCategory Category={Props.Category} Logout={Props.logout} Logined={Props.loginLogined} />
+)
+
 export default withRouter(
-  connect(
+  connect<Props, Method, void>(
     ({ Category, Login }: StoreState) => ({
       loginLogined: Login.loginLogined,
       Category: Category.categoryCategory
     }),
-    dispatch => ({
-      loginActions: bindActionCreators(LoginActions, dispatch)
+    (dispatch: Dispatch) => ({
+      logout: bindActionCreators(LoginActions.logout, dispatch)
     })
   )(HeaderCategoryContainer)
 )

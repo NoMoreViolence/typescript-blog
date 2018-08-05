@@ -11,18 +11,24 @@ interface Props {
   loginLogined: boolean
   category: CategoryStateInside[]
   pending: boolean
-
   changeCategoryInputValue: string
-  changeCategoryInputChange: (value: string) => void
   changeCategorySelectValue: string
-  changeCategorySelectChange: (value: string) => void
+}
 
-  categoryLoad: () => void
-  changeCategory: (value: PatchCategoryChangeAPIInterface) => any
-  logout: () => void
+interface Method {
+  // Category Data Get
+  categoryLoad: () => Promise<any>
+  // Change Category
+  changeCategoryInputChange: (value: string) => void
+  changeCategorySelectChange: (value: string) => void
+  changeCategory: (value: PatchCategoryChangeAPIInterface) => Promise<any>
+  // Done
   categoryDone: () => void
   postDone: () => void
+  // Error
+  logout: () => void
 }
+
 interface State {
   changeCategoryDropdown: boolean
 }
@@ -38,8 +44,8 @@ interface Target {
   target: HTMLInputElement
 }
 
-const CategoryChange = withRouter<Props & RouteComponentProps<any>>(
-  class CategoryChange extends React.Component<Props & RouteComponentProps<any>, State> {
+const CategoryChange = withRouter<Props & Method & RouteComponentProps<any>>(
+  class CategoryChange extends React.Component<Props & Method & RouteComponentProps<any>, State> {
     // to use focus()
     public changeCategoryInput: any
 

@@ -5,13 +5,17 @@ import { toast } from 'react-toastify'
 import { PostChildRipple } from 'store/modules/Ripple'
 
 import regExp from 'lib/RegExp'
+import { AxiosPromise } from 'axios'
 
 interface Props {
   category: string
   title: string
   topID: string
-  postChildRipple: (value: PostChildRipple) => Promise<object>
   addRippleStatePending: boolean
+}
+
+interface Method {
+  postChildRipple: (value: PostChildRipple) => AxiosPromise<object>
 }
 
 interface State {
@@ -30,7 +34,7 @@ interface SubmitINFO {
   pending: boolean
 }
 
-class RippleChildInput extends React.Component<Props, State> {
+class RippleChildInput extends React.Component<Props & Method, State> {
   // Ref
   public userName: any = null
   public userPassword: any = null

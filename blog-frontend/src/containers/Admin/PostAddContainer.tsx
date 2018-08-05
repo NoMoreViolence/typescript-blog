@@ -1,48 +1,82 @@
 import * as React from 'react'
 
 import { CategoryStateInside, CategoryActions } from 'store/modules/Category'
-import { AddPostState, PostActions } from 'store/modules/Post'
-import { LoginActions } from 'store/modules/Login'
+import { PostAddAPIInterface, PostActions } from 'store/modules/Post'
 
 import PostAdd from 'components/Templates/Admin/PostAdd'
 
 import { connect } from 'react-redux'
 import { StoreState } from 'store/modules'
-import { bindActionCreators } from 'redux'
+import { bindActionCreators, Dispatch } from 'redux'
+import { LoginActions } from 'store/modules/Login'
 
 interface Props {
   loginLogined: boolean
-  add: AddPostState
   category: CategoryStateInside[]
-  CategoryActions: typeof CategoryActions
-  PostActions: typeof PostActions
-  LoginActions: typeof LoginActions
+  addPending: boolean
+  addCategory: string
+  addTitle: string
+  addSubTitle: string
+  addMainText: string
 }
 
-const PostAddContainer: React.SFC<Props> = Props => (
+interface Method {
+  // Category Data Get
+  getCategory: () => any
+  // Add Post
+  addPostCategoryChange: (value: string) => void
+  addPostPost: (value: PostAddAPIInterface) => any
+  // Done
+  categoryDone: () => void
+  postDone: () => void
+  // Error
+  addPostPostError: (value: string) => void
+  logout: () => void
+}
+
+const PostAddContainer: React.SFC<Props & Method> = Props => (
   <PostAdd
+    // Login
     loginLogined={Props.loginLogined}
-    logout={Props.LoginActions.logout}
+    // Get Category Data
+    loadCategory={Props.getCategory}
+    // Category Data
     category={Props.category}
-    add={Props.add}
-    changeCategory={Props.PostActions.addPostCategoryChange}
-    addPost={Props.PostActions.addPostPost}
-    postDone={Props.PostActions.postDone}
-    categoryDone={Props.CategoryActions.categoryDone}
-    loadCategory={Props.CategoryActions.getCategory}
-    postError={Props.PostActions.addPostPostError}
+    // Add Post State
+    addPending={Props.addPending}
+    addCategory={Props.addCategory}
+    addTitle={Props.addTitle}
+    addSubTitle={Props.addSubTitle}
+    addMainText={Props.addMainText}
+    // Change Category
+    changeCategory={Props.addPostCategoryChange}
+    addPost={Props.addPostPost}
+    // Done
+    categoryDone={Props.categoryDone}
+    postDone={Props.postDone}
+    // Error
+    postError={Props.addPostPostError}
+    logout={Props.logout}
   />
 )
 
-export default connect(
+export default connect<Props, Method, void>(
   ({ Category, Post, Login }: StoreState) => ({
     loginLogined: Login.loginLogined,
-    add: Post.add,
-    category: Category.categoryCategory
+    category: Category.categoryCategory,
+    addPending: Post.add.addPending,
+    addCategory: Post.add.category,
+    addTitle: Post.add.title,
+    addSubTitle: Post.add.subTitle,
+    addMainText: Post.add.mainText
   }),
-  dispatch => ({
-    CategoryActions: bindActionCreators(CategoryActions, dispatch),
-    PostActions: bindActionCreators(PostActions, dispatch),
-    LoginActions: bindActionCreators(LoginActions, dispatch)
+  (dispatch: Dispatch) => ({
+    getCategory: bindActionCreators(CategoryActions.getCategory, dispatch),
+    addPostCategoryChange: bindActionCreators(PostActions.addPostCategoryChange, dispatch),
+    addPostPost: bindActionCreators(PostActions.addPostPost, dispatch),
+    categoryDone: bindActionCreators(CategoryActions.categoryDone, dispatch),
+    postDone: bindActionCreators(PostActions.postDone, dispatch),
+    addPostPostError: bindActionCreators(PostActions.addPostPostError, dispatch),
+    logout: bindActionCreators(LoginActions.logout, dispatch)
   })
 )(PostAddContainer)

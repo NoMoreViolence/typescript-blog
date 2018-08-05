@@ -15,6 +15,7 @@ import {
 } from 'store/modules/Ripple'
 import RippleChildRipple from 'lib/RippleChildRipple'
 import RippleInputChild from 'lib/RippleInputChild'
+import { AxiosPromise } from '../../../node_modules/axios'
 
 interface Props {
   // State
@@ -26,9 +27,6 @@ interface Props {
   // Child Ripple data
   childRippleLoaded: boolean
   childRipple: TopOrChildRippleState[]
-  // Get category & child data
-  topRippleLoad: (value: GetTopRipples) => Promise<object>
-  childRippleLoad: (value: GetChildRipples) => Promise<object>
   // URL
   category: string
   title: string
@@ -39,25 +37,31 @@ interface Props {
   topDeleteMode: boolean
   topMoreRippleView: boolean
   topMoreRippleViewMessage: string
-  // Mode change & HTTP request - TOP
-  changeTopAddMode: (value: number) => boolean
-  changeTopShowChildMode: (value: number) => boolean
-  changeTopChangeMode: (value: number) => boolean
-  changeTopRipple: (value: PatchTopRipple) => Promise<object>
-  changeTopDeleteMode: (value: number) => boolean
-  deleteTopRipple: (value: DeleteTopRipple) => Promise<object>
-  changeTopMoreViewMode: (value: number) => boolean
-  // Mode change & HTTP request - CHILD
-  postChildRipple: (value: PostChildRipple) => Promise<any>
-  changeChildChangeMode: (value: ChildMode) => boolean
-  changeChildRipple: (value: PatchChildRipple) => Promise<object>
-  changeChildDeleteMode: (value: ChildMode) => boolean
-  deleteChildRipple: (value: PatchChildRipple) => Promise<object>
-  changeChildMoreViewMode: (value: ChildMode) => boolean
   // Pending State
   addRippleStatePending: boolean
   changeRippleStatePending: boolean
   deleteRippleStatePending: boolean
+}
+
+interface Method {
+  // Get category & child data
+  topRippleLoad: (value: GetTopRipples) => Promise<object>
+  childRippleLoad: (value: GetChildRipples) => Promise<object>
+  // Mode change & HTTP request - TOP
+  changeTopAddMode: (value: number) => void
+  changeTopShowChildMode: (value: number) => void
+  changeTopChangeMode: (value: number) => void
+  changeTopRipple: (value: PatchTopRipple) => AxiosPromise<object>
+  changeTopDeleteMode: (value: number) => void
+  deleteTopRipple: (value: DeleteTopRipple) => AxiosPromise<object>
+  changeTopMoreViewMode: (value: number) => void
+  // Mode change & HTTP request - CHILD
+  postChildRipple: (value: PostChildRipple) => AxiosPromise<any>
+  changeChildChangeMode: (value: ChildMode) => void
+  changeChildRipple: (value: PatchChildRipple) => AxiosPromise<object>
+  changeChildDeleteMode: (value: ChildMode) => void
+  deleteChildRipple: (value: PatchChildRipple) => AxiosPromise<object>
+  changeChildMoreViewMode: (value: ChildMode) => void
 }
 
 interface State {
@@ -96,7 +100,7 @@ interface ShowChildRippleFunction {
   childRipple: TopOrChildRippleState[]
 }
 
-class RippleTopRipple extends React.Component<Props, State> {
+class RippleTopRipple extends React.Component<Props & Method, State> {
   // State
   public state = {
     passwordToChange: '',

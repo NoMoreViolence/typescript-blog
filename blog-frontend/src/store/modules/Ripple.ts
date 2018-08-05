@@ -1,15 +1,14 @@
 import { handleActions, Action, createAction } from 'redux-actions'
 import produce from 'immer'
-import axios from 'axios'
+import axios, { AxiosPromise } from 'axios'
 
 // Get top ripple function
 export interface GetTopRipples {
   category: string
   title: string
 }
-function getTopRipplesAPI(value: GetTopRipples) {
-  return axios.get(`/api/${value.category}/${value.title}/ripples/top`)
-}
+const getTopRipplesAPI = (value: GetTopRipples): AxiosPromise<any> =>
+  axios.get(`/api/${value.category}/${value.title}/ripples/top`)
 
 // Get child ripple function
 export interface GetChildRipples {
@@ -17,9 +16,8 @@ export interface GetChildRipples {
   title: string
   topID: string
 }
-function getChildRipplesAPI(value: GetChildRipples) {
-  return axios.get(`/api/${value.category}/${value.title}/ripples/child?topID=${value.topID}`)
-}
+const getChildRipplesAPI = (value: GetChildRipples): AxiosPromise<any> =>
+  axios.get(`/api/${value.category}/${value.title}/ripples/child?topID=${value.topID}`)
 
 // Post top ripple function
 export interface PostTopRipple {
@@ -29,8 +27,8 @@ export interface PostTopRipple {
   ripple: string
   password: string
 }
-function postTopRippleAPI(value: PostTopRipple) {
-  return axios.post(
+const postTopRippleAPI = (value: PostTopRipple): AxiosPromise<any> =>
+  axios.post(
     `/api/${value.category}/${value.title}/${value.writer}/top`,
     {
       ripple: value.ripple,
@@ -43,7 +41,6 @@ function postTopRippleAPI(value: PostTopRipple) {
       }
     }
   )
-}
 
 // Post child ripple function
 export interface PostChildRipple {
@@ -54,8 +51,8 @@ export interface PostChildRipple {
   ripple: string
   password: string
 }
-function postChildRippleAPI(value: PostChildRipple) {
-  return axios.post(
+const postChildRippleAPI = (value: PostChildRipple): AxiosPromise<any> =>
+  axios.post(
     `/api/${value.category}/${value.title}/${value.writer}/child`,
     {
       ripple: value.ripple,
@@ -68,7 +65,6 @@ function postChildRippleAPI(value: PostChildRipple) {
       }
     }
   )
-}
 
 export interface PatchTopRipple {
   category: string
@@ -78,13 +74,12 @@ export interface PatchTopRipple {
   password: string
   rippleID: string
 }
-function patchTopRippleAPI(value: PatchTopRipple) {
-  return axios.patch(`/api/${value.category}/${value.title}/${value.writer}/top`, {
+const patchTopRippleAPI = (value: PatchTopRipple): AxiosPromise<any> =>
+  axios.patch(`/api/${value.category}/${value.title}/${value.writer}/top`, {
     text: value.text,
     rippleID: value.rippleID,
     password: value.password
   })
-}
 
 export interface PatchChildRipple {
   category: string
@@ -95,14 +90,13 @@ export interface PatchChildRipple {
   topID: string
   rippleID: string
 }
-function patchChildRippleAPI(value: PatchChildRipple) {
-  return axios.patch(`/api/${value.category}/${value.title}/${value.writer}/child`, {
+const patchChildRippleAPI = (value: PatchChildRipple): AxiosPromise<any> =>
+  axios.patch(`/api/${value.category}/${value.title}/${value.writer}/child`, {
     text: value.text,
     topID: value.topID,
     rippleID: value.rippleID,
     password: value.password
   })
-}
 
 export interface DeleteTopRipple {
   category: string
@@ -111,8 +105,8 @@ export interface DeleteTopRipple {
   password: string
   rippleID: string
 }
-function deleteTopRippleAPI(value: DeleteTopRipple) {
-  return axios.delete(`/api/${value.category}/${value.title}/${value.writer}/top`, {
+const deleteTopRippleAPI = (value: DeleteTopRipple): AxiosPromise<any> =>
+  axios.delete(`/api/${value.category}/${value.title}/${value.writer}/top`, {
     data: {
       topID: '',
       rippleID: value.rippleID,
@@ -122,7 +116,6 @@ function deleteTopRippleAPI(value: DeleteTopRipple) {
       'Context-Type': 'application/json'
     }
   })
-}
 
 export interface DeleteChildRipple {
   category: string
@@ -132,15 +125,14 @@ export interface DeleteChildRipple {
   topID: string
   rippleID: string
 }
-function deleteChildRippleAPI(value: DeleteChildRipple) {
-  return axios.delete(`/api/${value.category}/${value.title}/${value.writer}/child`, {
+const deleteChildRippleAPI = (value: DeleteChildRipple): AxiosPromise<any> =>
+  axios.delete(`/api/${value.category}/${value.title}/${value.writer}/child`, {
     data: {
       topID: value.topID,
       rippleID: value.rippleID,
       password: value.password
     }
   })
-}
 
 // Reset all state data
 const RIPPLE_CLEAR = 'RIPPLE_CLEAR'

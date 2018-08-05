@@ -3,6 +3,7 @@ import * as React from 'react'
 import { toast } from 'react-toastify'
 
 import { PatchChildRipple, ChildMode, DeleteChildRipple } from 'store/modules/Ripple'
+import { AxiosPromise } from 'axios'
 
 interface Props {
   // Top Ripple data
@@ -22,15 +23,20 @@ interface Props {
   childDeleteMode: boolean
   childMoreRippleView: boolean
   childMoreRippleViewMessage: string
-  // Mode change
-  changeChildChangeMode: (value: ChildMode) => boolean
-  changeChildDeleteMode: (value: ChildMode) => boolean
-  changeChildMoreViewMode: (value: ChildMode) => boolean
-  // Action
-  changeChildRipple: (value: PatchChildRipple) => Promise<object>
+  // Pending
   changeRippleStatePending: boolean
-  deleteChildRipple: (value: DeleteChildRipple) => Promise<object>
   deleteRippleStatePending: boolean
+}
+
+interface Method {
+  // Mode change
+  changeChildChangeMode: (value: ChildMode) => void
+  changeChildDeleteMode: (value: ChildMode) => void
+  changeChildMoreViewMode: (value: ChildMode) => void
+
+  // Action
+  changeChildRipple: (value: PatchChildRipple) => AxiosPromise<object>
+  deleteChildRipple: (value: DeleteChildRipple) => AxiosPromise<object>
 }
 
 interface State {
@@ -60,7 +66,7 @@ interface DeleteRipple {
   pending: boolean
 }
 
-class RippleChildRipple extends React.Component<Props, State> {
+class RippleChildRipple extends React.Component<Props & Method, State> {
   // State
   public state = {
     // Child Text

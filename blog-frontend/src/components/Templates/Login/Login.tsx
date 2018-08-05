@@ -1,34 +1,37 @@
 import * as React from 'react'
 
+import { LoginInterface } from 'store/modules/Login'
+
+import { AxiosPromise } from 'axios'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
+
 import './Login.css'
 import { toast } from 'react-toastify'
 
-import { LoginInterface } from 'store/modules/Login'
-
-import { withRouter, RouteComponentProps } from 'react-router'
-
-// onChange Input Element
-interface InputTarget {
-  target: HTMLInputElement
-}
-
 // LoginContainer Props
 interface Props {
-  // username, password, onchange
-  handleChangeUsername: Function
+  // username, password
   loginUsername: string
-  handleChangePassword: Function
   loginPassword: string
-  // Login method
-  postLogin: (value: LoginInterface) => Promise<object>
   // logined = true, notLogined = false
   loginStatusCode: number
   loginType: string
   loginLogined: boolean
 }
 
-const Login = withRouter<Props & RouteComponentProps<any>>(
-  class Login extends React.Component<Props & RouteComponentProps<any>> {
+interface Method {
+  handleChangeUsername: (value: string) => void
+  handleChangePassword: (value: string) => void
+  postLogin: (value: LoginInterface) => AxiosPromise<any>
+}
+
+// onChange Input Element
+interface InputTarget {
+  target: HTMLInputElement
+}
+
+const Login = withRouter<Props & Method & RouteComponentProps<any>>(
+  class Login extends React.PureComponent<Props & Method & RouteComponentProps<any>> {
     // Ref
     public ID: any = null
     public PW: any = null
@@ -103,14 +106,6 @@ const Login = withRouter<Props & RouteComponentProps<any>>(
     // Handle change
     public handleChange = (e: InputTarget): void => {
       this.props['handleChange' + e.target.name](e.target.value)
-    }
-
-    // Optimization rendering problem
-    public shouldComponentUpdate(nextProps: Props) {
-      if (nextProps !== this.props) {
-        return true
-      }
-      return false
     }
 
     public render(): JSX.Element {

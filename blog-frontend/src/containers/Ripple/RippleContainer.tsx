@@ -22,32 +22,35 @@ import Ripple from 'components/Templates/Ripple'
 
 interface Props {
   topRipple: TopOrChildRippleState[]
-  rippleClear: () => never
-  getTopRipples: (value: GetTopRipples) => never
-  getChildRipples: (value: GetChildRipples) => never
-  postTopRipple: (value: PostTopRipple) => never
-  postChildRipple: (value: PostChildRipple) => never
-  changeTopRipple: (value: PatchTopRipple) => never
-  changeChildRipple: (value: PatchChildRipple) => any
-  deleteTopRipple: (value: DeleteTopRipple) => any
-  deleteChildRipple: (value: DeleteChildRipple) => any
-  // top
-  changeTopAddMode: (value: number) => never
-  changeTopShowChildMode: (value: number) => never
-  changeTopChangeMode: (value: number) => never
-  changeTopDeleteMode: (value: number) => never
-  changeTopMoreViewMode: (value: number) => never
-  // child
-  changeChildChangeMode: (value: ChildMode) => never
-  changeChildDeleteMode: (value: ChildMode) => never
-  changeChildMoreViewMode: (value: ChildMode) => never
   // submit ripple state
   addRippleStatePending: boolean
   changeRippleStatePending: boolean
   deleteRippleStatePending: boolean
 }
 
-const RippleContainer: React.SFC<Props> = Props => (
+interface Method {
+  rippleClear: () => void
+  getTopRipples: (value: GetTopRipples) => any
+  getChildRipples: (value: GetChildRipples) => any
+  postTopRipple: (value: PostTopRipple) => any
+  postChildRipple: (value: PostChildRipple) => any
+  changeTopRipple: (value: PatchTopRipple) => any
+  changeChildRipple: (value: PatchChildRipple) => any
+  deleteTopRipple: (value: DeleteTopRipple) => any
+  deleteChildRipple: (value: DeleteChildRipple) => any
+  // top
+  changeTopAddMode: (value: number) => void
+  changeTopShowChildMode: (value: number) => void
+  changeTopChangeMode: (value: number) => void
+  changeTopDeleteMode: (value: number) => void
+  changeTopMoreViewMode: (value: number) => void
+  // child
+  changeChildChangeMode: (value: ChildMode) => void
+  changeChildDeleteMode: (value: ChildMode) => void
+  changeChildMoreViewMode: (value: ChildMode) => void
+}
+
+const RippleContainer: React.SFC<Props & Method> = Props => (
   <Ripple
     topRipple={Props.topRipple}
     rippleClear={Props.rippleClear}
@@ -73,7 +76,7 @@ const RippleContainer: React.SFC<Props> = Props => (
   />
 )
 
-export default connect(
+export default connect<Props, Method, void>(
   ({ Ripple }: StoreState) => ({
     topRipple: Ripple.topRipple,
     addRippleStatePending: Ripple.addRippleState.pending,

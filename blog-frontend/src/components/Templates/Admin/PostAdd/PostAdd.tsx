@@ -4,23 +4,35 @@ import { toast } from 'react-toastify'
 
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 
-import { AddPostState, PostAddAPIInterface } from 'store/modules/Post'
+import { PostAddAPIInterface } from 'store/modules/Post'
 import { CategoryStateInside } from 'store/modules/Category'
 
 import MarkdownEditorAddContainer from 'containers/MarkDownEditorAdd/MarkDownEditorAddContainer'
 import MarkdownRendererAddContainer from 'containers/MarkDownRendererAdd/MarkDownRendererAddContainer'
+import regExp from 'lib/RegExp'
 
 interface Props {
   loginLogined: boolean
-  logout: () => void
   category: CategoryStateInside[]
-  add: AddPostState
+  addPending: boolean
+  addCategory: string
+  addTitle: string
+  addSubTitle: string
+  addMainText: string
+}
+
+interface Method {
+  // Category Data Get
   loadCategory: () => any
+  // Add Post
   changeCategory: (value: string) => any
   addPost: (AddPost: PostAddAPIInterface) => any
-  postDone: () => void
+  // Done
   categoryDone: () => void
+  postDone: () => void
+  // Error
   postError: (value: string) => void
+  logout: () => void
 }
 
 interface State {
@@ -31,18 +43,19 @@ interface State {
 }
 
 interface PostAddMethodInterface {
+  pending: boolean
   loginLogined: boolean
-  category?: string
-  title?: string
-  subTitle?: string
-  mainText?: string
+  category: string
+  title: string
+  subTitle: string
+  mainText: string
 }
 
 interface CTarget {
   currentTarget: HTMLButtonElement
 }
 
-class PostAdd extends React.Component<Props & RouteComponentProps<History>, State> {
+class PostAdd extends React.Component<Props & Method & RouteComponentProps<History>, State> {
   // State
   public state = {
     editorOrPreview: true,
@@ -90,7 +103,21 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
   // Submit => Post Add
   public handleSubmit = (): void => {
     // Props
-    const { loginLogined, logout, history, add, addPost, categoryDone, postDone, loadCategory, postError } = this.props
+    const {
+      loginLogined,
+      logout,
+      history,
+      addPending,
+      addCategory,
+      addTitle,
+      addSubTitle,
+      addMainText,
+      addPost,
+      categoryDone,
+      postDone,
+      loadCategory,
+      postError
+    } = this.props
 
     // Check user is logined or not
     const userAdminCheck = (data: PostAddMethodInterface): Promise<object> => {
@@ -98,6 +125,14 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
         return Promise.resolve(data)
       }
       return Promise.reject(new Error('Not_Admin_User'))
+    }
+
+    const PendingCheck = (data: PostAddMethodInterface): Promise<object> => {
+      if (data.pending === true) {
+        return Promise.reject(new Error('Pending'))
+      }
+
+      return Promise.resolve(data)
     }
 
     // Category value check
@@ -114,6 +149,16 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
         return Promise.resolve(data)
       }
       return Promise.reject(new Error('No_Data_Post_Title'))
+    }
+
+    const titleValueCheck = (data: PostAddMethodInterface): Promise<object> => {
+      // RegExp Test
+      const oldCategoryTested = regExp.test(data.title)
+      // If the data is not right
+      if (oldCategoryTested === true) {
+        return Promise.reject(new Error('Post_Title_/_?_&_#'))
+      }
+      return Promise.resolve(data)
     }
 
     // SubTitle value check
@@ -165,13 +210,18 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
         sessionStorage.clear()
         logout()
         history.push('/')
+      } else if (err.message === 'Pending') {
+        toast('포스트가 추가 중입니다... 잠시만 기다려 주세요 !', { type: 'error' })
       } else if (err.message === 'No_Data_Category_Select') {
         toast('추가할 포스트의 카테고리를 선택해 주세요 !', { type: 'error' })
       } else if (err.message === 'No_Data_Post_Title') {
         toast('추가할 포스트의 제목을 입력해 주세요 !', { type: 'error' })
         postError('title')
+      } else if (err.message === 'Post_Title_/_?_&_#') {
+        toast("'#', '/', '&', '?' 의 특수문자 사용은 불가능 합니다 !", { type: 'error' })
+        postError('title')
       } else if (err.message === 'No_Data_Post_Sub_Title') {
-        toast('추가할 포스트의부제목을 입력해 주세요 !', { type: 'error' })
+        toast('추가할 포스트의 부제목을 입력해 주세요 !', { type: 'error' })
         postError('subTitle')
       } else if (err.message === 'No_Data_Post_Main_Text') {
         toast('추가할 포스트의 본문을 입력해 주세요 !', { type: 'error' })
@@ -182,13 +232,16 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
     // Promise
     userAdminCheck({
       loginLogined,
-      category: add.category.trim(),
-      title: add.title.trim(),
-      subTitle: add.subTitle.trim(),
-      mainText: add.mainText.trim()
+      pending: addPending,
+      category: addCategory.trim(),
+      title: addTitle.trim(),
+      subTitle: addSubTitle.trim(),
+      mainText: addMainText.trim()
     })
+      .then(PendingCheck)
       .then(categoryCheck)
       .then(titleCheck)
+      .then(titleValueCheck)
       .then(subTitleCheck)
       .then(mainTextCheck)
       .then(requestToServer)
@@ -197,7 +250,7 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
 
   // Optimization component
   public shouldComponentUpdate(nextProps: Props, nextState: State) {
-    if (nextState !== this.state || nextProps.add.category !== this.props.add.category) {
+    if (nextState !== this.state || nextProps.addCategory !== this.props.addCategory) {
       return true
     }
     return false
@@ -231,8 +284,8 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
       return (
         <div className="admin-post-preview-container">
           <div className="admin-post-preview">
-            <h1 className="admin-post-preview-title">{this.props.add.title}</h1>
-            <h3 className="admin-post-preview-sub-title">{this.props.add.subTitle}</h3>
+            <h1 className="admin-post-preview-title">{this.props.addTitle}</h1>
+            <h3 className="admin-post-preview-sub-title">{this.props.addSubTitle}</h3>
             <div className="admin-post-preview-main-text">
               <MarkdownRendererAddContainer />
             </div>
@@ -259,12 +312,12 @@ class PostAdd extends React.Component<Props & RouteComponentProps<History>, Stat
 
             <div className="admin-post-select-container">
               <button className="primary" onClick={this.handleCategorySelectShowNoneToogle}>
-                {this.props.add.category}
+                {this.props.addCategory}
               </button>
               {this.state.dropdown && (
                 <div className="admin-post-select-child-container">
                   <div className="admin-post-select-child">
-                    {this.props.add.category !== '카테고리 선택' && (
+                    {this.props.addCategory !== '카테고리 선택' && (
                       <button onClick={this.handleCategorySelectChange} className="primary">
                         카테고리 선택
                       </button>

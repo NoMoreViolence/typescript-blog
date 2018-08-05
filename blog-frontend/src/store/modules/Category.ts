@@ -1,15 +1,13 @@
 import { handleActions, Action, createAction } from 'redux-actions'
 import produce from 'immer'
-import axios from 'axios'
+import axios, { AxiosPromise } from 'axios'
 
 // bring all category api
-function getCategorysAPI() {
-  return axios.get('/api/categories')
-}
+const getCategorysAPI = (): AxiosPromise<any> => axios.get('/api/categories')
 
 // add category api
-function postCategoryAddAPI(newCategory: string) {
-  return axios.post(
+const postCategoryAddAPI = (newCategory: string): AxiosPromise<any> =>
+  axios.post(
     `/api/${newCategory}`,
     {},
     {
@@ -19,15 +17,14 @@ function postCategoryAddAPI(newCategory: string) {
       }
     }
   )
-}
 
 export interface PatchCategoryChangeAPIInterface {
   oldCategory: string
   newCategory: string
 }
 // change category api
-function patchCategoryChangeAPI(value: PatchCategoryChangeAPIInterface) {
-  return axios.patch(
+const patchCategoryChangeAPI = (value: PatchCategoryChangeAPIInterface): AxiosPromise<any> =>
+  axios.patch(
     `/api/${value.oldCategory}`,
     { changeCategory: value.newCategory },
     {
@@ -37,21 +34,19 @@ function patchCategoryChangeAPI(value: PatchCategoryChangeAPIInterface) {
       }
     }
   )
-}
 
 export interface DeleteCategoryDeleteAPIInterface {
   category: string
   doubleCheck: string
 }
 // delete category api
-function deleteCategoryDeleteAPI(value: DeleteCategoryDeleteAPIInterface) {
-  return axios.delete(`/api/${value.category}?doubleCheck=${value.doubleCheck}`, {
+const deleteCategoryDeleteAPI = (value: DeleteCategoryDeleteAPIInterface): AxiosPromise<any> =>
+  axios.delete(`/api/${value.category}?doubleCheck=${value.doubleCheck}`, {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': sessionStorage.getItem('token')
     }
   })
-}
 
 // bring category
 const GET_BRING_CATEGORYS = 'GET_BRING_CATEGORYS'
@@ -128,15 +123,15 @@ export interface CategoryState {
   categoryCategory: CategoryStateInside[]
 
   addCategoryPending: boolean
-  addCategoryInputValue?: string
+  addCategoryInputValue: string
 
   changeCategoryPending: boolean
-  changeCategorySelectValue?: string
-  changeCategoryInputValue?: string
+  changeCategorySelectValue: string
+  changeCategoryInputValue: string
 
   deleteCategoryPending: boolean
-  deleteCategorySelectValue?: string
-  deleteCategoryInputValue?: string
+  deleteCategorySelectValue: string
+  deleteCategoryInputValue: string
 }
 // origin state
 const initialState: CategoryState = {
@@ -199,7 +194,7 @@ const reducer = handleActions<CategoryState, any>(
     // change add category input
     [POST_ADD_CATEGORY_INPUT_CHANGE]: (state, action: AddInputPayloadAction) =>
       produce(state, draft => {
-        draft.addCategoryInputValue = action.payload
+        draft.addCategoryInputValue = action.payload || ''
       }),
     // add category pending
     [POST_ADD_CATEGORY_PENDING]: state =>
@@ -220,12 +215,12 @@ const reducer = handleActions<CategoryState, any>(
     // change change category input
     [PATCH_CHANGE_CATEGORY_INPUT_CHANGE]: (state, action: ChangeInputPayloadAction) =>
       produce(state, draft => {
-        draft.changeCategoryInputValue = action.payload
+        draft.changeCategoryInputValue = action.payload || ''
       }),
     // change change category select
     [PATCH_CHANGE_CATEGORY_SELECT_CHANGE]: (state, action: ChangeCategoryCategoryPayloadAction) =>
       produce(state, draft => {
-        draft.changeCategorySelectValue = action.payload
+        draft.changeCategorySelectValue = action.payload || ''
       }),
     // change category pending
     [PATCH_CHANGE_CATEGORY_PENDING]: state =>
@@ -246,12 +241,12 @@ const reducer = handleActions<CategoryState, any>(
     // change delete category input
     [DELETE_DELETE_CATEGORY_INPUT_CHANGE]: (state, action: DeleteInputPayloadAction) =>
       produce(state, draft => {
-        draft.deleteCategoryInputValue = action.payload
+        draft.deleteCategoryInputValue = action.payload || ''
       }),
     // change delete category select
     [DELETE_DELETE_CATEGORY_SELECT_CHANGE]: (state, action: DeleteCategoryCategoryPayloadAction) =>
       produce(state, draft => {
-        draft.deleteCategorySelectValue = action.payload
+        draft.deleteCategorySelectValue = action.payload || ''
       }),
     // delete categoru pending
     [DELETE_DELETE_CATEGORY_PENDING]: state =>

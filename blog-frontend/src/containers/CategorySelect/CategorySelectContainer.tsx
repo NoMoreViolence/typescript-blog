@@ -27,7 +27,7 @@ const CategorySelectContainer: React.SFC<Props & RouteComponentProps<any>> = Pro
   )
 }
 
-const component = connect(({ Category }: StoreState) => ({
+const component = connect<Props, void, void>(({ Category }: StoreState) => ({
   Category: Category.categoryCategory,
   categoryLoaded: Category.categoryLoaded,
   categoryPending: Category.categoryPending,

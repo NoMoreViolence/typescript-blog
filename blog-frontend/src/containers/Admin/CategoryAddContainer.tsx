@@ -8,25 +8,28 @@ import { PostActions } from 'store/modules/Post'
 import { LoginActions } from 'store/modules/Login'
 
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import { bindActionCreators, Dispatch } from 'redux'
 import { StoreState } from 'store/modules'
 
 interface Props {
   loginLogined: boolean
   addCategoryInputValue: string
   addCategoryPending: boolean
-  // Category Actions
-  getCategory: () => never
-  addCategoryInputChange: (value: string) => never
-  addCategory: (value: string) => never
-  categoryDone: () => never
-  // Post Actions
-  postDone: () => never
-  // Login Actions
-  logout: () => never
 }
 
-const CategoryAddContainer: React.SFC<Props> = Props => (
+interface Method {
+  // Category Actions
+  getCategory: () => any
+  addCategoryInputChange: (value: string) => void
+  addCategory: (value: string) => any
+  categoryDone: () => void
+  // Post Actions
+  postDone: () => void
+  // Login Actions
+  logout: () => void
+}
+
+const CategoryAddContainer: React.SFC<Props & Method> = Props => (
   <CategoryAdd
     loginLogined={Props.loginLogined}
     categoryLoad={Props.getCategory}
@@ -40,13 +43,13 @@ const CategoryAddContainer: React.SFC<Props> = Props => (
   />
 )
 
-export default connect(
-  ({ Category, Login }: StoreState) => ({
+export default connect<Props, Method, void>(
+  ({ Login, Category }: StoreState) => ({
     loginLogined: Login.loginLogined,
     addCategoryInputValue: Category.addCategoryInputValue,
     addCategoryPending: Category.addCategoryPending
   }),
-  dispatch => ({
+  (dispatch: Dispatch) => ({
     getCategory: bindActionCreators(CategoryActions.getCategory, dispatch),
     addCategoryInputChange: bindActionCreators(CategoryActions.addCategoryInputChange, dispatch),
     addCategory: bindActionCreators(CategoryActions.addCategory, dispatch),

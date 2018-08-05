@@ -5,15 +5,19 @@ import { toast } from 'react-toastify'
 
 import { CategoryStateInside } from 'store/modules/Category'
 
+import { AxiosPromise } from 'axios'
 import { NavLink } from 'react-router-dom'
 
 interface Props {
   Category: CategoryStateInside[]
-  Logout: () => void
   Logined: boolean
 }
 
-class HeaderCategory extends React.Component<Props> {
+interface Method {
+  Logout: () => AxiosPromise<any>
+}
+
+class HeaderCategory extends React.Component<Props & Method> {
   public handleSignOut = (): void => {
     this.props.Logout()
     sessionStorage.clear()

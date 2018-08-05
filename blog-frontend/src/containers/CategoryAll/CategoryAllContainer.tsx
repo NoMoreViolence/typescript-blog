@@ -23,7 +23,7 @@ const CategoryAllContainer: React.SFC<Props> = Props => (
   />
 )
 
-export default connect(
+export default connect<Props, void, void>(
   ({ Category }: StoreState) => ({
     category: Category.categoryCategory,
     categoryLoaded: Category.categoryLoaded,

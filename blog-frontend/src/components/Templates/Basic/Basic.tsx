@@ -6,8 +6,11 @@ import { AutoLoginInterface } from 'store/modules/Login'
 
 interface Props {
   loginLogined: boolean
-  getLogin: (value: AutoLoginInterface) => any
-  loadCategory: () => void
+}
+
+interface Method {
+  getLogin: (value: AutoLoginInterface) => Promise<any>
+  loadCategory: () => Promise<any>
 }
 
 interface ClientAutoLoginInterface {
@@ -15,7 +18,7 @@ interface ClientAutoLoginInterface {
   token: string | null
 }
 
-class Basic extends React.Component<Props> {
+class Basic extends React.Component<Props & Method> {
   // auto login & bring category data
   public componentDidMount(): void {
     const { loadCategory, getLogin, loginLogined } = this.props

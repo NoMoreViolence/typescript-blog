@@ -6,7 +6,7 @@ import { PostActions } from 'store/modules/Post'
 
 import { connect } from 'react-redux'
 import { StoreState } from 'store/modules'
-import { bindActionCreators } from 'redux'
+import { bindActionCreators, Dispatch } from 'redux'
 
 interface Props {
   // Values
@@ -16,14 +16,17 @@ interface Props {
   failedWithNoDataTitle: boolean
   failedWithNoDataSubTitle: boolean
   failedWithNoDataMainText: boolean
-  // Method
-  addPostPostTitleChange: (value: string) => never
-  addPostPostSubTitleChange: (value: string) => never
-  addPostPostMainTextChange: (value: string) => never
-  addPostPostError: (value: string) => never
 }
 
-const MarkDownEditorAddContainer: React.SFC<Props> = Props => (
+interface Method {
+  // Method
+  addPostPostTitleChange: (value: string) => void
+  addPostPostSubTitleChange: (value: string) => void
+  addPostPostMainTextChange: (value: string) => void
+  addPostPostError: (value: string) => void
+}
+
+const MarkDownEditorAddContainer: React.SFC<Props & Method> = Props => (
   <MarkDownEditor
     // Value
     title={Props.title}
@@ -40,7 +43,7 @@ const MarkDownEditorAddContainer: React.SFC<Props> = Props => (
   />
 )
 
-export default connect(
+export default connect<Props, Method, void>(
   ({ Post }: StoreState) => ({
     title: Post.add.title,
     subTitle: Post.add.subTitle,
@@ -49,7 +52,7 @@ export default connect(
     failedWithNoDataSubTitle: Post.add.failedWithNoDataSubTitle,
     failedWithNoDataMainText: Post.add.failedWithNoDataMainText
   }),
-  dispatch => ({
+  (dispatch: Dispatch) => ({
     addPostPostTitleChange: bindActionCreators(PostActions.addPostPostTitleChange, dispatch),
     addPostPostSubTitleChange: bindActionCreators(PostActions.addPostPostSubTitleChange, dispatch),
     addPostPostMainTextChange: bindActionCreators(PostActions.addPostPostMainTextChange, dispatch),

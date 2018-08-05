@@ -11,6 +11,9 @@ interface Props {
   titleError: boolean
   subTitleError: boolean
   mainTextError: boolean
+}
+
+interface Method {
   changeTitle: (value: string) => void
   changeSubTitle: (value: string) => void
   changeMainText: (value: string) => void
@@ -25,7 +28,7 @@ interface Target {
   target: HTMLInputElement
 }
 
-class MarkDownEditor extends React.Component<Props, State> {
+class MarkDownEditor extends React.Component<Props & Method, State> {
   public state = {
     mainText: ''
   }

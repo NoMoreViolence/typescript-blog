@@ -10,11 +10,18 @@ interface Props {
   loginLogined: boolean
   addCategoryInputValue: string
   pending: boolean
-  categoryLoad: () => void
+}
+
+interface Method {
+  // Category Data Get
+  categoryLoad: () => Promise<any>
+  // Category add
   addCategoryInputChange: (value: string) => void
-  addCategory: (value: string) => any
+  addCategory: (value: string) => Promise<any>
+  // Done
   categoryDone: () => void
   postDone: () => void
+  // Error
   logout: () => void
 }
 
@@ -28,7 +35,7 @@ interface Target {
   target: HTMLInputElement
 }
 
-class CategoryAdd extends React.Component<Props & RouteComponentProps<History>> {
+class CategoryAdd extends React.Component<Props & Method & RouteComponentProps<History>> {
   // to use focus()
   public addCategoryInput: any
 

@@ -6,24 +6,27 @@ import { LoginActions, AutoLoginInterface } from 'store/modules/Login'
 import { CategoryActions } from 'store/modules/Category'
 
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import { bindActionCreators, Dispatch } from 'redux'
 import { StoreState } from 'store/modules'
 
 interface Props {
-  autoLogin: (value: AutoLoginInterface) => never
-  loadCategory: () => never
   loginLogined: boolean
 }
 
-const BasicContainer: React.SFC<Props> = Props => (
+interface Method {
+  autoLogin: (value: AutoLoginInterface) => any
+  loadCategory: () => any
+}
+
+const BasicContainer: React.SFC<Props & Method> = Props => (
   <Basic loginLogined={Props.loginLogined} getLogin={Props.autoLogin} loadCategory={Props.loadCategory} />
 )
 
-export default connect(
-  ({ Login, Category }: StoreState) => ({
+export default connect<Props, Method, void>(
+  ({ Login }: StoreState) => ({
     loginLogined: Login.loginLogined
   }),
-  dispatch => ({
+  (dispatch: Dispatch) => ({
     autoLogin: bindActionCreators(LoginActions.autoLogin, dispatch),
     loadCategory: bindActionCreators(CategoryActions.getCategory, dispatch)
   })

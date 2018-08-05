@@ -11,4 +11,6 @@ interface Props {
 
 const MarkDownRendererDeleteContainer: React.SFC<Props> = Props => <MarkDownRenderer markdown={Props.mainText} />
 
-export default connect(({ Post }: StoreState) => ({ mainText: Post.delete.mainText }))(MarkDownRendererDeleteContainer)
+export default connect<Props, void, void>(({ Post }: StoreState) => ({ mainText: Post.delete.mainText }))(
+  MarkDownRendererDeleteContainer
+)

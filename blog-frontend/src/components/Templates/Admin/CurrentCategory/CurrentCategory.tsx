@@ -6,7 +6,7 @@ interface Props {
   category: CategoryStateInside[]
 }
 
-const CurrentCategory = (Props: Props): JSX.Element => {
+const CurrentCategory: React.SFC<Props> = (Props): JSX.Element => {
   // Show categor
   const loadCategory = (data: CategoryStateInside[]): JSX.Element[] => {
     return data.map(

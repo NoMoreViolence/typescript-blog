@@ -80,8 +80,8 @@ export interface LoginState {
   loginType: string
   loginStatusCode: number
   loginLogined: boolean
-  loginUsername: string | undefined
-  loginPassword: string | undefined
+  loginUsername: string
+  loginPassword: string
 }
 // initial state
 const initialState: LoginState = {
@@ -159,12 +159,12 @@ const reducer = handleActions<LoginState, any>(
     // change username
     [HANDLE_CHANGE_USERNAME]: (state, action: changeUsernameInputPayloadAction) =>
       produce(state, (draft: LoginState) => {
-        draft.loginUsername = action.payload
+        draft.loginUsername = action.payload || ''
       }),
     // change password
     [HANDLE_CHANGE_PASSWORD]: (state, action: changePasswordInputPayloadAction) =>
       produce(state, (draft: LoginState) => {
-        draft.loginPassword = action.payload
+        draft.loginPassword = action.payload || ''
       })
   },
   initialState

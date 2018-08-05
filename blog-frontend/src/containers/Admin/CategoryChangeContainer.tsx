@@ -7,7 +7,7 @@ import { PostActions } from 'store/modules/Post'
 import { LoginActions } from 'store/modules/Login'
 
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import { bindActionCreators, Dispatch } from 'redux'
 import { StoreState } from 'store/modules'
 
 interface Props {
@@ -16,20 +16,21 @@ interface Props {
   changeCategoryPending: boolean
   changeCategoryInputValue: string
   changeCategorySelectValue: string
-  // Method
-  // Category actions
-  getCategory: () => never
-  changeCategoryInputChange: (value: string) => never
-  changeCategorySelectChange: (value: string) => never
-  changeCategory: (value: PatchCategoryChangeAPIInterface) => never
-  categoryDone: () => never
-  // Post actions
-  postDone: () => never
-  // Login actions
-  logout: () => never
 }
 
-const CategoryChangeContainer: React.SFC<Props> = Props => (
+interface Method {
+  getCategory: () => any
+  changeCategoryInputChange: (value: string) => void
+  changeCategorySelectChange: (value: string) => void
+  changeCategory: (value: PatchCategoryChangeAPIInterface) => any
+  categoryDone: () => void
+  // Post actions
+  postDone: () => void
+  // Login actions
+  logout: () => void
+}
+
+const CategoryChangeContainer: React.SFC<Props & Method> = Props => (
   <CategoryChange
     loginLogined={Props.loginLogined}
     category={Props.category}
@@ -46,7 +47,7 @@ const CategoryChangeContainer: React.SFC<Props> = Props => (
   />
 )
 
-export default connect(
+export default connect<Props, Method, void>(
   ({ Category, Login }: StoreState) => ({
     loginLogined: Login.loginLogined,
     category: Category.categoryCategory,
@@ -54,7 +55,7 @@ export default connect(
     changeCategoryInputValue: Category.changeCategoryInputValue,
     changeCategorySelectValue: Category.changeCategorySelectValue
   }),
-  dispatch => ({
+  (dispatch: Dispatch) => ({
     getCategory: bindActionCreators(CategoryActions.getCategory, dispatch),
     changeCategoryInputChange: bindActionCreators(CategoryActions.changeCategoryInputChange, dispatch),
     changeCategorySelectChange: bindActionCreators(CategoryActions.changeCategorySelectChange, dispatch),

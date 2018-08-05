@@ -13,16 +13,20 @@ interface Props {
   deleteCategoryPending: boolean
   deleteCategoryInputValue: string
   deleteCategorySelectValue: string
+}
+
+interface Method {
+  // Category Data Get
+  categoryLoad: () => Promise<any>
   // Change text
   deleteCategoryInputChange: (value: string) => void
   deleteCategorySelectChange: (value: string) => void
-  // Loading category
-  categoryLoad: () => void
-  // Delete category
-  deleteCategory: (value: DeleteCategoryDeleteAPIInterface) => any
-  // Ending method
+  // Delete category API
+  deleteCategory: (value: DeleteCategoryDeleteAPIInterface) => Promise<any>
+  // Done
   categoryDone: () => void
   postDone: () => void
+  // Error
   logout: () => void
 }
 
@@ -41,7 +45,7 @@ interface Target {
   target: HTMLInputElement
 }
 
-class CategoryDelete extends React.Component<Props & RouteComponentProps<any>, State> {
+class CategoryDelete extends React.Component<Props & Method & RouteComponentProps<any>, State> {
   // To use focus()
   public deleteCategoryInput: any
 

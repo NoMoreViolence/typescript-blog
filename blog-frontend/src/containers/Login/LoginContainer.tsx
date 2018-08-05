@@ -13,27 +13,32 @@ interface Props {
   loginLogined: boolean
   loginUsername: string
   loginPassword: string
-  handleChangeUsername: (value: string) => never
-  handleChangePassword: (value: string) => never
-  postLogin: (value: LoginInterface) => never
 }
 
-const LoginContainer: React.SFC<Props> = Props => {
-  return (
-    <Login
-      handleChangeUsername={Props.handleChangeUsername}
-      loginUsername={Props.loginUsername}
-      handleChangePassword={Props.handleChangePassword}
-      loginPassword={Props.loginPassword}
-      postLogin={Props.postLogin}
-      loginStatusCode={Props.loginStatusCode}
-      loginType={Props.loginType}
-      loginLogined={Props.loginLogined}
-    />
-  )
+interface Method {
+  handleChangeUsername: (value: string) => void
+  handleChangePassword: (value: string) => void
+  postLogin: (value: LoginInterface) => any
 }
 
-export default connect(
+class LoginContainer extends React.PureComponent<Props & Method> {
+  public render() {
+    return (
+      <Login
+        handleChangeUsername={this.props.handleChangeUsername}
+        loginUsername={this.props.loginUsername}
+        handleChangePassword={this.props.handleChangePassword}
+        loginPassword={this.props.loginPassword}
+        postLogin={this.props.postLogin}
+        loginStatusCode={this.props.loginStatusCode}
+        loginType={this.props.loginType}
+        loginLogined={this.props.loginLogined}
+      />
+    )
+  }
+}
+
+export default connect<Props, Method, void>(
   ({ Login }: StoreState) => ({
     loginStatusCode: Login.loginStatusCode,
     loginType: Login.loginType,

@@ -1,27 +1,26 @@
 import * as React from 'react'
 
-import './HeaderLogo.css'
-
+import { AxiosPromise } from 'axios'
 import { NavLink } from 'react-router-dom'
 
-interface Props {
-  getCategory: () => void
+import './HeaderLogo.css'
+
+interface Method {
+  getCategory: () => AxiosPromise<any>
 }
 
-class HeaderLogo extends React.Component<Props> {
-  public handleClick = (): void => {
-    this.props.getCategory()
+const HeaderLogo: React.SFC<Method> = Props => {
+  const handleClick = (): void => {
+    Props.getCategory()
   }
 
-  public render(): JSX.Element {
-    return (
-      <h1 className="header-h1">
-        <NavLink to="/" onClick={this.handleClick}>
-          NoMoreViolence
-        </NavLink>
-      </h1>
-    )
-  }
+  return (
+    <h1 className="header-h1">
+      <NavLink to="/" onClick={handleClick}>
+        NoMoreViolence
+      </NavLink>
+    </h1>
+  )
 }
 
 export default HeaderLogo

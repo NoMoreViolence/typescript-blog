@@ -19,41 +19,45 @@ import RippleTopRipple from 'lib/RippleTopRipple'
 
 import './Ripple.css'
 import { toast } from 'react-toastify'
+import { AxiosPromise } from 'axios'
 
 interface Props {
   // Ripple data
   topRipple: TopOrChildRippleState[]
-  // Ripple http fun
-  rippleClear: () => Promise<object>
-  topRippleLoad: (value: GetTopRipples) => Promise<object>
-  childRippleLoad: (value: GetChildRipples) => Promise<object>
-  postTopRipple: (value: PostTopRipple) => Promise<object>
-  postChildRipple: (value: PostChildRipple) => Promise<object>
-  changeTopRipple: (value: PatchTopRipple) => Promise<object>
-  changeChildRipple: (value: PatchChildRipple) => Promise<object>
-  deleteTopRipple: (value: DeleteTopRipple) => Promise<object>
-  deleteChildRipple: (value: DeleteChildRipple) => Promise<object>
-  // Ripple state fun: top
-  changeTopAddMode: (value: number) => boolean
-  changeTopShowChildMode: (value: number) => boolean
-  changeTopChangeMode: (value: number) => boolean
-  changeTopDeleteMode: (value: number) => boolean
-  changeTopMoreViewMode: (value: number) => boolean
-  // Ripple staet fun: child
-  changeChildChangeMode: (value: ChildMode) => boolean
-  changeChildDeleteMode: (value: ChildMode) => boolean
-  changeChildMoreViewMode: (value: ChildMode) => boolean
   // Submit ripple state
   addRippleStatePending: boolean
   changeRippleStatePending: boolean
   deleteRippleStatePending: boolean
 }
 
+interface Method {
+  // Ripple http fun
+  rippleClear: () => void
+  topRippleLoad: (value: GetTopRipples) => AxiosPromise<object>
+  childRippleLoad: (value: GetChildRipples) => AxiosPromise<object>
+  postTopRipple: (value: PostTopRipple) => AxiosPromise<object>
+  postChildRipple: (value: PostChildRipple) => AxiosPromise<object>
+  changeTopRipple: (value: PatchTopRipple) => AxiosPromise<object>
+  changeChildRipple: (value: PatchChildRipple) => AxiosPromise<object>
+  deleteTopRipple: (value: DeleteTopRipple) => AxiosPromise<object>
+  deleteChildRipple: (value: DeleteChildRipple) => AxiosPromise<object>
+  // Ripple state fun: top
+  changeTopAddMode: (value: number) => void
+  changeTopShowChildMode: (value: number) => void
+  changeTopChangeMode: (value: number) => void
+  changeTopDeleteMode: (value: number) => void
+  changeTopMoreViewMode: (value: number) => void
+  // Ripple staet fun: child
+  changeChildChangeMode: (value: ChildMode) => void
+  changeChildDeleteMode: (value: ChildMode) => void
+  changeChildMoreViewMode: (value: ChildMode) => void
+}
+
 interface State {
   topRippleLoaded: object
 }
 
-class Ripple extends React.Component<Props & RouteComponentProps<any>, State> {
+class Ripple extends React.Component<Props & Method & RouteComponentProps<any>, State> {
   public state = {
     topRippleLoaded: {}
   }

@@ -1,6 +1,6 @@
 import { handleActions, Action, createAction } from 'redux-actions'
 import produce from 'immer'
-import axios from 'axios'
+import axios, { AxiosPromise } from 'axios'
 
 // Bring Category & SubTitle of Posts & type
 // Type is the mark that can Recognize the api caller
@@ -9,9 +9,8 @@ export interface GetPostBringAPIInterface {
   title?: string
   type?: number
 }
-function getPostAPI(value: GetPostBringAPIInterface) {
-  return axios.get(`/api/${value.category}/${value.title}?type=${value.type}`)
-}
+const getPostAPI = (value: GetPostBringAPIInterface): AxiosPromise<any> =>
+  axios.get(`/api/${value.category}/${value.title}?type=${value.type}`)
 
 // interface of postPostAPI fun's parameter
 export interface PostAddAPIInterface {
@@ -21,8 +20,8 @@ export interface PostAddAPIInterface {
   mainText?: string
 }
 // API of Adding Post
-function postPostAddAPI(value: PostAddAPIInterface) {
-  return axios.post(
+const postPostAddAPI = (value: PostAddAPIInterface): AxiosPromise<any> =>
+  axios.post(
     `/api/${value.category}/${value.title}`,
     {
       subTitle: value.subTitle,
@@ -35,7 +34,6 @@ function postPostAddAPI(value: PostAddAPIInterface) {
       }
     }
   )
-}
 
 // interface of putPostAPI fun's parameter
 export interface PutChangeAPIInterface {
@@ -47,8 +45,8 @@ export interface PutChangeAPIInterface {
   newMainText?: string
 }
 // API of Changing Post
-function putPostChangeAPI(value: PutChangeAPIInterface) {
-  return axios.put(
+const putPostChangeAPI = (value: PutChangeAPIInterface): AxiosPromise<any> =>
+  axios.put(
     `/api/${value.oldCategory}/${value.oldTitle}`,
     {
       changeCategory: value.newCategory,
@@ -63,7 +61,6 @@ function putPostChangeAPI(value: PutChangeAPIInterface) {
       }
     }
   )
-}
 
 // interface of deltePostAPI fun's parameter
 export interface DeleteDeleteAPIInterface {
@@ -71,14 +68,13 @@ export interface DeleteDeleteAPIInterface {
   title?: string
 }
 // API of Deleting Post
-function deletePostDeleteAPI(value: DeleteDeleteAPIInterface) {
-  return axios.delete(`/api/${value.category}/${value.title}`, {
+const deletePostDeleteAPI = (value: DeleteDeleteAPIInterface): AxiosPromise<any> =>
+  axios.delete(`/api/${value.category}/${value.title}`, {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': sessionStorage.getItem('token')
     }
   })
-}
 
 // Bring All info of Post
 const GET_BRING_POST_INFO = 'GET_BRING_POST_INFO'

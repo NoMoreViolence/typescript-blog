@@ -11,4 +11,6 @@ interface Props {
 
 const MarkDownRendererAddContainer: React.SFC<Props> = Props => <MarkDownRenderer markdown={Props.mainText} />
 
-export default connect(({ Post }: StoreState) => ({ mainText: Post.add.mainText }))(MarkDownRendererAddContainer)
+export default connect<Props, void, void>(({ Post }: StoreState) => ({ mainText: Post.add.mainText }))(
+  MarkDownRendererAddContainer
+)

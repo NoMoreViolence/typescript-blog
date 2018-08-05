@@ -8,7 +8,7 @@ import { LoginActions } from 'store/modules/Login'
 
 import { connect } from 'react-redux'
 import { StoreState } from 'store/modules'
-import { bindActionCreators } from 'redux'
+import { bindActionCreators, Dispatch } from 'redux'
 
 interface Props {
   loginLogined: boolean
@@ -19,24 +19,27 @@ interface Props {
   newTitle: string
   subTitle: string
   mainText: string
-  loadingPending: boolean
   changePending: boolean
-  // Category action
-  getCategory: () => never
-  // Post action
-  getPost: (value: GetPostBringAPIInterface) => never
-  changePutPostCategorySelectChange: (value: string) => never
-  changePutPostCategoryChange: (value: string) => never
-  changePutPostTitleSelectChange: (value: string) => never
-  changePutPost: (value: PutChangeAPIInterface) => never
-  // Login action
-  categoryDone: () => never
-  postDone: () => never
-  logout: () => never
-  changePutPostError: (value: string) => never
 }
 
-const PostChangeContainer: React.SFC<Props> = Props => (
+interface Method {
+  // Data Get
+  getCategory: () => any
+  getPost: (value: GetPostBringAPIInterface) => any
+  // Post action
+  changePutPostCategorySelectChange: (value: string) => void
+  changePutPostCategoryChange: (value: string) => void
+  changePutPostTitleSelectChange: (value: string) => void
+  changePutPost: (value: PutChangeAPIInterface) => any
+  // Done
+  categoryDone: () => void
+  postDone: () => void
+  // Error
+  changePutPostError: (value: string) => void
+  logout: () => void
+}
+
+const PostChangeContainer: React.SFC<Props & Method> = Props => (
   <PostChange
     // Login
     loginLogined={Props.loginLogined}
@@ -49,7 +52,6 @@ const PostChangeContainer: React.SFC<Props> = Props => (
     newTitle={Props.newTitle}
     subTitle={Props.subTitle}
     mainText={Props.mainText}
-    loadingPending={Props.loadingPending}
     changePending={Props.changePending}
     // Method
     // Category
@@ -69,7 +71,7 @@ const PostChangeContainer: React.SFC<Props> = Props => (
   />
 )
 
-export default connect(
+export default connect<Props, Method, void>(
   ({ Post, Category, Login }: StoreState) => ({
     loginLogined: Login.loginLogined,
     category: Category.categoryCategory,
@@ -79,10 +81,9 @@ export default connect(
     newTitle: Post.change.title,
     subTitle: Post.change.subTitle,
     mainText: Post.change.mainText,
-    loadingPending: Post.load.loadingPending,
     changePending: Post.change.changePending
   }),
-  dispatch => ({
+  (dispatch: Dispatch) => ({
     // loading methdo
     getCategory: bindActionCreators(CategoryActions.getCategory, dispatch),
     getPost: bindActionCreators(PostActions.getPost, dispatch),

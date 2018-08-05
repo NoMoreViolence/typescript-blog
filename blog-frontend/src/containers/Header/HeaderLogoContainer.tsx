@@ -5,17 +5,16 @@ import { CategoryActions } from 'store/modules/Category'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { StoreState } from 'store/modules'
 
-type Props = {
-  CategoryActions: typeof CategoryActions
+interface Method {
+  getCategory: () => any
 }
 
-const HeaderContainer: React.SFC<Props> = Props => <HeaderLogo getCategory={Props.CategoryActions.getCategory} />
+const HeaderContainer: React.SFC<Method> = Props => <HeaderLogo getCategory={Props.getCategory} />
 
-export default connect(
-  ({  }: StoreState) => ({}),
+export default connect<void, Method, void>(
+  () => ({}),
   dispatch => ({
-    CategoryActions: bindActionCreators(CategoryActions, dispatch)
+    getCategory: bindActionCreators(CategoryActions.getCategory, dispatch)
   })
 )(HeaderContainer)
