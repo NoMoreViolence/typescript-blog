@@ -280,7 +280,7 @@ class CategoryAll extends React.Component<Props, State> {
 
         {this.props.categoryPending && this.props.category.length === 0 ? (
           <div className="category-all-loading-circle">
-            <LoadingCircle />
+            <LoadingCircle isLoading={'awefw'} />
           </div>
         ) : (
           <React.Fragment>

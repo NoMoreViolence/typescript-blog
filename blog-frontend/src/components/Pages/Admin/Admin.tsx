@@ -34,30 +34,33 @@ import 'codemirror/mode/shell/shell'
 // CodeMirror Css Style
 import 'codemirror/lib/codemirror.css'
 import 'components/commonCSS/editorTheme-seti.css'
+import { LoadingComponentProps } from 'react-loadable'
 
-const Admin: React.SFC = () => {
-  return (
-    <div className="root-admin-container">
-      <div className="admin-container">
-        <div className="layout-container">
-          <div className="admin-warning">
-            # 주의사항: 하나의 작업을 완료하게 되면 진행중인 다른 작업들은 모두 사라집니다 #
+class Admin extends React.PureComponent<LoadingComponentProps> {
+  public render() {
+    return (
+      <div className="root-admin-container">
+        <div className="admin-container">
+          <div className="layout-container">
+            <div className="admin-warning">
+              # 주의사항: 하나의 작업을 완료하게 되면 진행중인 다른 작업들은 모두 사라집니다 #
+            </div>
+            <h1 className="admin-logo">Category</h1>
+            <CurrentCategoryContainer />
+            <CategoryAddContainer />
+            <CategoryChangeContainer />
+            <CategoryDeleteContainer />
           </div>
-          <h1 className="admin-logo">Category</h1>
-          <CurrentCategoryContainer />
-          <CategoryAddContainer />
-          <CategoryChangeContainer />
-          <CategoryDeleteContainer />
+          <div className="layout-container">
+            <h1 className="admin-logo">Post</h1>
+          </div>
+          <PostAddContainer />
+          <PostChangeContainer />
+          <PostDeleteContainer />
         </div>
-        <div className="layout-container">
-          <h1 className="admin-logo">Post</h1>
-        </div>
-        <PostAddContainer />
-        <PostChangeContainer />
-        <PostDeleteContainer />
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 export default Admin

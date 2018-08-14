@@ -29,46 +29,49 @@ const Login = Loadable({
   loader: () => import('components/Pages/Login'),
   loading: LoadingCircle
 })
-
 // Code splitting
 const Admin = Loadable({
   loader: () => import('components/Pages/Admin'),
   loading: LoadingCircle
 })
 
-const App: React.SFC = () => (
-  <React.Fragment>
-    <ProgressBar />
-    <div className="main">
-      <Basic />
-      <Helmet />
-      <ToastContainer />
-      <Introduce />
-      <div className="article-container">
-        <Header />
-        <Route exact={true} path="/" component={CategoryAll} />
+class App extends React.Component {
+  public render() {
+    return (
+      <React.Fragment>
+        <ProgressBar />
+        <div className="main">
+          <Basic />
+          <Helmet />
+          <ToastContainer />
+          <Introduce />
+          <div className="article-container">
+            <Header />
+            <Route exact={true} path="/" component={CategoryAll} />
 
-        <Switch>
-          <Route exact={true} path="/admin" component={Admin} />
-          <Route exact={true} path="/:category" component={CategorySelect} />
-        </Switch>
+            <Switch>
+              <Route exact={true} path="/admin" component={Admin} />
+              <Route exact={true} path="/:category" component={CategorySelect} />
+            </Switch>
 
-        <Switch>
-          <Route exact={true} path="/admin/login" component={Login} />
-          <Route
-            exact={true}
-            path="/:category/:post"
-            render={() => (
-              <React.Fragment>
-                <PostSelect />
-                <Ripple />
-              </React.Fragment>
-            )}
-          />
-        </Switch>
-      </div>
-    </div>
-  </React.Fragment>
-)
+            <Switch>
+              <Route exact={true} path="/admin/login" component={Login} />
+              <Route
+                exact={true}
+                path="/:category/:post"
+                render={() => (
+                  <React.Fragment>
+                    <PostSelect />
+                    <Ripple />
+                  </React.Fragment>
+                )}
+              />
+            </Switch>
+          </div>
+        </div>
+      </React.Fragment>
+    )
+  }
+}
 
 export default App

@@ -1,5 +1,11 @@
 import * as React from 'react'
 import LoginContainer from 'containers/Login/LoginContainer'
+import { LoadingComponentProps } from 'react-loadable'
 
-const Login: React.SFC = () => <LoginContainer />
+class Login extends React.Component<LoadingComponentProps> {
+  public render() {
+    return <LoginContainer />
+  }
+}
+
 export default Login
