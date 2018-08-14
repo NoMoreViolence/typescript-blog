@@ -15,7 +15,7 @@ interface State {
 
 class Helmet extends React.Component<RouteComponentProps<any>, State> {
   public state = {
-    title: 'NoMoreViolence'
+    title: 'NMV Blog'
   }
 
   public render() {

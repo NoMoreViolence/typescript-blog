@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Route, Switch } from 'react-router-dom'
 import * as Loadable from 'react-loadable'
 
+import './App.css'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 // css module
@@ -14,6 +15,7 @@ import 'components/commonCSS/color.css'
 // Pages
 import Basic from 'components/Pages/Basic'
 import Helmet from 'components/Pages/Helmet'
+import Introduce from 'components/Pages/Introduce'
 import Header from 'components/Pages/Header'
 import CategoryAll from 'components/Pages/CategoryAll'
 import CategorySelect from 'components/Pages/CategorySelect'
@@ -41,28 +43,30 @@ const App: React.SFC = () => (
       <Basic />
       <Helmet />
       <ToastContainer />
-      <Header />
+      <Introduce />
+      <div className="article-container">
+        <Header />
+        <Route exact={true} path="/" component={CategoryAll} />
 
-      <Route exact={true} path="/" component={CategoryAll} />
+        <Switch>
+          <Route exact={true} path="/admin" component={Admin} />
+          <Route exact={true} path="/:category" component={CategorySelect} />
+        </Switch>
 
-      <Switch>
-        <Route exact={true} path="/admin" component={Admin} />
-        <Route exact={true} path="/:category" component={CategorySelect} />
-      </Switch>
-
-      <Switch>
-        <Route exact={true} path="/admin/login" component={Login} />
-        <Route
-          exact={true}
-          path="/:category/:post"
-          render={() => (
-            <React.Fragment>
-              <PostSelect />
-              <Ripple />
-            </React.Fragment>
-          )}
-        />
-      </Switch>
+        <Switch>
+          <Route exact={true} path="/admin/login" component={Login} />
+          <Route
+            exact={true}
+            path="/:category/:post"
+            render={() => (
+              <React.Fragment>
+                <PostSelect />
+                <Ripple />
+              </React.Fragment>
+            )}
+          />
+        </Switch>
+      </div>
     </div>
   </React.Fragment>
 )
