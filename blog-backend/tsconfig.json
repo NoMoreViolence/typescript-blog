@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES5",
-    "module": "esnext",
-    "noImplicitAny": true,
-    "removeComments": true,
-    "preserveConstEnums": true,
-    "sourceMap": true,
+    "charset": "utf8",
+    "baseUrl": ".src",
+    "lib": ["esnext"],
     "outDir": "build",
-    "allowJs": true,
-    "baseUrl": "./src"
+    "target": "esnext",
+    "module": "commonjs",
+    "resolveJsonModule": true, // Allow import json file
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "experimentalDecorators": true, // sequelize
+    "emitDecoratorMetadata": true, // sequelize
+    "locale": "ko", // Error message korean
+    "pretty": true // Error message pretty
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["node_modules", "build"]
 }

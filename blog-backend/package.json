@@ -4,32 +4,44 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "build": "./node_modules/typescript/bin/tsc",
-    "start:dev": "'./node_modules/nodemon/bin/nodemon.js' index.js"
+    "start:dev": "nodemon --config ./nodemon.json ./node_modules/ts-node/dist/bin ./src/index.ts",
+    "start": "node ./build/index.js",
+    "build": "./node_modules/typescript/bin/tsc"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.2",
+    "@types/express": "^4.16.1",
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.4",
+    "dotenv": "^7.0.0",
     "express": "^4.16.4",
-    "jsonwebtoken": "^8.2.0",
-    "mongoose": "^5.0.10",
-    "morgan": "^1.9.0",
+    "helmet": "^3.16.0",
+    "http-errors": "^1.7.2",
+    "jsonwebtoken": "^8.5.1",
+    "method-override": "^3.0.0",
+    "morgan": "^1.9.1",
+    "mysql2": "^1.6.5",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.16",
     "typescript": "^3.4.3"
   },
   "nodemonConfig": {
     "ignore": [],
-    "delay": "500"
+    "delay": "1000"
   },
   "devDependencies": {
+    "@types/compression": "^0.0.36",
+    "@types/dotenv": "^6.1.1",
+    "@types/helmet": "^0.0.43",
+    "@types/http-errors": "^1.6.1",
+    "@types/method-override": "^0.0.31",
+    "@types/morgan": "^1.7.35",
     "@types/node": "^11.13.4",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.11.0",
-    "nodemon": "^1.17.2",
+    "nodemon": "^1.18.11",
     "prettier": "^1.17.0",
-    "prettier-eslint": "^8.8.1",
+    "ts-node": "^8.0.3",
     "tslint": "^5.15.0",
     "tslint-config-prettier": "^1.18.0"
   }
