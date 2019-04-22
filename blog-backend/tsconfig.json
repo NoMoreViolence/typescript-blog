@@ -1,18 +1,28 @@
 {
   "compilerOptions": {
-    "charset": "utf8",
-    "baseUrl": ".src",
-    "lib": ["esnext"],
-    "outDir": "build",
-    "target": "esnext",
+    "baseUrl": "./src",
+    "outDir": "./dist/",
+    "paths": {
+      "@lib/*": ["lib/*"],
+      "@database": ["database"],
+      "@middlewares": ["middlewares"],
+      "@util": ["util"]
+    },
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "module": "commonjs",
-    "resolveJsonModule": true, // Allow import json file
     "moduleResolution": "node",
     "sourceMap": true,
-    "experimentalDecorators": true, // sequelize
-    "emitDecoratorMetadata": true, // sequelize
-    "locale": "ko", // Error message korean
-    "pretty": true // Error message pretty
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": false,
+    "pretty": true,
+    "target": "esnext",
+    "lib": ["esnext"],
+    "typeRoots": ["./node_modules/@types"]
   },
   "exclude": ["node_modules", "build"]
 }
