@@ -15,6 +15,9 @@ export class User {
   @Column({ type: 'varchar', length: 200 })
   public password: string;
 
+  @Column({ type: 'varchar', length: 50 })
+  public salt: string;
+
   @OneToMany(type => Post, post => post)
   public posts: Post[];
 
