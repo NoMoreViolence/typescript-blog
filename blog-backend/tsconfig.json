@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./dist/",
+    "paths": {
+      "@lib/*": ["lib/*"],
+      "@database": ["database"],
+      "@middlewares": ["middlewares"],
+      "@util": ["util"]
+    },
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": false,
+    "pretty": true,
+    "target": "esnext",
+    "lib": ["esnext"],
+    "typeRoots": ["./node_modules/@types"]
+  },
+  "exclude": ["node_modules", "build"]
+}

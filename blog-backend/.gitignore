@@ -1,0 +1,6 @@
+.env
+.vscode
+.prettierrc
+yarn.lock
+yarn-error.log
+build

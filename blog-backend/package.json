@@ -1,31 +1,59 @@
 {
-  "name": "server",
+  "name": "typescript-blog-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Blog server with marble.js",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "start:dev": "'./node_modules/nodemon/bin/nodemon.js' index.js"
+    "start:dev": "./node_modules/nodemon/bin/nodemon.js ./node_modules/ts-node/dist/bin -r tsconfig-paths/register ./src/index.ts",
+    "start": "node ./build/index.js",
+    "build": "./node_modules/typescript/bin/tsc"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "Functional",
+    "Reactive",
+    "RxJS",
+    "Marble.js",
+    "Korea",
+    "ljh86029926@gmail.com",
+    "lee jihoon",
+    "PPLINK"
+  ],
+  "author": "Jihoon Lee",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 8.0.0",
+    "yarn": ">= 1.7.0",
+    "npm": ">= 5.0.0"
+  },
   "dependencies": {
-    "body-parser": "^1.18.2",
-    "eslint": "^4.19.1",
-    "express": "^4.16.3",
-    "jsonwebtoken": "^8.2.0",
-    "mongoose": "^5.0.10",
-    "morgan": "^1.9.0"
+    "@marblejs/core": "^2.1.0",
+    "@marblejs/middleware-body": "^2.1.0",
+    "@marblejs/middleware-cors": "^2.1.0",
+    "@marblejs/middleware-io": "^2.1.0",
+    "@marblejs/middleware-jwt": "^2.1.0",
+    "@marblejs/middleware-logger": "^2.1.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^7.0.0",
+    "mysql2": "^1.6.5",
+    "randomstring": "^1.1.5",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.4.0",
+    "tsconfig-paths": "^3.8.0",
+    "typeorm": "^0.2.16",
+    "typescript": "^3.4.3"
   },
   "nodemonConfig": {
     "ignore": [],
-    "delay": "500"
+    "delay": "1000"
   },
   "devDependencies": {
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.11.0",
-    "nodemon": "^1.17.2",
-    "prettier-eslint": "^8.8.1"
+    "@types/dotenv": "^6.1.1",
+    "@types/node": "^11.13.4",
+    "@types/randomstring": "^1.1.6",
+    "nodemon": "^1.18.11",
+    "prettier": "^1.17.0",
+    "ts-node": "^8.0.3",
+    "tslint": "^5.15.0",
+    "tslint-config-prettier": "^1.18.0"
   }
 }
