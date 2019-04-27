@@ -1,11 +1,12 @@
 import { HttpEffect, HttpError, HttpStatus, use } from '@marblejs/core';
 import { requestValidator$, t } from '@marblejs/middleware-io';
-import { neverNullable } from '@util';
+import { neverNullable } from '@utils';
 import { User } from 'database/models';
+import { getUserByEmail } from 'database/queries';
 import { of, throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { getRepository } from 'typeorm';
-import { checkEmailAndPassword, checkLoginVaildation, createToken } from '../util';
+import { checkEmailAndPassword, checkLoginVaildation, createToken } from '../utils';
 
 const loginVaildater$ = requestValidator$({
   body: t.type({
@@ -22,19 +23,14 @@ export const loginEffect$: HttpEffect = req$ => {
     mergeMap(req =>
       of(req).pipe(
         map(() => checkLoginVaildation(req.body)),
-        mergeMap(() =>
-          userEntity.findOne({
-            where: {
-              email: req.body.email
-            }
-          })
-        ),
+        mergeMap(() => getUserByEmail({ entity: userEntity, email: req.body.email })),
         mergeMap(neverNullable),
         map(user => checkEmailAndPassword({ user, body: req.body })),
         map(createToken),
         map(trans => ({
           body: {
-            message: 'User register completed',
+            expiresIn: trans.expiresIn,
+            message: 'User Login success',
             status: HttpStatus.CREATED,
             token: trans.token
           },

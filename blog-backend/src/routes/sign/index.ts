@@ -1,5 +1,6 @@
 import { combineRoutes, EffectFactory, RouteEffect } from '@marblejs/core';
-import { loginEffect$, registerEffect$ } from './effects';
+import { authorize$ } from '@middlewares';
+import { loginEffect$, profileEffect$, registerEffect$ } from './effects';
 
 const register$: RouteEffect = EffectFactory.matchPath('/register')
   .matchType('POST')
@@ -9,4 +10,9 @@ const login$: RouteEffect = EffectFactory.matchPath('/login')
   .matchType('POST')
   .use(loginEffect$);
 
-export default combineRoutes('/sign', { effects: [register$, login$] });
+const profile$: RouteEffect = EffectFactory.matchPath('/')
+  .matchType('GET')
+  .use(profileEffect$);
+
+const profileRoutes$ = combineRoutes('/profile', { effects: [profile$], middlewares: [authorize$] });
+export default combineRoutes('/sign', { effects: [register$, login$, profileRoutes$] });

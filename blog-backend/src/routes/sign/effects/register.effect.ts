@@ -1,11 +1,12 @@
 import { HttpEffect, HttpError, HttpStatus, use } from '@marblejs/core';
 import { requestValidator$, t } from '@marblejs/middleware-io';
-import { createNewPassword, everNullable } from '@util';
+import { createNewPassword, everNullable } from '@utils';
 import { User } from 'database/models';
+import { createUser } from 'database/queries';
 import { of, throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { getRepository } from 'typeorm';
-import { checkRegisterVaildation, createToken } from '../util';
+import { checkRegisterVaildation, createToken } from '../utils';
 
 const registerVaildater$ = requestValidator$({
   body: t.type({
@@ -33,22 +34,14 @@ export const registerEffect$: HttpEffect = req$ => {
         ),
         mergeMap(everNullable),
         map(() => createNewPassword(req.body)),
-        mergeMap(trnasPassword => {
-          const user = new User();
-          user.email = req.body.email;
-          user.password = trnasPassword.password;
-          user.salt = trnasPassword.saltKey;
-          user.name = req.body.name;
-          return userEntity.save(user);
-        }),
+        mergeMap(trnasPassword => createUser({ entity: userEntity, ...req.body, ...trnasPassword })),
         map(createToken),
         mergeMap(trans =>
           of({
             body: {
               message: 'User register completed',
               status: HttpStatus.CREATED,
-              token: trans.token,
-              userId: trans.userId
+              token: trans.token
             },
             status: HttpStatus.CREATED
           })
