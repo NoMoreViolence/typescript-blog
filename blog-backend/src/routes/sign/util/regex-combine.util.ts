@@ -1,4 +1,4 @@
-import { checkEmail, checkPassword } from '@util';
+import { checkEmail, checkPassword, checkSameValue } from '@util';
 
 export const checkRegisterVaildation = ({
   email,
@@ -9,6 +9,12 @@ export const checkRegisterVaildation = ({
   password: string;
   rPassword: string;
 }): void => {
-  checkPassword(password, rPassword);
   checkEmail(email);
+  checkPassword(password);
+  checkSameValue(password, rPassword);
+};
+
+export const checkLoginVaildation = ({ email, password }: { email: string; password: string }): void => {
+  checkEmail(email);
+  checkPassword(password);
 };
