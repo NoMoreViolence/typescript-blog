@@ -1,15 +1,16 @@
 import { HttpError, HttpStatus } from '@marblejs/core';
-import { generateToken } from '@marblejs/middleware-jwt';
-import { reCreatePassword } from '@util';
+import { generateExpirationInHours, generateToken } from '@marblejs/middleware-jwt';
+import { reCreatePassword } from '@utils';
 import { User } from 'database/models';
-import { of } from 'rxjs';
 
-const SECRET_KEY = process.env.KEY_OF_FUCKING_SECRET;
-
-export const createToken = (user: User): { token: string; userId: number } => {
-  const token = generateToken({ secret: SECRET_KEY, header: { userId: user.id } });
-  return { token: token(), userId: user.id };
-};
+export const createToken = (user: User): { token: string; expiresIn: number } => ({
+  expiresIn: generateExpirationInHours(168),
+  token: generateToken({
+    algorithm: 'HS512',
+    expiresIn: '7d',
+    secret: process.env.KEY_OF_FUCKING_SECRET
+  })({ userId: user.id })
+});
 
 export const checkEmailAndPassword = (trans: {
   user: User;

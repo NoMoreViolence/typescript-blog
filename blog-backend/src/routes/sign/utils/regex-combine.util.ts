@@ -1,4 +1,4 @@
-import { checkEmail, checkPassword, checkSameValue } from '@util';
+import { checkEmail, checkPassword, checkSameValue } from 'utils';
 
 export const checkRegisterVaildation = ({
   email,
