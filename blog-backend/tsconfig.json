@@ -6,7 +6,7 @@
       "@lib/*": ["lib/*"],
       "@database": ["database"],
       "@middlewares": ["middlewares"],
-      "@util": ["util"]
+      "@utils": ["utils"]
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
