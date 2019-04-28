@@ -1,4 +1,14 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm';
+import { Tag } from './tag.model';
 import { User } from './user.model';
 
 @Entity()
@@ -15,9 +25,6 @@ export class Post {
   @Column({ type: 'text' })
   public article: string;
 
-  @Column({ type: 'int', default: 0 })
-  public views: number;
-
   @Column({ type: 'boolean', default: false })
   public isPublished: boolean;
 
@@ -32,4 +39,11 @@ export class Post {
 
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt: Date;
+
+  @Column({ type: 'timestamp', default: null })
+  public deletedAt: Date;
+
+  @ManyToMany(type => Tag, tag => tag.id)
+  @JoinTable()
+  public tags: Tag[];
 }

@@ -26,4 +26,7 @@ export class User {
 
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt: Date;
+
+  @Column({ type: 'timestamp', default: null })
+  public deletedAt: Date;
 }

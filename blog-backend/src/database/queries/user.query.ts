@@ -1,15 +1,31 @@
 import { User } from 'database/models';
-import { Repository } from 'typeorm';
+import { Any, FindOneOptions, IsNull, Not, Repository } from 'typeorm';
 
 export const getUserByEmail = (
   trans: { entity: Repository<User>; email: string },
-  option: { select?: Array<keyof User> } = {}
-) => trans.entity.findOne({ where: { email: trans.email }, ...option });
+  option: FindOneOptions<User> = {},
+  all?: boolean
+) =>
+  trans.entity.findOne({
+    where: {
+      deletedAt: all ? Any([Not(IsNull()), IsNull()]) : IsNull(),
+      email: trans.email
+    },
+    ...option
+  });
 
 export const getUserByUserId = (
   trans: { entity: Repository<User>; userId: string },
-  option: { select?: Array<keyof User> } = {}
-) => trans.entity.findOne({ where: { id: trans.userId }, ...option });
+  option: FindOneOptions<User> = {},
+  all?: boolean
+) =>
+  trans.entity.findOne({
+    where: {
+      deletedAt: all ? Any([Not(IsNull()), IsNull()]) : IsNull(),
+      id: trans.userId
+    },
+    ...option
+  });
 
 export const createUser = (trans: {
   entity: Repository<User>;
