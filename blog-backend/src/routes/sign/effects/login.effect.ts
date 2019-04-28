@@ -31,7 +31,6 @@ export const loginEffect$: HttpEffect = req$ => {
           body: {
             expiresIn: trans.expiresIn,
             message: 'User Login success',
-            status: HttpStatus.CREATED,
             token: trans.token
           },
           status: HttpStatus.CREATED
