@@ -4,9 +4,10 @@ import { cors$ } from '@marblejs/middleware-cors';
 import { logger$ } from '@marblejs/middleware-logger';
 import { throwError } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
+import posts$ from './posts';
 import sign$ from './sign';
 
-const api$ = combineRoutes('/api', [sign$]);
+const api$ = combineRoutes('/api', [sign$, posts$]);
 const notFound$ = r.pipe(
   r.matchPath('*'),
   r.matchType('*'),
