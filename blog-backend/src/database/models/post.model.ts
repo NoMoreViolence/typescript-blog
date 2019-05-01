@@ -43,7 +43,7 @@ export class Post {
   @Column({ type: 'timestamp', default: null })
   public deletedAt: Date;
 
-  @ManyToMany(type => Tag, tag => tag.id)
+  @ManyToMany(type => Tag, tag => tag.posts)
   @JoinTable()
   public tags: Tag[];
 }

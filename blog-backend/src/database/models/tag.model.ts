@@ -18,6 +18,6 @@ export class Tag {
   @Column({ type: 'timestamp', default: null })
   public deletedAt: Date;
 
-  @ManyToMany(type => Post, post => post.id)
+  @ManyToMany(type => Post, post => post.tags)
   public posts: Post[];
 }
